@@ -83,18 +83,19 @@ You can always ask questions during the lecture and the exercise hours or altern
 ```{r Schedule, echo=FALSE, results='asis'}
 # define vector of topics for course schedule
 vec_topics_schedule <- vec_topics
-vec_topics_schedule[which(Datum == format(as.Date("2019/02/18"), "%d.%m"))] <- ""
-vec_topics_schedule[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- ""
-vec_topics_schedule[which(Datum == format(as.Date("2019/03/04"), "%d.%m"))] <- ""
-vec_topics_schedule[which(Datum == format(as.Date("2019/03/11"), "%d.%m"))] <- ""
-vec_topics_schedule[which(Datum == format(as.Date("2019/03/18"), "%d.%m"))] <- ""
-vec_topics_schedule[which(Datum == format(as.Date("2019/03/25"), "%d.%m"))] <- ""
-vec_topics_schedule[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- ""
-vec_topics_schedule[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- ""
-vec_topics_schedule[which(Datum == format(as.Date("2019/04/15"), "%d.%m"))] <- ""
-vec_topics_schedule[which(Datum == format(as.Date("2019/04/29"), "%d.%m"))] <- ""
-vec_topics_schedule[which(Datum == format(as.Date("2019/05/06"), "%d.%m"))] <- ""
-vec_topics_schedule[which(Datum == format(as.Date("2019/05/13"), "%d.%m"))] <- ""
+vec_topics_schedule[which(Datum == format(as.Date("2019/02/18"), "%d.%m"))] <- "Introduction"
+vec_topics_schedule[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- "Multiple Linear Regression"
+vec_topics_schedule[which(Datum == format(as.Date("2019/03/04"), "%d.%m"))] <- "GBLUP - Marker-Effects Models"
+vec_topics_schedule[which(Datum == format(as.Date("2019/03/11"), "%d.%m"))] <- "GBLUP - Breeding Value Models"
+vec_topics_schedule[which(Datum == format(as.Date("2019/03/18"), "%d.%m"))] <- "Bayesian Approaches"
+vec_topics_schedule[which(Datum == format(as.Date("2019/03/25"), "%d.%m"))] <- "Lasso"
+
+vec_topics_schedule[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- "Introduction"
+vec_topics_schedule[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- "Aspects of Modern Breeding Programs"
+vec_topics_schedule[which(Datum == format(as.Date("2019/04/15"), "%d.%m"))] <- "Model Selection"
+vec_topics_schedule[which(Datum == format(as.Date("2019/04/29"), "%d.%m"))] <- "Genetic Groups"
+vec_topics_schedule[which(Datum == format(as.Date("2019/05/06"), "%d.%m"))] <- "Longitudinal Data"
+vec_topics_schedule[which(Datum == format(as.Date("2019/05/13"), "%d.%m"))] <- "Estimation of Response to Selection"
 vec_topics_schedule[which(Datum == format(as.Date("2019/05/20"), "%d.%m"))] <- "Questions and Test Exams"
 vec_topics_schedule[which(Datum == format(as.Date("2019/05/27"), "%d.%m"))] <- "Final Exams"
 
@@ -111,17 +112,17 @@ The lecture notes, the slides, the exercises and the solutions can be downloaded
 ### Course Notes
 ```{r NotesTable, echo=FALSE, results='asis'}
 # url for course notes
-s_cn_url <- paste0(sBaseUrl, "cn/")
+s_cn_asm_url <- paste0(sBaseUrl, "cn_asm/")
 s_cn_gel_url <- paste0(sBaseUrl, "cn_gel/")
 
 vec_topics_notes <- vec_topics
 # add links to the material
-vec_topics_notes[which(Datum == format(as.Date("2019/02/18"), "%d.%m"))] <- paste0("[](", s_cn_url, "", ")") 
-vec_topics_notes[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- paste0("[](", s_cn_url, "", ")") 
-vec_topics_notes[which(Datum == format(as.Date("2019/03/04"), "%d.%m"))] <- paste0("[](", s_cn_url, "", ")") 
-vec_topics_notes[which(Datum == format(as.Date("2019/03/11"), "%d.%m"))] <- paste0("[](", s_cn_url, "", ")") 
-vec_topics_notes[which(Datum == format(as.Date("2018/03/18"), "%d.%m"))] <- paste0("[](", s_cn_url, "", ")") 
-vec_topics_notes[which(Datum == format(as.Date("2018/03/25"), "%d.%m"))] <- paste0("[](", s_cn_url, "", ")") 
+vec_topics_notes[which(Datum == format(as.Date("2019/02/18"), "%d.%m"))] <- paste0("[](", s_cn_asm_url, "", ")") 
+vec_topics_notes[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- paste0("[](", s_cn_asm_url, "", ")") 
+vec_topics_notes[which(Datum == format(as.Date("2019/03/04"), "%d.%m"))] <- paste0("[](", s_cn_asm_url, "", ")") 
+vec_topics_notes[which(Datum == format(as.Date("2019/03/11"), "%d.%m"))] <- paste0("[](", s_cn_asm_url, "", ")") 
+vec_topics_notes[which(Datum == format(as.Date("2018/03/18"), "%d.%m"))] <- paste0("[](", s_cn_asm_url, "", ")") 
+vec_topics_notes[which(Datum == format(as.Date("2018/03/25"), "%d.%m"))] <- paste0("[](", s_cn_asm_url, "", ")") 
 
 vec_topics_notes[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")") 
 vec_topics_notes[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")") 
@@ -142,19 +143,19 @@ knitr::kable(df_notes)
 s_sl_url <- paste0(sBaseUrl, "sl/")
 vec_topics_slides <- vec_topics
 # links zu slides
-vec_topics_slides[which(Datum == format(as.Date("2019/02/18"), "%d.%m"))] <- paste0("[](", s_cn_url, "", ")") 
-vec_topics_slides[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- paste0("[](", s_cn_url, "", ")") 
-vec_topics_slides[which(Datum == format(as.Date("2019/03/04"), "%d.%m"))] <- paste0("[](", s_cn_url, "", ")") 
-vec_topics_slides[which(Datum == format(as.Date("2019/03/11"), "%d.%m"))] <- paste0("[](", s_cn_url, "", ")") 
-vec_topics_slides[which(Datum == format(as.Date("2018/03/18"), "%d.%m"))] <- paste0("[](", s_cn_url, "", ")") 
-vec_topics_slides[which(Datum == format(as.Date("2018/03/25"), "%d.%m"))] <- paste0("[](", s_cn_url, "", ")") 
+vec_topics_slides[which(Datum == format(as.Date("2019/02/18"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")") 
+vec_topics_slides[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")") 
+vec_topics_slides[which(Datum == format(as.Date("2019/03/04"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")") 
+vec_topics_slides[which(Datum == format(as.Date("2019/03/11"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")") 
+vec_topics_slides[which(Datum == format(as.Date("2018/03/18"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")") 
+vec_topics_slides[which(Datum == format(as.Date("2018/03/25"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")") 
 
-vec_topics_slides[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")")
-vec_topics_slides[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")")
-vec_topics_slides[which(Datum == format(as.Date("2019/04/15"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")")
-vec_topics_slides[which(Datum == format(as.Date("2019/04/29"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")")
-vec_topics_slides[which(Datum == format(as.Date("2019/05/06"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")")
-vec_topics_slides[which(Datum == format(as.Date("2019/05/13"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")")
+vec_topics_slides[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")")
+vec_topics_slides[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")")
+vec_topics_slides[which(Datum == format(as.Date("2019/04/15"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")")
+vec_topics_slides[which(Datum == format(as.Date("2019/04/29"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")")
+vec_topics_slides[which(Datum == format(as.Date("2019/05/06"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")")
+vec_topics_slides[which(Datum == format(as.Date("2019/05/13"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")")
   
 # create data frame and convert it to table
 df_slides <- data.frame(Woche = Woche, Datum = Datum, Thema = vec_topics_slides, stringsAsFactors = FALSE)
@@ -167,18 +168,18 @@ knitr::kable(df_slides)
 # url for exercises
 s_ex_url <- paste0(sBaseUrl, "ex/")
 vec_topics_ex <- vec_topics
-vec_topics_ex[which(Datum == format(as.Date("2019/02/18"), "%d.%m"))] <- paste0("[](", s_cn_url, "", ")") 
-vec_topics_ex[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- paste0("[](", s_cn_url, "", ")") 
-vec_topics_ex[which(Datum == format(as.Date("2019/03/04"), "%d.%m"))] <- paste0("[](", s_cn_url, "", ")") 
-vec_topics_ex[which(Datum == format(as.Date("2019/03/11"), "%d.%m"))] <- paste0("[](", s_cn_url, "", ")") 
-vec_topics_ex[which(Datum == format(as.Date("2018/03/18"), "%d.%m"))] <- paste0("[](", s_cn_url, "", ")") 
-vec_topics_ex[which(Datum == format(as.Date("2018/03/25"), "%d.%m"))] <- paste0("[](", s_cn_url, "", ")") 
-vec_topics_ex[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")")
-vec_topics_ex[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")")
-vec_topics_ex[which(Datum == format(as.Date("2019/04/15"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")")
-vec_topics_ex[which(Datum == format(as.Date("2019/04/29"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")")
-vec_topics_ex[which(Datum == format(as.Date("2019/05/06"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")")
-vec_topics_ex[which(Datum == format(as.Date("2019/05/13"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")")
+vec_topics_ex[which(Datum == format(as.Date("2019/02/18"), "%d.%m"))] <- paste0("[](", s_ex_url, "", ")") 
+vec_topics_ex[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- paste0("[](", s_ex_url, "", ")") 
+vec_topics_ex[which(Datum == format(as.Date("2019/03/04"), "%d.%m"))] <- paste0("[](", s_ex_url, "", ")") 
+vec_topics_ex[which(Datum == format(as.Date("2019/03/11"), "%d.%m"))] <- paste0("[](", s_ex_url, "", ")") 
+vec_topics_ex[which(Datum == format(as.Date("2018/03/18"), "%d.%m"))] <- paste0("[](", s_ex_url, "", ")") 
+vec_topics_ex[which(Datum == format(as.Date("2018/03/25"), "%d.%m"))] <- paste0("[](", s_ex_url, "", ")") 
+vec_topics_ex[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- paste0("[](", s_ex_url, "", ")")
+vec_topics_ex[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- paste0("[](", s_ex_url, "", ")")
+vec_topics_ex[which(Datum == format(as.Date("2019/04/15"), "%d.%m"))] <- paste0("[](", s_ex_url, "", ")")
+vec_topics_ex[which(Datum == format(as.Date("2019/04/29"), "%d.%m"))] <- paste0("[](", s_ex_url, "", ")")
+vec_topics_ex[which(Datum == format(as.Date("2019/05/06"), "%d.%m"))] <- paste0("[](", s_ex_url, "", ")")
+vec_topics_ex[which(Datum == format(as.Date("2019/05/13"), "%d.%m"))] <- paste0("[](", s_ex_url, "", ")")
 
 # create dataframe and table
 df_ex <- data.frame(Woche = Woche, Datum = Datum, Thema = vec_topics_ex, stringsAsFactors = FALSE)
@@ -191,18 +192,18 @@ knitr::kable(df_ex)
 ```{r SolTable, echo=FALSE, results='asis'}
 s_sol_url <- paste0(sBaseUrl, "sol/")
 vec_topics_sol <- vec_topics
-vec_topics_sol[which(Datum == format(as.Date("2019/02/18"), "%d.%m"))] <- paste0("[](", s_cn_url, "", ")") 
-vec_topics_sol[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- paste0("[](", s_cn_url, "", ")") 
-vec_topics_sol[which(Datum == format(as.Date("2019/03/04"), "%d.%m"))] <- paste0("[](", s_cn_url, "", ")") 
-vec_topics_sol[which(Datum == format(as.Date("2019/03/11"), "%d.%m"))] <- paste0("[](", s_cn_url, "", ")") 
-vec_topics_sol[which(Datum == format(as.Date("2018/03/18"), "%d.%m"))] <- paste0("[](", s_cn_url, "", ")") 
-vec_topics_sol[which(Datum == format(as.Date("2018/03/25"), "%d.%m"))] <- paste0("[](", s_cn_url, "", ")") 
-vec_topics_sol[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")")
-vec_topics_sol[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")")
-vec_topics_sol[which(Datum == format(as.Date("2019/04/15"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")")
-vec_topics_sol[which(Datum == format(as.Date("2019/04/29"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")")
-vec_topics_sol[which(Datum == format(as.Date("2019/05/06"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")")
-vec_topics_sol[which(Datum == format(as.Date("2019/05/13"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")")
+vec_topics_sol[which(Datum == format(as.Date("2019/02/18"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")") 
+vec_topics_sol[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")") 
+vec_topics_sol[which(Datum == format(as.Date("2019/03/04"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")") 
+vec_topics_sol[which(Datum == format(as.Date("2019/03/11"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")") 
+vec_topics_sol[which(Datum == format(as.Date("2018/03/18"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")") 
+vec_topics_sol[which(Datum == format(as.Date("2018/03/25"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")") 
+vec_topics_sol[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")")
+vec_topics_sol[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")")
+vec_topics_sol[which(Datum == format(as.Date("2019/04/15"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")")
+vec_topics_sol[which(Datum == format(as.Date("2019/04/29"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")")
+vec_topics_sol[which(Datum == format(as.Date("2019/05/06"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")")
+vec_topics_sol[which(Datum == format(as.Date("2019/05/13"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")")
 
 # create dataframe and table
 df_sol <- data.frame(Woche = Woche, Datum = Datum, Thema = vec_topics_sol, stringsAsFactors = FALSE)
