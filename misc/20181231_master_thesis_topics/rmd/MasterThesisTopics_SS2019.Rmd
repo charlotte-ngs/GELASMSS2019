@@ -1,0 +1,64 @@
+---
+title: "Master Thesis Topics with Qualitas AG and ETHZ"
+author: "Peter von Rohr"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<style type="text/css">
+h1.title {
+  font-size: 32px;
+  color: Black;
+}
+h1 { /* Header 1 */
+  font-size: 28px;
+  color: DarkRed;
+}
+h2 { /* Header 2 */
+    font-size: 22px;
+  color: DarkRed;
+}
+h3 { /* Header 3 */
+  font-size: 18px;
+  color: DarkRed;
+}
+</style>
+
+If you are interested in any of the following topics or if you have questions, please contact Peter von Rohr (Qualitas AG) Chamerstrasse 56, 6300 Zug; peter.vonrohr@qualitasag.ch, Tel 041 768 92 21.
+
+
+### Genomic Selection in Populations With a High Rate of Natural Insemination - Long-term Development of Accuracy of Genomic Breeding Values If Sires Are Not Re-Genotyped {#project_header .emphasized}
+
+Routinely, selection candidates are genotyped with a Low-density chip (LD-chip, about 30000 SNPs). The prediction of SNP-effects in a training population is done with sires genotyped with a chip with a higher density. As a consequence of that sires which are selected for artificial insemination are usually re-genotyped. In populations like __Original Braunvieh__ and __Simmental__ the amount of natural insemination is high. In breeding schemes without artificial insemination, selected sires are not re-genotyped with the denser chip. The influence of this fact on the accuracy of the predicted genomic breeding values in the population of Original Braunvieh is to be investigated with a real-world dataset. The project contains imputation of the LD-Chip genotypes onto the denser chip by predicting the missing genotypes and the prediction of genomic breeding values
+
+
+### Analysis of Twin and Multiple Births in Swiss Dairy Cattle {#project_header .emphasized}
+
+The goal of this project is the analysis of twin and multiple births in Swiss dairy cattle breeds like Braunvieh, Original Braunvieh, Simmental, Swiss Fleckvieh and Holstein. This project focuses on the frequency of twin and multiple births using descriptive statistics and on the determination of influential factors via variance components estimation. Data of Swiss dairy cattle breeds are available. The statistical analysis is done using the statistical computing system R. Variance components estimation is done with a specialized software program.
+
+
+### Verification of the prediction forumula for the standard lactation milk yield {#project_header .emphasized}
+
+For Swiss dairy cows the milk yield of a standard lactation is predicted starting from day 80 of the respective lactation with a regression formula. Influential factors in this formula are lactation number and birth month of the calf. In this project, the existing regression formula should be verified and adapted if necessary. 
+
+
+### New Breeding Programs {#project_header .emphasized}
+(description follows)
+
+
+### Predicting Behavior Traits Based On Video Data {#project_header .emphasized}
+SESAM stands for Sensor Assisted Alpine Milk Production and is an Interreg B project in the EU. The project aims at predicting new phenotypes based on sensor-collected activity patterns of cows. In a first project stage, behavior phenotypes must be derived from activity patterns and activity data. The main task in this project is to determine the different behavior traits based on collected video data.
+
+---
+
+If you are interested in any of the following topics or if you have questions, please contact Peter von Rohr (Qualitas AG) Chamerstrasse 56, 6300 Zug; peter.vonrohr@qualitasag.ch, Tel 041 768 92 21.
+
+
+```{r echo=FALSE, results='asis'}
+cat(rmddochelper::get_latest_change())
+```
+

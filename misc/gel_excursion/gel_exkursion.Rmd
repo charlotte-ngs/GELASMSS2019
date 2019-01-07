@@ -1,0 +1,39 @@
+---
+title: "Excursion Genetic Evaluation in Livestock"
+author: "Peter von Rohr"
+date: "26.04.2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::knit_hooks$set(odg.conv = rmddochelper::odg.graphics.conv.hook)
+```
+
+## Speakers
+* Lukas Casanova, Braunvieh Schweiz
+* Jürg Moll, Qualitas AG
+
+
+## Date and Place
+* Date: Monday xx.yy.2019
+* Time: 08-10 (je nach Ankunft)
+* Address: Chamerstrasse 56, 6300 Zug
+
+
+## Travel by Train
+* from Zurich HB:  IR70 at 07:04 on track 5 or with EC at 07:09 from track 8
+* from Luzerne: with IR 70 at 07:10 from track Gleis 4
+
+
+## Plan
+The way from the train station in Zug to Chamerstasse 56 is shown on the following plan
+
+```{r GelExkursionPlan,echo=FALSE, odg.conv=TRUE, odg.path=".", odg.graph.cache=TRUE, odg.out.format="png"}
+knitr::include_graphics(path = "png/GelExkursionPlan.png")
+```
+
+
+```{r, echo=FALSE, results='asis'}
+cat(rmddochelper::get_latest_change(ps_msg = "Latest Change"), "\n")
+```
