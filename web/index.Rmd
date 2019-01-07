@@ -14,7 +14,7 @@ output:
 
 ```{r CourseSetup, echo=FALSE, results='hide'}
 # BaseUrl of course website
-sBaseUrl <- 'https://github.com/charlotte-ngs/GELASMSS2019/'
+sBaseUrl <- 'https://charlotte-ngs.github.io/GELASMSS2019/'
 # define course start date
 dCourseStart <- as.Date("2019/02/18")
 # set number of weeks in semester
