@@ -2,12 +2,20 @@
 title: "Master Thesis Topics with Qualitas AG and ETHZ"
 author: "Peter von Rohr"
 date: "`r Sys.Date()`"
-output: html_document
+bibliography: [bibliography.bib]
+#output: html_document
+output: bookdown::html_document2
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+```{r mrmt-setup, include=FALSE}
+mrmt <- rmddochelper::MendeleyExportToolR6$new()
+mrmt$set_this_rmd_file(ps_this_rmd_file = ifelse(rstudioapi::isAvailable(), rstudioapi::getSourceEditorContext()$path, rprojroot::thisfile()))
+```
+
 
 <style type="text/css">
 h1.title {
@@ -31,26 +39,30 @@ h3 { /* Header 3 */
 If you are interested in any of the following topics or if you have questions, please contact Peter von Rohr (Qualitas AG) Chamerstrasse 56, 6300 Zug; peter.vonrohr@qualitasag.ch, Tel 041 768 92 21.
 
 
-### Genomic Selection in Populations With a High Rate of Natural Insemination - Long-term Development of Accuracy of Genomic Breeding Values If Sires Are Not Re-Genotyped {#project_header .emphasized}
+### Genomic Selection in Populations With a High Rate of Natural Insemination - Long-term Development of Accuracy of Genomic Breeding Values If Sires Are Not Re-Genotyped {-#project_header .emphasized}
 
 Routinely, selection candidates are genotyped with a Low-density chip (LD-chip, about 30000 SNPs). The prediction of SNP-effects in a training population is done with sires genotyped with a chip with a higher density. As a consequence of that sires which are selected for artificial insemination are usually re-genotyped. In populations like __Original Braunvieh__ and __Simmental__ the amount of natural insemination is high. In breeding schemes without artificial insemination, selected sires are not re-genotyped with the denser chip. The influence of this fact on the accuracy of the predicted genomic breeding values in the population of Original Braunvieh is to be investigated with a real-world dataset. The project contains imputation of the LD-Chip genotypes onto the denser chip by predicting the missing genotypes and the prediction of genomic breeding values
 
 
-### Analysis of Twin and Multiple Births in Swiss Dairy Cattle {#project_header .emphasized}
+### Analysis of Twin and Multiple Births in Swiss Dairy Cattle {-#project_header .emphasized}
 
 The goal of this project is the analysis of twin and multiple births in Swiss dairy cattle breeds like Braunvieh, Original Braunvieh, Simmental, Swiss Fleckvieh and Holstein. This project focuses on the frequency of twin and multiple births using descriptive statistics and on the determination of influential factors via variance components estimation. Data of Swiss dairy cattle breeds are available. The statistical analysis is done using the statistical computing system R. Variance components estimation is done with a specialized software program.
 
 
-### Verification of the prediction forumula for the standard lactation milk yield {#project_header .emphasized}
+### Verification of the prediction forumula for the standard lactation milk yield   {-#project_header .emphasized}
 
 For Swiss dairy cows the milk yield of a standard lactation is predicted starting from day 80 of the respective lactation with a regression formula. Influential factors in this formula are lactation number and birth month of the calf. In this project, the existing regression formula should be verified and adapted if necessary. 
 
 
-### New Breeding Programs {#project_header .emphasized}
-(description follows)
+### Economic Values in Swiss Beef Cattle Using a Production Model   {-#project_header .emphasized}
+In a recently completed Master Thesis `r mrmt$add("Wyss2019")`, Silvan Wyss compared different strategies to breed for early maturity of carcasses in Swiss Beef Cattle. The different strategies were compared based on their asymptotic selection responses. The computation of the selection response using an aggregate genotype and a selection index over multiple traits requires the economic values of the different traits in the aggregate genotype. In a first approach Silvan Wyss used economic values which depended only on the payment system for beef cattle imposed by Proviande. Economic values that are only based on the payment system completely ignore the different costs that can occur during the fattening period of an animal. This problem can be solved when economic values are derived based on so called production models. `r mrmt$add("Phocas1998")` used such a production model to derive economic values for beef cattle in France. The aim of this project is to derive economic values for beef cattle in Switzerland using a similar approach as was used by [@Phocas1998].
 
 
-### Predicting Behavior Traits Based On Video Data {#project_header .emphasized}
+### New Breeding Programs   {-#project_header .emphasized}
+Swiss Dairy Cattle Breeding organisations (Braunvieh Schweiz, Swissherdbook and Holstein Schweiz) have recently adapted their breeding programs. This adaptation can be seen as a change in paradigm with respect to the traditional data collection strategies. Before this adaptations were implemented, breeding organisations aimed for collecting a fixed set of data from a big number of breeding farms. Those farms were all members of the breeding organisation. With this paradigm change, breeding organisations are selecting a smaller number of breeding farms from which they aim to collect a much bigger set of different data types. All other farms are still providing the traditional data for routine collection. This project aims at investigating the influence of the change in paradigm with respect to data collection on different parameters of the breeding program, with a main focus on response to selection. Response to selection for different traits depends on selection intensity, accuracy of predicted breeding values and length of the generation interval. All these parameters are to be compared between a traditional data collection scheme and the new hierarchical data collection strategy. Further important parameters might encompass quality of estimated variance components and average level of inbreeding in the whole population. In a first approach, different simulation programs should be used to run different breeding program scenarios which would then allow to compare the mentioned parameters of interest. Examples of such simulation programs are ZPLAN or MOPS (https://github.com/tpook92/MoBPS).
+
+
+### Predicting Behavior Traits Based On Video Data   {-#project_header .emphasized}
 SESAM stands for Sensor Assisted Alpine Milk Production and is an Interreg B project in the EU. The project aims at predicting new phenotypes based on sensor-collected activity patterns of cows. In a first project stage, behavior phenotypes must be derived from activity patterns and activity data. The main task in this project is to determine the different behavior traits based on collected video data.
 
 ---
@@ -61,4 +73,5 @@ If you are interested in any of the following topics or if you have questions, p
 ```{r echo=FALSE, results='asis'}
 cat(rmddochelper::get_latest_change())
 ```
-
+ 
+# References {-}   

@@ -1,0 +1,37 @@
+---
+title: "Applied Statistical Methods in Animal Sciences"
+author: "Peter von Rohr"
+date: "2019-02-11"
+site: bookdown::bookdown_site
+documentclass: book
+bibliography: [bibliography.bib]
+biblio-style: "apalike"
+link-citations: true
+output:
+  bookdown::pdf_book: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r mrtminit, include=FALSE}
+mrmt <- rmddochelper::MendeleyExportToolR6$new()
+```
+
+
+# Preface {-}
+This document contains the course notes for 
+
+__751-7602-00L Applied Statistical Methods in Animal Sciences__. 
+
+This course gives a short introduction to a collection of statistical methods that I believe are relevant for a wide range of topics in Animal Sciences. These methods include 
+
+* Multiple Linear Least Squares Regression (MLLSR)
+* Best Linear Unbiased Prediction (BLUP) which is called GBLUP when applied in the context of genomics
+* Least Absolute Shrinkage and Selection Operator (LASSO)
+* Bayesian Estimation of Unknown Parameters (BEUP)
+
+The above listed collection of statistial methods all happen to be illustrated around the same topic which is called __Genomic Selection__ (GS). GS was introduced in a seminal paper by [@Meuwissen2001]. This very same paper is used as a building block to explain some of the statistical methods (MLLSR and BEUP) used in this course. Furthermore the same publication illustrates that some methods (MLLSR) are not suitable for all different kinds of datasets. 
+
+The time available for this course is just half a semester. This leaves very little time for the introduction of each topic. 
