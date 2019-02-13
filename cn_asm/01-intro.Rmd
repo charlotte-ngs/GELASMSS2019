@@ -1,0 +1,16 @@
+# Introduction {#asm-intro}
+```{r mrmt-intro-reset, include=FALSE}
+mrmt$set_this_rmd_file(ps_this_rmd_file = ifelse(rstudioapi::isAvailable(), 
+                                                 rstudioapi::getSourceEditorContext()$path, 
+                                                 rprojroot::thisfile()))
+```
+According to Wikipedia `r mrmt$add("Wikipedia2019")`, the term `Big Data` has been used since the 1990s. Some credit was given to John Mashey `r mrmt$add("Mashey1998")` for popularizing the term. Nowadays `Big Data` is used in connection with large companies, social media or governments which collect massive amounts of data and which are then using that data to draw certain conclusions about behaviors of customers, or followers or voters. The presidential election campains of Barack Obama were examples of how `Big Data` were used to access behaviors of voters `r mrmt$add("Issenberg2013")`. A different example is the use of `Big Data` in health care. An overview of the use of `Big Data` in health care is gien in `r mrmt$add("Adibuzzaman2017")`. The collected health data is most likely not only used by research but also by insurance companies. Therefore this type of using data to make certain predictions that influences our daily lives is becoming a general interest also outside of the area of animal breeding. 
+
+In animal breeding the statistical analyses that have emerged together with the advent of `Big Data` technologies have long been applied when breeding values are predicted for whole populations of animals using BLUP-based approaches. The process of breeding value prediction uses statistical methods to assess the genetic potential of breeding animals in a population based on a large collection of data that characterize each animal in the population. The data used to predict the breeding values are collected not for having predicted breeding values in the first place, but the data are collected in the first place for quality control or management purposes. The prediction of breeding values can be viewed as a side product. In the area of cattle breeding, data collection consists of rather complex flows of information. The flow of information is shown in Figure \@ref(fig:datacollectionflow).
+
+```{r datacollectionflow, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg", fig.cap="Data Flow in an Animal Breeding Program"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/datacollectionflow.odg")
+knitr::include_graphics(path = "odg/datacollectionflow.png")
+```
+ 
+The data flow shown in Figure \@ref(fig:datacollectionflow) contains the traditional evaluation of data to result in predicted breeding values. But it is missing the newest development in the breeding industry. This development is known as `Genomic Selection` (GS). GS was introduced by the work of [@Meuwissen2001]. The methods presented by [@Meuwissen2001] were only introduced into practical breeding programs when `r mrmt$add("Schaeffer2006")` showed the tremendous potential of saving costs for the whole breeding program.

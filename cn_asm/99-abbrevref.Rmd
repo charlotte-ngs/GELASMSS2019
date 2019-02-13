@@ -3,5 +3,5 @@
   -- concerning the table of abbreviations                               --> 
   
 
-# References {-}
+`r if (knitr::is_html_output()) '# References {-}'`
 

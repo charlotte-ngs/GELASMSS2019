@@ -1,0 +1,22 @@
+---
+author: Prof. Dr. Bruno Studer
+return-address: 
+  - Head of Institute of Agricultural Sciences
+  - Universitaetstrasse 2
+  - 8092 Zurich
+address:
+
+subject: Confirmation for Peter von Rohr as a Lecturer at IAS ETH Zurich
+opening: To whom it may concern,
+closing: Best regards,
+signature: Bruno Studer
+
+output: komaletter::komaletter
+---
+
+I hereby confirm that Peter von Rohr works as a lecturer at the Institute of Agricultural Sciences at ETH Zurich. Peter von Rohr teaches 
+
+* Livestock Breeding and Genomics in the Fall Semester and
+* Applied Statistical Methods in Animal Science and Applied Breeding Value Prediction in the Spring Semester.
+
+All these courses are applied courses in the area of data science. For this types of courses it is especially important to get the students to work on practical exercises using a programming language and environment like R. To avoid the burden of having the students install all the required software locally on their private laptops, a central cloud-based installation on AWS would be of tremendous help.
