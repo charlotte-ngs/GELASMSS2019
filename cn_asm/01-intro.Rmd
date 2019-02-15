@@ -68,7 +68,7 @@ knitr::include_graphics(path = "odg/twostepgs.png")
 The big advantage of the two step method is that once we have defined a good reference population which yields reliable estimates for the $a$ values, the computation of the GBV is a simple computation of just summing up the $a$ contributions with the correct sign determined by the SNP genotypes of the animals for which the GBVs should be determined. All animals with SNP genotypes can get GBV values. The difficult part in the two step approach is to define a reliable reference population and to determine good phenotypic measurements ($y$).
 
 
-## Single Step Approach
+## Single Step Approach {#asm-single-step-approach}
 The estimation of the $a$ values and the prediction of the genomic breeding values is done in one step using linear mixed effects models. In this single step evaluation animals with and without genomic information can get predicted genomic breeding values in a single analysis. One possiblity to get to this predicted breeding values is via the use of `Genomic BLUP` (GBLUP). This will be the topic of a complete chapter in this course. The problem with the single step approach is to get an estmate of the covariance between animals with and without genomic information. This is a problem of ongoing research.
 
 

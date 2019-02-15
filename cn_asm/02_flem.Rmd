@@ -1,0 +1,136 @@
+# Fixed Linear Effects Models {#asm-flem}
+```{r mrmt-flem-reset, include=FALSE}
+mrmt$set_this_rmd_file(ps_this_rmd_file = ifelse(rstudioapi::isAvailable(), 
+                                                 rstudioapi::getSourceEditorContext()$path, 
+                                                 rprojroot::thisfile()))
+```
+
+## Other Resources {#asm-flem-other-resources}
+This chapter is based on the work of `r mrmt$add("Buehlmann2014")`. Apart from that there are many other resources for the topic of `Multiple Linear Regressions`. An interesting online book is `r mrmt$add("Lilja2016")`. 
+
+
+## Motivation {#asm-flem-motivation}
+Why is the topic of `fixed linear effects models` (FLEM) important for the analysis of genomic data? This question is best answered when looking at the data. In chapter \@ref(asm-intro), we saw that genomic breeding values can either be estimated using a two-step procedure (see section \@ref(asm-two-step-approach)) or by a single step approach (see section \@ref(asm-single-step-approach)). At the moment, we assume that we are in the first step of the two step approach where we estimate the $a$ effects in a reference population or alternatively we have a perfect data set with all animals genotyped and with a phenotypic observation in a single step setting. Both situations are equivalent when it comes to the structure of the underlying dataset and with respect to the proposed model to analyse the data.
+
+
+## Data {#asm-flem-data}
+As already mentioned in section \@ref(asm-flem-motivation), we are assuming that we have a perfect data set for a given population of animals. That means each animal $i$ has a phenotypic observation $y_i$ for a given trait of interest. Futhermore, we assume to just have a map of three SNP markers. The marker loci are called $G$, $H$ and $I$. Each of the markers has just two alleles. Figure \@ref(fig:datastucturegbv) tries to illustrate the structure of a dataset used to estimate GBV.
+
+```{r datastucturegbv, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg", fig.cap="Structure of Dataset To Estimate GBV"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/datastucturegbv.odg")
+knitr::include_graphics(path = "odg/datastucturegbv.png")
+```
+ 
+As can be seen from Figure \@ref(fig:datastucturegbv) each of the $N$ animals have known genotypes for all three SNP markers and they all have a phenotypic observation $y_i \quad (i = 1, \cdot, N)$. Because we are assuming each SNP marker to be bi-allelic, there are only three possible marker genotypes at every marker position. Hence marker genotypes are discrete entities with a fixed number of levels. Due to the nature of the SNP marker genotype data, we can already say that they could be modeled as fixed effects in a fixed linear effects model. More details about the model will follow in section \@ref(asm-flem-model).
+
+
+## Model {#asm-flem-model}
+The goal of our data analysis using the dataset described in section \@ref(asm-flem-data) is to come up with estimates for genomic breeding values for all animals in our dataset. The genomic breeding values will later be used to rank the animals. The ranking of the animals according to the GBV is used to select the parents of the future generation of livestock animals. It probably makes sense to distinguish between two different types of models that we have to set up. On the one side we need a model that describes the underlying genetic architecuture which is present in our dataset. We will be using a so-called __genetic__ model to describe this. On the other side, we have at some point being able to get estimates for the GBVs which requires a __statistical__ model which is able to estimate unknown parameters as a function of observed data. In the end, we will realize that the two models are acutally the same model but they are just different ways of looking at the same structure of underlying phenomena.
+
+
+### Genetic Model {#asm-flem-genetic-model}
+The availability of genomic information for all animals in the dataset makes it possible to use a polygenic model. In constrast to an infinitesimal model, a polygenic model uses a finite number of descrete loci to model the genetic part of an expressed phenotypic observation. From quantiative genetics (see e.g. [@Falconer1996] for a reference) we know that every phenotypic observation $y$ can be separated into a genetic part $g$ and an environmental part $e$. This leads to the very simple genetic model 
+
+\begin{equation}
+  y = g + e
+  (\#eq:simplegeneticmodel)
+\end{equation}
+
+The environmental part can be split into some fixed known systematic factors such as `herd`, `season effects`, `age` and more and into a random unknown part. The systematic factors are typically grouped into a vector of fixed effects called $\beta$. The unknown random part is usually called $\epsilon$. This allows to re-write the simple genetic model in \@ref(eq:simplegeneticmodel) as
+
+\begin{equation}
+  y = \beta + g + \epsilon
+  (\#eq:envdecompgeneticmodel)
+\end{equation}
+
+The genetic component $g$ can be decomposed into contributions from the finite number of loci that are influncing the observation $y$. In our example dataset (see Figure \@ref(fig:datastucturegbv)) there are three loci^[Implicitly, we are treating the SNP-markers to be identical with the underlying QTL. But based on the fact that we have very many SNPs spread over the complete genome, there will always be SNP sufficiently close to every QTL that influnces a certain trait. But in reality the unknown QTL affect the traits and not the SNPs.] that are assumed to have an effect on $y$. Ignoring any interaction effects between the three loci, we can decompose the overall genetic effect $g$ into the some of the genotypic values of each locus. Hence 
+
+\begin{equation}
+  g = \sum_{j=1}^k g_j
+  (\#eq:decompgeneticeffect)
+\end{equation}
+
+where for our example $k$ is equal to three^[In reality $k$ can be $1.5*10^5$ for some commercial SNP chip platforms. When working with complete genomic sequences, $k$ can also be in the order of $3*10^7$.]. 
+
+Considering all SNP loci to be purely additive which means that we are ignoring any dominance effects, the genotypic values $g_j$ at any locus $j$ can just take one of the three values $-a_j$, $0$ or $+a_j$ where $a_j$ corresponds to the $a$ value from the mono-genic model (see Figure \@ref(fig:monogenicsnpmodel)). For our example dataset the genotypic value for each SNP genotype is given in the following table.
+
+```{r genotypicvalue, echo=FALSE, results='asis'}
+tbl_genoval <- tibble::tibble(`SNP Locus` = c(rep("$SNP_1$", 3),
+                                              rep("$SNP_2$", 3),
+                                              rep("$SNP_3$", 3)),
+                              Genotype = c("$G_1G_1$","$G_1G_2$","$G_2G_2$",
+                                           "$H_1H_1$","$H_1H_2$","$H_2H_2$",
+                                           "$I_1I_1$","$I_1I_2$","$I_2I_2$"),
+                              `Genotypic Value` = c("$a_1$", "$0$", "$-a_1$",
+                                                    "$a_2$", "$0$", "$-a_2$",
+                                                    "$a_3$", "$0$", "$-a_3$"))
+knitr::kable(tbl_genoval,
+             booktabs = TRUE,
+             longtable = TRUE,
+             caption = "Genotypic Values For All Three SNP-Loci",
+             escape = FALSE)
+```
+
+From the Table \@ref(tab:genotypicvalue) we can see that always the allele with subscript $1$ is taken to be that with the positive effect. Combining the information from Table \@ref(tab:genotypicvalue) together with the decomposition of the genotypic value $g$ in \@ref(eq:decompgeneticeffect), we get
+
+\begin{equation}
+  g = M \cdot a
+  (\#eq:genotypicvalueintermsofa)
+\end{equation}
+
+where $M$ is an indicator matrix taking values of $-1$, $0$ and $1$ depending on the SNP marker genotype and $a$ is a vector of $a$ values. Combining the decomposition in \@ref(eq:genotypicvalueintermsofa) together with the basic genetic model in \@ref(eq:envdecompgeneticmodel), we get
+
+\begin{equation}
+  y = \beta + M \cdot a + \epsilon
+  (\#eq:finalgeneticmodel)
+\end{equation}
+
+The result obtained in \@ref(eq:envdecompgeneticmodel) is the fundamental decomposition of the phenotypic observation $y$ into a genetic part represented by the SNP marker information ($M$) and an environmental part ($\beta$ and $\epsilon$). The $a$ values are unknown an must be estimated. The estimates of the $a$ values will then be used to predict the GBVs. How this estimation procedure works is described in the next section \@ref(asm-flem-statistical-model). 
+
+
+### Statistical Model {#asm-flem-statistical-model}
+When looking at the fundamental decomposition given in the statistical model presented in \@ref(eq:finalgeneticmodel) from a statistics point of view, the model in \@ref(eq:finalgeneticmodel) can be interpreted as __fixed linear effects model__ (FLEM). FLEM represent a class of linear models where each model term except for the random residual term is a fixed effect. 
+
+Using the decomposition given in our genetic model (see equation \@ref(eq:finalgeneticmodel)) for our example dataset illustrated in Figure \@ref(fig:datastucturegbv), every observation $y_i$ of animal $i$ can be written as
+
+\begin{equation}
+  y_i = X_i \cdot \beta + M_i \cdot a + \epsilon_i
+  (\#eq:basisstatisticalmodel)
+\end{equation}
+
+where 
+
+* $y_i$ is the observation of animal $i$
+* $\beta$ is a vector of unknown systematic environmental effects
+* $X_i$ is an indicator row vector linking $\beta$ to $y_i$
+* $a$ is a vector of unknown additive allele substitution effects ($a$ values)
+* $M_i$ is an indicator row vector encoding the SNP genotypes of animal $i$ and
+* $\epsilon_i$ is the random residual term belonging to animal $i$
+
+In the following section, we write down the definition of a FLEM and compare it to the statistical model given in \@ref(eq:basisstatisticalmodel). 
+
+
+## Definition of FLEM {#asm-flem-definition}
+The multiple fixed linear effects model is defined as follows.
+
+```{definition, name="Fixed Linear Effects Model"}
+In a fixed linear effects model, every observation $i$ in a dataset is characterized by a __response variable__ and a set of __predictors__. Up to some random errors the response variable can be expressed as a linear function of the predictors. The proposed linear function contains unknown parameters. The goal is to estimate these parameters and the error variance.
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
