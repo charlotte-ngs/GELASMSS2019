@@ -36,7 +36,7 @@ The availability of genomic information for all animals in the dataset makes it 
   (\#eq:simplegeneticmodel)
 \end{equation}
 
-The environmental part can be split into some fixed known systematic factors such as `herd`, `season effects`, `age` and more and into a random unknown part. The systematic factors are typically grouped into a vector of fixed effects called $\beta$. The unknown random part is usually called $\epsilon$. This allows to re-write the simple genetic model in \@ref(eq:simplegeneticmodel) as
+The environmental part can be split into some fixed known systematic factors such as `herd`, `season effects`, `age` and more and into a random unknown part. The systematic factors are typically grouped into a vector of fixed effects called $\beta$. The unknown environmental random part is usually called $\epsilon$. This allows to re-write the simple genetic model in \@ref(eq:simplegeneticmodel) as
 
 \begin{equation}
   y = \beta + g + \epsilon
@@ -94,7 +94,7 @@ When looking at the fundamental decomposition given in the statistical model pre
 Using the decomposition given in our genetic model (see equation \@ref(eq:finalgeneticmodel)) for our example dataset illustrated in Figure \@ref(fig:datastucturegbv), every observation $y_i$ of animal $i$ can be written as
 
 \begin{equation}
-  y_i = X_i \cdot \beta + M_i \cdot a + \epsilon_i
+  y_i = W_i \cdot \beta + M_i \cdot a + \epsilon_i
   (\#eq:basisstatisticalmodel)
 \end{equation}
 
@@ -102,10 +102,10 @@ where
 
 * $y_i$ is the observation of animal $i$
 * $\beta$ is a vector of unknown systematic environmental effects
-* $X_i$ is an indicator row vector linking $\beta$ to $y_i$
+* $W_i$ is an indicator row vector linking $\beta$ to $y_i$
 * $a$ is a vector of unknown additive allele substitution effects ($a$ values)
 * $M_i$ is an indicator row vector encoding the SNP genotypes of animal $i$ and
-* $\epsilon_i$ is the random residual term belonging to animal $i$
+* $\epsilon_i$ is the random unknown environmental term belonging to animal $i$
 
 In the following section, we write down the definition of a FLEM and compare it to the statistical model given in \@ref(eq:basisstatisticalmodel). 
 
@@ -113,16 +113,55 @@ In the following section, we write down the definition of a FLEM and compare it 
 ## Definition of FLEM {#asm-flem-definition}
 The multiple fixed linear effects model is defined as follows.
 
-```{definition, name="Fixed Linear Effects Model"}
-In a fixed linear effects model, every observation $i$ in a dataset is characterized by a __response variable__ and a set of __predictors__. Up to some random errors the response variable can be expressed as a linear function of the predictors. The proposed linear function contains unknown parameters. The goal is to estimate these parameters and the error variance.
+```{definition, label="defflem", name="Fixed Linear Effects Model"}
+In a fixed linear effects model, every observation $i$ in a dataset is characterized by a __response variable__ and a set of __predictors__. Up to some random errors the response variable can be expressed as a linear function of the predictors. The proposed linear function contains unknown parameters. The goal is to estimate both the unknown parameters and the error variance.
 ```
 
 
+### Terminology {#asm-flem-terminology}
+For datasets where both the predictors and the response variables are on a continuous scale, which means that they correspond to measured quantities such as body weight, breast circumverence or milk yield, the model is referred to as __multiple linear regression model__. Because the statistical model in \@ref(eq:basisstatisticalmodel) contains the SNP genotypes as discrete fixed effects, we are not dealing with a regression model but with a more general fixed linear effects model. 
 
 
+### Model Specification {#asm-flem-model-specification}
+An analysis of the model given in \@ref(eq:basisstatisticalmodel) shows that it exactly corresponds to the definition \@ref(def:defflem). In this equivanlence, the observation $y_i$ corresponds to the response variable. Furthermore, the unknown environmental term $\epsilon$ corresponds to the random residual part in the FLEM. Except for the random resiudals the response variable $y_i$ is a linear function of the fixed effects which corresponds to all systematic environmental effects and to all SNP genotype effects. 
+
+For the description of how to estimate the unknown parameter $\beta$ and $a$ in the model \@ref(eq:basisstatisticalmodel), it is useful to combine $\beta$ and $a$ into a single vector of unknown parameters and we call it $b$.
+
+\begin{equation}
+  b = \left[ \begin{array}{c} \beta \\ a \end{array} \right]
+  (\#eq:combinefixedeffects)
+\end{equation}
+
+Taking the equations as shown in \@ref(eq:basisstatisticalmodel) for all obserations ($i=1, \ldots, N$) and expressing them in matrix-vector notation, we get
+
+\begin{equation}
+ y = Xb + \epsilon
+ (\#eq:flemmatrixvector)
+\end{equation}
+
+where 
+
+* $y$ is the vector of $N$ observations
+* $b$ is the vector of all unknown fixed effects
+* $X$ is the incidence matrix linking the parameters of $b$ to $y$
+* $\epsilon$ is the vector of random residuals
+
+The incidence matrix $X$ in \@ref(eq:flemmatrixvector) can be composed from the matrices $W$ and $M$ by concatenating the latter two matrices, i.e., 
+
+\begin{equation}
+  X = \left[ \begin{array}{cc} W  &  M  \end{array} \right]
+  (\#eq:composematrixx)
+\end{equation}
 
 
+## Parameter Estimation Using Least Squares {#asm-flem-parameter-estimation}
+The method of parameter estimation is explained using the simpler case of a regression model. That means both the predictors and the response variables are on a continuous scale. As a further simplification, we assume that there is only one predictor variable and one response variable. The predictor variable is called $x$ and the response variable is called $y$. The model is still the same as shown in \@ref(eq:flemmatrixvector). The matrix $X$ has just one column with the measured values of the predictor variable and $b$ is just a scalar unknown parameter. The vector $y$ contains the observed values for the response values. 
 
+The goal of the analysis of the simple dataset is to find an estimate of the scalar $b$ such that the linear combination of $X$ and $b$ best explains the values in $y$. How we can find such an estimation procedure that allows us to calculate an estimate of $b$ is explained using a small example data set in the following subsection.
+
+
+### An Example Dataset {#asm-flem-regression-example}
+A widely use example dataset for such a simple regression analysis in animal breeding consists of measurements of body weight and breast circumference for a given group of animals.
 
 
 
