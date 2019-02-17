@@ -36,7 +36,7 @@ This course gives a short introduction to a collection of statistical methods th
 * Least Absolute Shrinkage and Selection Operator (LASSO)
 * Bayesian Estimation of Unknown Parameters (BEUP)
 
-The above listed collection of statistial methods all happen to be illustrated around the same topic which is called __Genomic Selection__ (GS). GS was introduced in a seminal paper by [@Meuwissen2001]. This very same paper is used as a building block to explain some of the statistical methods (MLLSR and BEUP) used in this course. Furthermore the same publication illustrates that some methods (MLLSR) are not suitable for all different kinds of datasets. 
+The above listed collection of statistical methods all happen to be illustrated around the same topic which is called __Genomic Selection__ (GS). GS was introduced in a seminal paper by [@Meuwissen2001]. This very same paper is used as a building block to explain some of the statistical methods (MLLSR and BEUP) used in this course. Furthermore the same publication illustrates that some methods (MLLSR) are not suitable for all different kinds of datasets. 
 
 The time available for this course is just half a semester. This leaves very little time for the introduction of each topic. As a consequence of that each topic can only be presented very superficially and students are expected to work on their own during the exercise hours. Exercises consist of sets of problems related to each topic. Problems are often to be expected to be solved using the R programming language [@RCoreTeam2017]. 
 
