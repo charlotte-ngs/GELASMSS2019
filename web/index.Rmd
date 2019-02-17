@@ -118,7 +118,7 @@ s_cn_gel_url <- paste0(sBaseUrl, "cn_gel/")
 vec_topics_notes <- vec_topics
 # add links to the material
 vec_topics_notes[which(Datum == format(as.Date("2019/02/18"), "%d.%m"))] <- paste0("[Introduction](", s_cn_asm_url, "asm-intro.pdf", ")") 
-vec_topics_notes[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- paste0("[](", s_cn_asm_url, "", ")") 
+vec_topics_notes[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- paste0("[Fixed Linear Effects Model (part 1)](", s_cn_asm_url, "asm-flem1.pdf", ")") 
 vec_topics_notes[which(Datum == format(as.Date("2019/03/04"), "%d.%m"))] <- paste0("[](", s_cn_asm_url, "", ")") 
 vec_topics_notes[which(Datum == format(as.Date("2019/03/11"), "%d.%m"))] <- paste0("[](", s_cn_asm_url, "", ")") 
 vec_topics_notes[which(Datum == format(as.Date("2018/03/18"), "%d.%m"))] <- paste0("[](", s_cn_asm_url, "", ")") 
