@@ -1,0 +1,143 @@
+---
+title: "Applied Statistical Methods In Animal Science"
+author: "Peter von Rohr"
+date: "18.02.2019"
+output: beamer_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
+```
+
+## Administration
+
+- Course: 2 hours of lecture (2 V)
+- Plan: 2 V $\rightarrow$ 1 U + 1V (1 hour of exercise and 1 hour of lecture) 
+- Exercises: Work on problems in R 
+- Material: course notes, slides, solution to exercises
+- Exam: written, date: 27.05.2019, 08:15-09:00 
+
+
+## Objectives
+
+The students 
+
+- are familiar with the properties of __fixed linear effects models__
+- are able to analyse simple data sets
+- know why least squares cannot be used for genomic selection. 
+- know the statistical methods used in genomic selection, such as 
+    + BLUP-based approaches, 
+    + Bayesian procedures and 
+    + LASSO. 
+- are able to solve simple exercise problems using the statistical framework R.
+
+
+## Program
+
+```{r CourseSetup, echo=FALSE, results='asis'}
+# define course start date
+dCourseStart <- as.Date("2019/02/18")
+# set number of weeks in semester
+nNrSemesterWeeks <- 6
+# define columns for weaks and dates which remain constant
+Woche <- 1:nNrSemesterWeeks
+Datum <- format(seq(dCourseStart, by = "week", length.out = nNrSemesterWeeks), "%d.%m")
+# empty vector for topics
+vec_topics <- vector(mode = "character", length = nNrSemesterWeeks)
+vec_topics_schedule <- vec_topics
+vec_topics_schedule[which(Datum == format(as.Date("2019/02/18"), "%d.%m"))] <- "Introduction"
+vec_topics_schedule[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- "Fixed Linear Effects Models"
+vec_topics_schedule[which(Datum == format(as.Date("2019/03/04"), "%d.%m"))] <- "GBLUP - Marker-Effects Models"
+vec_topics_schedule[which(Datum == format(as.Date("2019/03/11"), "%d.%m"))] <- "GBLUP - Breeding Value Models"
+vec_topics_schedule[which(Datum == format(as.Date("2019/03/18"), "%d.%m"))] <- "Lasso"
+vec_topics_schedule[which(Datum == format(as.Date("2019/03/25"), "%d.%m"))] <- "Bayesian Approaches"
+
+dfSlideTable <- tibble::tibble(Woche = Woche, Datum = Datum, Thema = vec_topics_schedule) 
+knitr::kable(dfSlideTable) 
+```
+
+
+## Information
+
+- Website: https://charlotte-ngs.github.io/GELASMSS2019/
+- Topics for master thesis
+- Excursion: 13.05.2019, more information will follow
+- Exam: 27.05.2019 08:15 -- 09:00
+
+
+## This Course
+
+- Use dataset that is used to predict genomic breeding values and introduce four methods
+
+1. Fixed Linear Effects Models - Least Squares
+2. GBLUP - genomic version of BLUP
+3. LASSO - still fixed linear effects model, but modified parameter estimation
+4. Bayesian approach to estimate unknown parameter
+
+
+## Significance
+
+- Why is this important? 
+- Is this only relevant for animal breeding? 
+- What about the rest of animal science?
+
+- General trend of collecting data has led to development of `Big Data`
+- Examples
+    + Presidential campains in the US
+    + Health care
+    + Agriculture: Smart Farming
+    + Animal Science
+
+
+## Traditional Animal Breeding
+
+- Before 2006
+- Data collected for other purposes were used to predict breeding values
+- Predicted breeding values as side-product
+
+
+## Data Logistics
+
+```{r datalogistics, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/datalogistics.odg")
+knitr::include_graphics(path = "odg/datalogistics.png")
+```
+
+ 
+## Genomic Selection
+
+- Same goal as in traditional breeding: Find animals with best genetic potential as parents of next generation
+- New: use additional source of information
+- __Genomic__ information
+    + spread accross whole genome
+    + single nucleotide polymorphisms (SNP)
+- Introduction: 
+
+\small "> Meuwissen THE, Hayes BJ, Goddard ME (2001) Prediction of total genetic value
+using genome-wide dense marker maps. Genetics 157:1819–1829"
+
+- Popularisation:
+
+\small "> L. R. Schaeffer. Strategy for applying genome-wide selection in dairy cat- tle. Journal of Animal Breeding and Genetics, 123(4):218–223, 2006. ISSN 09312668. doi: 10.1111/j.1439-0388.2006.00595.x."
+
+
+## SNP
+
+```{r snparchitecture, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/snparchitecture.odg")
+knitr::include_graphics(path = "odg/snparchitecture.png")
+```
+ 
+
+## QTL
+
+```{r linkagesnpqtl, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/linkagesnpqtl.odg")
+knitr::include_graphics(path = "odg/linkagesnpqtl.png")
+```
+ 
+
+## Linkage
+
+- Flanking SNPs and QTL not independent

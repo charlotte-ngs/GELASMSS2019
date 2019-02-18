@@ -62,7 +62,7 @@ The students know the theoretical and practical application of breeding value es
 - Room: [LFW C11](http://www.mapsearch.ethz.ch/map/map.do?gebaeudeMap=LFW&lang=en)
 
 ### Excursion 
-More information on the excursion will be available from [here](`r paste0(sBaseUrl, "misc/gel_exkursion/gel_exkursion.html") `)
+More information on the excursion will be available from here. <!--[here](`r paste0(sBaseUrl, "misc/gel_exkursion/gel_exkursion.html") `)-->
 
 ### Exercise Platform
 You can use the exercise platform to work on exercise problems. The platform is reachable at: 
@@ -87,15 +87,15 @@ vec_topics_schedule[which(Datum == format(as.Date("2019/02/18"), "%d.%m"))] <- "
 vec_topics_schedule[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- "Multiple Linear Regression"
 vec_topics_schedule[which(Datum == format(as.Date("2019/03/04"), "%d.%m"))] <- "GBLUP - Marker-Effects Models"
 vec_topics_schedule[which(Datum == format(as.Date("2019/03/11"), "%d.%m"))] <- "GBLUP - Breeding Value Models"
-vec_topics_schedule[which(Datum == format(as.Date("2019/03/18"), "%d.%m"))] <- "Bayesian Approaches"
-vec_topics_schedule[which(Datum == format(as.Date("2019/03/25"), "%d.%m"))] <- "Lasso"
+vec_topics_schedule[which(Datum == format(as.Date("2019/03/18"), "%d.%m"))] <- "Lasso"
+vec_topics_schedule[which(Datum == format(as.Date("2019/03/25"), "%d.%m"))] <- "Bayesian Approaches"
 
 vec_topics_schedule[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- "Introduction"
 vec_topics_schedule[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- "Aspects of Modern Breeding Programs"
 vec_topics_schedule[which(Datum == format(as.Date("2019/04/15"), "%d.%m"))] <- "Model Selection"
 vec_topics_schedule[which(Datum == format(as.Date("2019/04/29"), "%d.%m"))] <- "Genetic Groups"
 vec_topics_schedule[which(Datum == format(as.Date("2019/05/06"), "%d.%m"))] <- "Longitudinal Data"
-vec_topics_schedule[which(Datum == format(as.Date("2019/05/13"), "%d.%m"))] <- "Estimation of Response to Selection"
+vec_topics_schedule[which(Datum == format(as.Date("2019/05/13"), "%d.%m"))] <- "Excursion to Braunvieh Schweiz and Qualitas in Zug"
 vec_topics_schedule[which(Datum == format(as.Date("2019/05/20"), "%d.%m"))] <- "Questions and Test Exams"
 vec_topics_schedule[which(Datum == format(as.Date("2019/05/27"), "%d.%m"))] <- "Final Exams"
 
