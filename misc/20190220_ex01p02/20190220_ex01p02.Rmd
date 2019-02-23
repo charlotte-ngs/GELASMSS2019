@@ -1,0 +1,98 @@
+---
+title: "ASM - Ex01P02"
+output: html_notebook
+---
+
+
+## Disclaimer
+Experiment with dataset for Exercise 01 Problem 02. 
+
+
+## Background
+Assume
+
+* one bi-allelic QTL with alleles $Q_1$ and $Q_2$
+* two SNPs $R$ and $S$
+* $S$ is linked to $Q$ and $R$ is independent
+* Generate a dataset with $12$ individuals
+* The following model is used to generate the dataset
+
+$$y_i = M_i \cdot a + \epsilon_i$$
+where $y_i$ is the observation of animal $i$, $a$ is a vector of genotypic values of homozygotes for both SNPs, i.e., 
+
+$$a = \left[\begin{array}{c} a_R \\ a_S \end{array} \right]$$
+
+where $a_R$ and $a_S$ are the genotypic values of the positive homozygote of SNP $R$ and $S$ respectively. Because, we assume that $R$ is unlinked to $Q$, we set $a_R = 0$.
+
+## Data Generation
+The genotypes are determined randomly
+
+```{r}
+### # fix the number of animals
+n_nr_animal <- 12
+### # fix number of snp columns
+n_nr_snp <- 2
+### # residual standard deviation
+n_res_sd <- 2.13
+### # vector of genotype value coefficients
+vec_geno_value_coeff <- c(-1,0,1)
+### # sample genotypes of unlinked SNP randomly
+set.seed(9876)
+### # fix allele frequency of positive allele
+n_prob_snps <- .5
+### # genotypic values 
+vec_geno_val <- c(0, 23.52)
+### # put together the genotypes into a matrix
+mat_geno_snp <- matrix(c(sample(vec_geno_value_coeff, n_nr_animal, replace = TRUE),
+                         sample(vec_geno_value_coeff, n_nr_animal, prob = c((1-n_prob_snps)^2, 2*(1-n_prob_snps)*n_prob_snps, n_prob_snps^2), replace = TRUE)),
+                       nrow = n_nr_snp)
+mat_obs_y <- crossprod(mat_geno_snp, vec_geno_val) + rnorm(n = n_nr_animal, mean = 0, sd = n_res_sd)
+```
+
+Now we generate a table with SNP genotypes and observations
+
+```{r}
+geno_code_map <- tibble::tibble(code = c(-1, 0, 1),
+                            `SNP R` = c("$R_2R_2$", "$R_1R_2$", "$R_1R_1$"),
+                            `SNP S` = c("$S_2S_2$", "$S_1S_2$", "$S_1S_1$"))
+geno_code <- tibble::tibble(`Code R` = mat_geno_snp[1,],
+                            `Code S` = mat_geno_snp[2,])
+require(dplyr)
+geno_code %>% 
+  inner_join(geno_code_map, by = c("Code R" = "code")) %>%
+  select(`Code R`, `SNP R`) -> geno_snp_r
+geno_code %>% 
+  inner_join(geno_code_map, by = c("Code S" = "code")) %>%
+  select(`Code S`, `SNP S`) -> geno_snp_s
+
+geno_snp_r %>%
+  bind_cols(geno_snp_s) -> tbl_all_geno
+  
+tbl_obs <- tibble::tibble(Observation = mat_obs_y[,1])
+
+tbl_all_geno %>% bind_cols(tbl_obs) -> tbl_all_data
+knitr::kable(tbl_all_data, booktabs = TRUE) 
+```
+
+
+## Plots
+Trying to plot the observation data as a function of the genotypes leads to 
+
+```{r}
+require(ggplot2)
+ggplot(data = tbl_all_data, aes(x = `SNP R`, y = Observation)) + 
+  geom_point(color = 'blue')
+```
+
+
+```{r}
+ggplot(data = tbl_all_data, aes(x = `SNP S`, y = Observation)) + 
+  geom_point(color = 'green') 
+```
+
+Side-by-side position of diagrams
+
+```{r side-by-side}
+
+```
+

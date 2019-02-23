@@ -100,7 +100,7 @@ vec_topics_schedule[which(Datum == format(as.Date("2019/05/20"), "%d.%m"))] <- "
 vec_topics_schedule[which(Datum == format(as.Date("2019/05/27"), "%d.%m"))] <- "Final Exams"
 
 # define dataframe for schedule table
-df_schedule <- data.frame(Woche = Woche, Datum = Datum, Thema = vec_topics_schedule, stringsAsFactors = FALSE)
+df_schedule <- data.frame(Week = Woche, Date = Datum, Topic = vec_topics_schedule, stringsAsFactors = FALSE)
 knitr::kable(df_schedule)
 ```
 
@@ -132,7 +132,7 @@ vec_topics_notes[which(Datum == format(as.Date("2019/05/06"), "%d.%m"))] <- past
 vec_topics_notes[which(Datum == format(as.Date("2019/05/13"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")") 
 
 # define dataframe for schedule table
-df_notes <- data.frame(Woche = Woche, Datum = Datum, Thema = vec_topics_notes, stringsAsFactors = FALSE)
+df_notes <- data.frame(Week = Woche, Date = Datum, Topic = vec_topics_notes, stringsAsFactors = FALSE)
 knitr::kable(df_notes)
 ```
 
@@ -143,7 +143,7 @@ knitr::kable(df_notes)
 s_sl_url <- paste0(sBaseUrl, "sl/")
 vec_topics_slides <- vec_topics
 # links zu slides
-vec_topics_slides[which(Datum == format(as.Date("2019/02/18"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")") 
+vec_topics_slides[which(Datum == format(as.Date("2019/02/18"), "%d.%m"))] <- paste0("[Introduction](", s_sl_url, "w01/asm-w01-v01-intro.pdf", ")") 
 vec_topics_slides[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")") 
 vec_topics_slides[which(Datum == format(as.Date("2019/03/04"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")") 
 vec_topics_slides[which(Datum == format(as.Date("2019/03/11"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")") 
@@ -158,7 +158,7 @@ vec_topics_slides[which(Datum == format(as.Date("2019/05/06"), "%d.%m"))] <- pas
 vec_topics_slides[which(Datum == format(as.Date("2019/05/13"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")")
   
 # create data frame and convert it to table
-df_slides <- data.frame(Woche = Woche, Datum = Datum, Thema = vec_topics_slides, stringsAsFactors = FALSE)
+df_slides <- data.frame(Week = Woche, Date = Datum, Topic = vec_topics_slides, stringsAsFactors = FALSE)
 knitr::kable(df_slides)
 ```
 
@@ -169,7 +169,7 @@ knitr::kable(df_slides)
 s_ex_url <- paste0(sBaseUrl, "ex/")
 vec_topics_ex <- vec_topics
 vec_topics_ex[which(Datum == format(as.Date("2019/02/18"), "%d.%m"))] <- paste0("[](", s_ex_url, "", ")") 
-vec_topics_ex[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- paste0("[](", s_ex_url, "", ")") 
+vec_topics_ex[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- paste0("[Breeding Values and Prediction of Effects](", s_ex_url, "w02/asm-w02-ex01.pdf", ")") 
 vec_topics_ex[which(Datum == format(as.Date("2019/03/04"), "%d.%m"))] <- paste0("[](", s_ex_url, "", ")") 
 vec_topics_ex[which(Datum == format(as.Date("2019/03/11"), "%d.%m"))] <- paste0("[](", s_ex_url, "", ")") 
 vec_topics_ex[which(Datum == format(as.Date("2018/03/18"), "%d.%m"))] <- paste0("[](", s_ex_url, "", ")") 
@@ -182,7 +182,7 @@ vec_topics_ex[which(Datum == format(as.Date("2019/05/06"), "%d.%m"))] <- paste0(
 vec_topics_ex[which(Datum == format(as.Date("2019/05/13"), "%d.%m"))] <- paste0("[](", s_ex_url, "", ")")
 
 # create dataframe and table
-df_ex <- data.frame(Woche = Woche, Datum = Datum, Thema = vec_topics_ex, stringsAsFactors = FALSE)
+df_ex <- data.frame(Week = Woche, Date = Datum, Topic = vec_topics_ex, stringsAsFactors = FALSE)
 knitr::kable(df_ex)
 ```
 
@@ -193,7 +193,7 @@ knitr::kable(df_ex)
 s_sol_url <- paste0(sBaseUrl, "sol/")
 vec_topics_sol <- vec_topics
 vec_topics_sol[which(Datum == format(as.Date("2019/02/18"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")") 
-vec_topics_sol[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")") 
+# vec_topics_sol[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- paste0("[Breeding Values and Prediction of Effects](", s_sol_url, "w02/asm-w02-sol01.pdf", ")") 
 vec_topics_sol[which(Datum == format(as.Date("2019/03/04"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")") 
 vec_topics_sol[which(Datum == format(as.Date("2019/03/11"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")") 
 vec_topics_sol[which(Datum == format(as.Date("2018/03/18"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")") 
@@ -206,7 +206,7 @@ vec_topics_sol[which(Datum == format(as.Date("2019/05/06"), "%d.%m"))] <- paste0
 vec_topics_sol[which(Datum == format(as.Date("2019/05/13"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")")
 
 # create dataframe and table
-df_sol <- data.frame(Woche = Woche, Datum = Datum, Thema = vec_topics_sol, stringsAsFactors = FALSE)
+df_sol <- data.frame(Week = Woche, Date = Datum, Topic = vec_topics_sol, stringsAsFactors = FALSE)
 knitr::kable(df_sol)
 ```
 
@@ -215,9 +215,9 @@ knitr::kable(df_sol)
 ### Additional Material
 ```{r AdditionalMaterial, echo=FALSE, results='asis'}
 vec_topics_addmat <- vec_topics
-
+vec_topics_addmat[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- paste0("[Genotype Data Exercise 1](", s_ex_url, "w02/asm_w02_ex01_p02_genodatafile.csv", ")") 
 # dataframe and table with additional material
-df_addmat <- data.frame(Woche = Woche, Datum = Datum, Thema = vec_topics_addmat, stringsAsFactors = FALSE)
+df_addmat <- data.frame(Week = Woche, Date = Datum, Topic = vec_topics_addmat, stringsAsFactors = FALSE)
 knitr::kable(df_addmat)
 ```
 

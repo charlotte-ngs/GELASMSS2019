@@ -140,4 +140,77 @@ knitr::include_graphics(path = "odg/linkagesnpqtl.png")
 
 ## Linkage
 
-- Flanking SNPs and QTL not independent
+- Flanking SNPs and QTL not independent passed on from parents to progeny
+- Favorable QTL-allele linked with a given SNP-allele
+- QTL is unknown, but use SNPs close to QTL as information for selection
+
+
+## Monogenic Model
+
+- Assume quantitative trait is influenced by one locus only
+- Locus is bi-allelic $\rightarrow$ two alleles ($G_1$ and $G_2$) and three genotypes
+- Look at Distribution of trait values for three different genotypes
+
+
+## Distribution No Effect
+
+```{r monogenicmodeltraitdistributionnoeffect, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/monogenicmodeltraitdistributionnoeffect.odg")
+knitr::include_graphics(path = "odg/monogenicmodeltraitdistributionnoeffect.png")
+```
+
+
+## Distribution With Effect
+
+```{r monogenicmodeltraitdistribution, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/monogenicmodeltraitdistribution.odg")
+knitr::include_graphics(path = "odg/monogenicmodeltraitdistribution.png")
+```
+  
+
+## Breeding Value
+
+- Definition: Two times deviation from large number of offspring from population mean
+- Assume: Hardy-Weinberg equilibrium
+- Compute population mean as expected value of genotypic values
+- Compute expected genotypic value of offspring for each of the three parental genotypes
+- Assume purely additive loci, hence $d = 0$
+
+
+## Genomic Breeding Value
+
+- Take into account many loci
+- Approximate unknown QTL with linked SNP
+- Estimate $a$-effects from monogenic model
+- Compute genomic breeding values for all loci based on $a$ effects
+
+
+## Two Approaches
+
+1. Two Step Procedure (used currently in Swiss Dairy Cattle)
+2. Single Step 
+
+
+## Two Step
+
+```{r twostepprocedure, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/twostepprocedure.odg")
+knitr::include_graphics(path = "odg/twostepprocedure.png")
+```
+
+
+## Single Step
+
+- Combine all information into one single BLUP-based analysis
+- Problem: Determine covariance between animals with and without genomic information
+
+
+## Summary: Traditional versus Genomic Selection
+
+```{r summarytraditionalvsgs, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/summarytraditionalvsgs.odg")
+knitr::include_graphics(path = "odg/summarytraditionalvsgs.png")
+```
+
+
+ 

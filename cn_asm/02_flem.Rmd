@@ -89,7 +89,7 @@ The result obtained in \@ref(eq:envdecompgeneticmodel) is the fundamental decomp
 
 
 ### Statistical Model {#asm-flem-statistical-model}
-When looking at the fundamental decomposition given in the statistical model presented in \@ref(eq:finalgeneticmodel) from a statistics point of view, the model in \@ref(eq:finalgeneticmodel) can be interpreted as __fixed linear effects model__ (FLEM). FLEM represent a class of linear models where each model term except for the random residual term is a fixed effect. 
+When looking at the fundamental decomposition given in the genetic model presented in \@ref(eq:finalgeneticmodel) from a statistics point of view, the model in \@ref(eq:finalgeneticmodel) can be interpreted as __fixed linear effects model__ (FLEM). FLEM represent a class of linear models where each model term except for the random residual term is a fixed effect. Furthermore, besides a random error term, the response is explained by a linear function of the predictor variables. 
 
 Using the decomposition given in our genetic model (see equation \@ref(eq:finalgeneticmodel)) for our example dataset illustrated in Figure \@ref(fig:datastucturegbv), every observation $y_i$ of animal $i$ can be written as
 
@@ -304,6 +304,156 @@ The computation of the regression coefficient for the dataset shown in Table \@r
 \end{equation}
 
 It has to be noted that the prediction $\widehat{y_s}$ is only valid, if the measured value $x_s$ is close to the measured predictors that were used to estimate $\hat{b}$. For our example with body weight and breast circumference, we could not use the same regression line to predict the body weight for calves, if $\hat{b}$ was estimated with data of adult bulls.
+
+
+## Regression On Dummy Variables {#asm-flem-reg-dummy}
+In a regression model (such as shown in \@ref(eq:regressionbwonbc)) both the response variable and the predictor variables are continuous variables. Examples of such variables are `body weight` and `breast circumference` which are both measured and the measurements are expressed as real numbers. In contrast to such a regression model, the statistical model shown in \@ref(eq:basisstatisticalmodel) has a continuous response, but the predictor variables are discrete variables. The predictor variables are assumed to be genotypes of a certain set of SNP genotypes and hence these genotypes can only have a fixed number of states. Under the assumption of bi-allelic Loci, a SNP locus can have just three genotypes and hence the predictor variable that is used to represent any given SNP-locus can only take three discrete states.
+
+Figure \@ref(fig:compareregflem) shows the difference between a regression model as the one of `body weight` on `breast circumference` and a fixed linear effects model where one locus has an effect on a quantitative trait. In the left diagram of Figure \@ref(fig:compareregflem) the red line denotes the regression line. This line is meaningful because on the x-axis and on the y-axis every single point of the red line would be valid observations. On the x-axis of the diagram on the righthand side, only three values are possible. In the diagram they are shown as Genotypes $G_1G_1$, $G_1G_2$ and $G_2G_2$. We will see very soon that in our statistical model, they will be encoded by $1$, $0$ and $-1$. The response variable in the diagram on the right of Figure \@ref(fig:compareregflem) is a continuous random variable, similarly to the regression model shown in the left diagram. This combination of continuous response variable on a discrete type of variable lead to the term __regression on dummy variables__ because the predictor variables are not continuous but just discrete levels of a certain factor. In this lecture, we are using __fixed linear effects model__ rather than regression on dummy variables for the same type of model. The term of fixed linear effects model was used, because in the next chapter in Genomic BLUP we are going to introduce mixed linear effects model which are an extension of the fixed linear effects model used in this chapter.
+
+```{r generateflemdata, eval=TRUE, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+### # This chunk generates the second half of the following Figure and must only be 
+### #  run once and afterwards, when the following figure is updated. In a normal build
+### #  it need not be evaluated.
+### # fix the number of animals
+n_nr_animal <- 20
+### # intercept
+n_inter_cept <- 500
+### # residual standard deviation
+n_res_sd <- 12.13
+### # vector of genotype value coefficients
+vec_geno_value_coeff <- c(-1,0,1)
+### # sample genotypes of unlinked SNP randomly
+set.seed(436)
+### # fix allele frequency of positive allele
+n_prob_snps <- .45
+### # genotypic values 
+vec_geno_val <- 43.52
+### # put together the genotypes into a matrix
+vec_geno_snp <- sample(vec_geno_value_coeff, n_nr_animal, prob = c((1-n_prob_snps)^2, 
+                                                                   2*(1-n_prob_snps)*n_prob_snps, 
+                                                                   n_prob_snps^2), 
+                       replace = TRUE)
+vec_obs_y <- n_inter_cept + vec_geno_snp * vec_geno_val + rnorm(n = n_nr_animal, mean = 0, sd = n_res_sd)
+### # mapping the -1,0,1 codes to genotypes
+geno_code_map <- tibble::tibble(code = c(-1, 0, 1),
+                            `SNP G` = c("G2G2", "G1G2", "G1G1"))
+geno_code <- tibble::tibble(`Code G` = vec_geno_snp)
+require(dplyr)
+geno_code %>% 
+  inner_join(geno_code_map, by = c("Code G" = "code")) %>%
+  select(`SNP G`) -> geno_snp_g
+
+tbl_obs <- tibble::tibble(Observation = round(vec_obs_y, digits = 0))
+geno_snp_g %>% bind_cols(tbl_obs) -> tbl_all_data
+# tbl_all_data
+### # generate the plot
+require(ggplot2)
+p <- ggplot(data = tbl_all_data, aes(x = `SNP G`, y = Observation)) +
+  geom_point(color = 'blue')
+s_plot_filename <- "odg/flem_geno.pdf"
+if (!file.exists(s_plot_filename))
+  ggsave(s_plot_filename, p)
+```
+
+```{r compareregflem, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg", fig.cap="Comparison Between Regression Model And Fixed Linear Effects Model With An SNP-Locus As A Discrete Predictor Variables"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/compareregflem.odg")
+knitr::include_graphics(path = "odg/compareregflem.png")
+```
+
+
+### Fixed Linear Effects Model For SNP Data {#asm-flem-flem-for-snp}
+We are using genetic data and assume that the SNP genotypes have an effect on a quantitative trait. Our goal is to predict genomic breeding values based on the information from the SNP genotypes for the quantitative traits. We have seen that under some simplifying assumptions of additivity of the genetic effects, the genomic breeding values depend on the absolute value of the genotypic values ($a$ values) of the homozygous SNP genotypes. Hence all we need to know from our analysis of the data under a fixed linear effects model are the $a$ values for each SNP locus. The decomposition of the phenotypic observation shown in \@ref(asm-flem-genetic-model) under the assumed genetic model tells us that the phenotypic observation can be explained as a linear function of the genotypic values of the SNP genotypes plus a random error term. The fact that our genetic model is a fixed linear effects model that uses phenotypic observations as response and SNP loci as predictors allows us to set up the following model for an example data set shown in the following subsection.
+
+
+### Example Data Set With SNP Loci And A Phenotypic Observation {#asm-flem-snp-obs}
+We are using the following dataset as an example on how to use a fixed linear effects model to estimate the genotypic value of the SNP genotypes.
+
+```{r dataflemsnpobs, echo=FALSE}
+### # fix the number of animals
+n_nr_animal <- 20
+### # intercept
+n_inter_cept <- 500
+### # residual standard deviation
+n_res_sd <- 12.13
+### # vector of genotype value coefficients
+vec_geno_value_coeff <- c(-1,0,1)
+### # sample genotypes of unlinked SNP randomly
+set.seed(436)
+### # fix allele frequency of positive allele
+n_prob_snps <- .45
+### # genotypic values 
+vec_geno_val <- c(27.2, -17.3)
+n_nr_snp <- length(vec_geno_val)
+### # put together the genotypes into a matrix
+mat_geno_snp <- matrix(c(sample(vec_geno_value_coeff, n_nr_animal, prob = c((1-n_prob_snps)^2, 
+                                                                   2*(1-n_prob_snps)*n_prob_snps, 
+                                                                   n_prob_snps^2), 
+                       replace = TRUE),
+                       sample(vec_geno_value_coeff, n_nr_animal, prob = c(n_prob_snps^2, 
+                                                                   2*(1-n_prob_snps)*n_prob_snps, 
+                                                                   (1-n_prob_snps)^2), 
+                       replace = TRUE)),
+                       nrow = n_nr_snp)
+vec_obs_y <- n_inter_cept + crossprod(mat_geno_snp, vec_geno_val) + rnorm(n = n_nr_animal, mean = 0, sd = n_res_sd)
+### # mapping the -1,0,1 codes to genotypes
+geno_code_map <- tibble::tibble(code = c(-1, 0, 1),
+                            `SNP G` = c("$G_2G_2$", "$G_1G_2$", "$G_1G_1$"),
+                            `SNP H` = c("$H_2H_2$", "$H_1H_2$", "$H_1H_1$"))
+geno_code <- tibble::tibble(`Code G` = mat_geno_snp[1,],
+                            `Code H` = mat_geno_snp[2,])
+
+require(dplyr)
+geno_code %>% 
+  inner_join(geno_code_map, by = c("Code G" = "code")) %>%
+  select(`SNP G`) -> geno_snp_g
+geno_code %>% 
+  inner_join(geno_code_map, by = c("Code H" = "code")) %>%
+  select(`SNP H`) -> geno_snp_h
+geno_snp_all <- bind_cols(geno_snp_g, geno_snp_h)
+### # add the data
+tbl_obs <- tibble::tibble(Observation = round(vec_obs_y[,1], digits = 0))
+geno_snp_all %>% bind_cols(tbl_obs) -> tbl_all_data
+### # add animal ids
+tbl_all_data <- bind_cols(Animal = c(1:n_nr_animal),tbl_all_data)
+
+# tbl_flemsnppbs <- tibble::tibble()
+knitr::kable(tbl_all_data,
+             booktabs = TRUE,
+             longtable = TRUE,
+             caption = "Animals With A Single SNP Locus Affecting A Quantitative Trait",
+             escape = FALSE)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
