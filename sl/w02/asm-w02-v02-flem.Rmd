@@ -57,3 +57,95 @@ $$y = g + e$$
 knitr::include_graphics(path = "odg/geneticmodeldiagram.png")
 ```
  
+
+## Polygenic Model
+- Component $g$ can be decomposed into contributions $g_j$ of single loci
+
+$$g = \sum_{j=1}^k g_j$$
+
+- Assume that loci are additive, hence genotypic values $g_j$ depends on $a_j$ with $d_j = 0$
+- Genotypic values at locus $j$ can either be $-a_j$, $0$ or $a_j$
+- Breeding values based on locus $j$ depends on $a_j$.
+
+
+## Genotypic Value
+- Genotypic value $g_i$ for animal $i$ over all loci
+
+$$g_i = M_i \cdot a$$
+
+where M_i is a row vector with elements $-1$, $0$ and $1$ and $a$ is the vector of all genotypic values of the positive homozygous genotypes of all loci. 
+
+
+## Phenotypic Value
+- Collecting all components for an observation $y_i$ for animal $i$
+
+$$y_i = W_i \cdot \beta + M_i \cdot a + \epsilon_i$$
+
+- all animals in the population
+
+$$y = W\cdot \beta + M \cdot a + \epsilon$$
+
+- combining $b^T = \left[\begin{array}{cc} \beta & a \end{array} \right]$ and $X = \left[\begin{array}{cc} W & M \end{array} \right]$
+
+$$y = X\cdot b + \epsilon$$
+
+
+## Statistical Model
+- genetic model from statistics point of view
+- phenotypic observation as response $y$
+- vector $b$ (known environment and genotypic values) as unknown parameter
+- fixed predictor variales in matrix $X$
+- vector $\epsilon$ as random error terms
+
+$\rightarrow$ Fixed Linear Effects Model
+
+
+## Parameter Estimation
+- use regression model
+- regression means both response and predictors are continuous
+- example dataset: body weight on breast circumference
+
+
+## Regression Dataset
+
+```{r dataregression, echo=FALSE, results='asis'}
+tbl_reg <- tibble::tibble(Animal = c(1:10),
+                          `Breast Circumference` = c(176, 177, 178, 179, 179, 180, 181, 182,183, 184),
+                          `Body Weight` = c(471, 463, 481, 470, 496, 491, 518, 511, 510, 541))
+knitr::kable(tbl_reg)
+```
+
+
+## Regression Model
+
+- response $y$: body weight
+- predictor $x$: breast circumference
+- model for observation $y_i$
+
+$$y_i = x_i * b + \epsilon_i$$
+
+- meaning of $b$: change $x_i$ by one unit $\rightarrow$ $y_i$ changes on average by $b$ units.
+- use case: measure $x_{N+1}$ for animal $N+1$ with unknown weight and use $b$ to predict $y_{N+1}$
+
+
+## Least Squares
+- How to find $b$ such that $y$ is best approximated by $x$
+- Residuals $r_i = y_i - x_i * b$
+- Minimization of sum of squared residuals ($SSQ_R$)
+- Use $\hat{b}$ at minimal $SSQ_R$ as estimate
+
+
+## LSQ Diagram
+```{r showregressionbwonbc, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/showregressionbwonbc.odg")
+knitr::include_graphics(path = "odg/showregressionbwonbc.png")
+```
+
+
+
+
+
+
+
+
+
