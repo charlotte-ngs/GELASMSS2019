@@ -1,0 +1,59 @@
+---
+title: "Fixed Linear Effects Models"
+author: "Peter von Rohr"
+date: "25.02.2019"
+output: beamer_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
+```
+
+## Background
+- Given a population of $N$ animals
+- Each animal has information on genotypes at loci $G$, $H$ and $I$
+- Each animal has an observation for one quantitative trait of interest $y$
+- __Goal__: Predict genomic breeding values
+
+
+## Data
+```{r datastucturegbv, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/datastucturegbv.odg")
+knitr::include_graphics(path = "odg/datastucturegbv.png")
+```
+
+
+## Two Types Of Models
+
+1. __Genetic__ Model: How can we decompose the phenotype into genetic part and non-genetic environmental part
+2. __Statistical__ Model: How to estimate unknown parameters from a dataset
+
+__Goals__: 
+
+1. Use genetic model to show how observations and genetic information can be used to predict breeding values.
+2. Use statistical techniques to do the prediction
+
+
+## Genetic Model
+
+- simple model from quantitative genetics to split phenotypic observation into 
+    + genetic part $g$ and
+    + environmental part $e$
+    
+$$y = g + e$$
+    
+- environment: split into
+    + known environmental factors: `herd`, `year`, ... ($\beta$)
+    + unknown random error ($\epsilon$)
+    
+- polygenic model: use a finite number of loci to model genetic part of phenotypic observation
+
+
+## Genetic Model (II)
+
+```{r geneticmodeldiagram, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/geneticmodeldiagram.odg")
+knitr::include_graphics(path = "odg/geneticmodeldiagram.png")
+```
+ 

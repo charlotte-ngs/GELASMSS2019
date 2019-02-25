@@ -367,7 +367,7 @@ We are using genetic data and assume that the SNP genotypes have an effect on a 
 
 
 ### Example Data Set With SNP Loci And A Phenotypic Observation {#asm-flem-snp-obs}
-We are using the following dataset as an example on how to use a fixed linear effects model to estimate the genotypic value of the SNP genotypes.
+We are using the dataset shown in Table \@ref(tab:dataflemsnpobs) as an example on how to use a fixed linear effects model to estimate the genotypic value of the SNP genotypes.
 
 ```{r dataflemsnpobs, echo=FALSE}
 ### # fix the number of animals
@@ -383,7 +383,7 @@ set.seed(436)
 ### # fix allele frequency of positive allele
 n_prob_snps <- .45
 ### # genotypic values 
-vec_geno_val <- c(27.2, -17.3)
+vec_geno_val <- c(27.2, 7.3)
 n_nr_snp <- length(vec_geno_val)
 ### # put together the genotypes into a matrix
 mat_geno_snp <- matrix(c(sample(vec_geno_value_coeff, n_nr_animal, prob = c((1-n_prob_snps)^2, 
@@ -395,24 +395,27 @@ mat_geno_snp <- matrix(c(sample(vec_geno_value_coeff, n_nr_animal, prob = c((1-n
                                                                    (1-n_prob_snps)^2), 
                        replace = TRUE)),
                        nrow = n_nr_snp)
-vec_obs_y <- n_inter_cept + crossprod(mat_geno_snp, vec_geno_val) + rnorm(n = n_nr_animal, mean = 0, sd = n_res_sd)
+mat_obs_y <- n_inter_cept + crossprod(mat_geno_snp, vec_geno_val) + rnorm(n = n_nr_animal, mean = 0, sd = n_res_sd)
 ### # mapping the -1,0,1 codes to genotypes
 geno_code_map <- tibble::tibble(code = c(-1, 0, 1),
                             `SNP G` = c("$G_2G_2$", "$G_1G_2$", "$G_1G_1$"),
-                            `SNP H` = c("$H_2H_2$", "$H_1H_2$", "$H_1H_1$"))
+                            `SNP H` = c("$H_2H_2$", "$H_1H_2$", "$H_1H_1$"),
+                            `Genotypic Value G` = c("$-a_G$", "$0$", "$a_G$"),
+                            `Genotypic Value H` = c("$-a_H$", "$0$", "$a_H$"))
 geno_code <- tibble::tibble(`Code G` = mat_geno_snp[1,],
                             `Code H` = mat_geno_snp[2,])
 
 require(dplyr)
 geno_code %>% 
   inner_join(geno_code_map, by = c("Code G" = "code")) %>%
-  select(`SNP G`) -> geno_snp_g
+  select(`SNP G`, `Genotypic Value G`) -> geno_snp_g
 geno_code %>% 
   inner_join(geno_code_map, by = c("Code H" = "code")) %>%
-  select(`SNP H`) -> geno_snp_h
+  select(`SNP H`, `Genotypic Value H`) -> geno_snp_h
 geno_snp_all <- bind_cols(geno_snp_g, geno_snp_h)
 ### # add the data
-tbl_obs <- tibble::tibble(Observation = round(vec_obs_y[,1], digits = 0))
+mat_obs_y_rounded <- round(mat_obs_y, digits = 0)
+tbl_obs <- tibble::tibble(Observation = mat_obs_y_rounded[,1])
 geno_snp_all %>% bind_cols(tbl_obs) -> tbl_all_data
 ### # add animal ids
 tbl_all_data <- bind_cols(Animal = c(1:n_nr_animal),tbl_all_data)
@@ -420,12 +423,78 @@ tbl_all_data <- bind_cols(Animal = c(1:n_nr_animal),tbl_all_data)
 # tbl_flemsnppbs <- tibble::tibble()
 knitr::kable(tbl_all_data,
              booktabs = TRUE,
-             longtable = TRUE,
+             longtable = FALSE,
              caption = "Animals With A Single SNP Locus Affecting A Quantitative Trait",
              escape = FALSE)
 ```
 
+Instead of fitting individual effects for the different SNP genotypes to explain the response variable, we are directly including the genotypic values $a_G$ and $a_H$ into the fixed effects linear model. How the genotypic values are related to the SNP genotypes is also shown in Table \@ref(tab:dataflemsnpobs). For all animals in Table \@ref(tab:dataflemsnpobs), we can write the model equations in matrix-vector notation as
 
+\begin{equation}
+  y = Xb + \epsilon
+  (\#eq:flemsnp)
+\end{equation}
+
+where $y$ is the vector of observations, $b$ is a vector of genotypic values plus an intercept, $X$ is a design matrix linking the elements in $b$ to $y$ and $\epsilon$ is a vector of random errors. Writing out the matrices and vectors leads to 
+
+```{r, echo=FALSE, results='asis'}
+matX <- matrix(c(1, 1, 0,
+                 1, 0, 1,
+                 1, 0, 1,
+                 1, 1, -1,
+                 1, 1, 1,
+                 1, 0, 0,
+                 1, 0, -1,
+                 1, -1, 1,
+                 1, 0, -1,
+                 1, -1, 0,
+                 1, 1, 0,
+                 1, 1, 1,
+                 1, -1, 0,
+                 1, -1, 0,
+                 1, 0, 1,
+                 1, 0, 0,
+                 1, 1, 0,
+                 1, 1, 0,
+                 1, 1, -1,
+                 1, 0, 0), nrow = n_nr_animal, byrow = TRUE)
+vec_b = matrix(c("b_0", "a_G", "a_H"), ncol = 1)
+cat("\\begin{equation}\n")
+cat("\\left[")
+cat(paste0(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = mat_obs_y_rounded, pnDigits = 0), collapse = "\n"), "\n")
+cat("\\right]\n")
+cat(" = \n")
+cat("\\left[")
+cat(paste0(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = matX, pnDigits = 0), collapse = "\n"), "\n")
+cat("\\right]\n")
+cat("\\left[")
+cat(paste0(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = vec_b, pnOutStartLine = 4), collapse = "\n"), "\n")
+cat("\\right]\n")
+cat(" + \\epsilon")
+cat("\\end{equation}")
+```
+
+
+### Parameter Estimation In A Fixed Linear Effects Model {#asm-flem-parameter-estimation}
+The goal for model \@ref(eq:flemsnp) is to get an estimate for the unknown parameters $b_0$, $a_G$ and $a_H$. In section \@ref(asm-flem-parameter-estimation) we saw how unknown parameters can be estimated for a regression model using least squares. When applying the least squares method, we did not make any assumptions about the predictor variables. The minimization of the sum of the squared residuals can also be applied for the fixed linear effects model. This minimization leads to the same normal equations
+
+\begin{equation}
+  X^TXb^{(0)} = X^Ty
+  (\#eq:normalequationflem)
+\end{equation}
+
+So far everything was identical to the case of the regression model. But when trying to find a solution for \@ref(eq:normalequationflem) we have to account for the different nature of the design matrix $X$. In the regression model this matrix $X$ contains real numbers. In our example of a fixed linear effects model, the matrix $X$ just contains just the three number $-1$, $0$ and $1$^[In most other fixed linear effects models, the design matrix contains just $0$ and $1$.]. The fact that the matrix $X$ contains only a few discrete values makes it very likely that $X$ does not have full column rank. That means it is very likely that some columns of $X$ can be expressed as linear combinations of other columns. This linear dependence of the columns of $X$ causes the matrix $X^TX$ to be singular and hence the inverse of $X^TX$ cannot be computed. Whenever the matrix $X^TX$ is singular, the solution given in \@ref(eq:solutionhatb) cannot be computed.
+
+The normal equations in \@ref(eq:normalequationflem) are written with the symbol $b^{(0)}$ to denote that the equations do not have a single solution $b^{(0)}$ in the sense that we were able to compute them in the case of the regression model. In the case where $X^TX$ is singular, there are infinitely many solutions $b^{(0)}$. These solutions can be expressed as
+
+\begin{equation}
+  b^{(0)} = (X^TX)^-X^Ty
+  (\#eq:gensolnormalequationflem)
+\end{equation}
+
+where $(X^TX)^-$ denotes the __generalized inverse__ of the matrix $X^TX$. A generalized inverse $G$ of a given matrix $A$ is defined as the matrix that satisfies the equation $AGA = A$. The matrix $G$ is not unique. Applying the concept of a generalized inverse to a system of equations $Ax = y$, it can be shown that $x = Gy$ is a solution, if $G$ is a generalized inverse of $A$. Because $G$ is not unique, there are infinitely many solutions corresponding to $\tilde{x} = Gy + (GA - I)z$ where $z$ can be an arbitrary vector of consistent order. Applying these statements concerning generalized inverses and solutions to systems of equations to \@ref(eq:gensolnormalequationflem), it means that $b^{(0)}$ is not a unique solution to \@ref(eq:normalequationflem) because the generalized inverse $(X^TX)^-$ is not unique. As a consequence of that the solution $b^{(0)}$ cannot be used as an estimate of the unknown parameter vector $b$. 
+
+The numeric solution of the analysis of the example dataset given in Table \@ref(tab:dataflemsnpobs) is the topic of an exercise. When developing that solution, we will see that some linear functions of $b^{(0)}$ can be found which do not depend on the choice of the generalized inverse $(X^TX)^-$. Such functions are called __estimable functions__ and can be used as estimates for the unknown parameter vector $b$. More details about generalized inverses and estimable functions can be found in `r mrmt$add("Searle1971")`. 
 
 
 
