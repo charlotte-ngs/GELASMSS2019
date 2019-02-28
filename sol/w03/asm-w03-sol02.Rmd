@@ -1,0 +1,227 @@
+---
+title:  Applied Statistical Methods -- Solution 2
+author: Peter von Rohr
+date: 2019-03-04
+output: 
+  bookdown::pdf_document2:
+    toc: FALSE
+---
+
+```{r setup, include=FALSE}
+# knitr::opts_chunk$set(echo = FALSE, results = 'asis')
+knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
+```
+
+
+## Problem 1: Regression Model {-}
+During the lecture the regression model was explained using the dataset given in Table \@ref(tab:dataregression). 
+
+```{r dataregression, echo=FALSE, results='asis', message=FALSE}
+### # define constant paths
+s_data_root_online <- "https://charlotte-ngs.github.io/GELASMSS2019"
+s_data_root_local <- here::here() 
+s_data_dir <- "ex/w03/bw_bc_reg.csv"
+### # define data path depending on whether we are online or not
+b_online <- FALSE
+if (b_online){
+  s_data_root <- s_data_root_online
+} else {
+  s_data_root <- s_data_root_local
+}
+s_data_path <- file.path(s_data_root, s_data_dir)
+### # read data from s_data_path
+tbl_reg <- readr::read_csv(file = s_data_path)
+knitr::kable(tbl_reg,
+             booktabs = TRUE,
+             longtable = TRUE,
+             caption = "Dataset for Regression of Body Weight on Breast Circumference for ten Animals")
+```
+
+The same dataset is also available from the website at `r paste(s_data_root_online, s_data_dir, sep = "/")`. 
+
+
+
+### Your Task {-}
+* Setup the linear regression model with an intercept for the data given in Table \@ref(tab:dataregression)
+* Compute the solution for the unknown parameter $b$
+* Verify the result with the output from the function `lm()` in R
+
+
+### Solution {-}
+The linear regression model is given by the following equation
+
+\begin{equation}
+  y = X * b + \epsilon \notag
+\end{equation}
+
+where $y$ is a vector of body weights, $X$ is a matrix with two columns. The first column of $X$ is all ones and the second column contains the breast circumference values, $b$ is the vector with the intercept and the unknown regression coefficient and $\epsilon$ is the vector of unknown random residuals. The least squares estimate $\hat{b}$ can be computed as 
+
+$$ \hat{b} = (X^TX)^{-1}X^Ty$$
+
+
+The matrix $X$ and the vector $y$ are extracted from the dataframe and have the following form
+
+```{r}
+n_nr_ani <- nrow(tbl_reg)
+mat_x <- matrix(c(rep(1,n_nr_ani), tbl_reg$`Breast Circumference`), ncol = 2)
+vec_y <- tbl_reg$`Body Weight`
+```
+
+```{r, echo=FALSE, results='asis'}
+cat("$$\n")
+cat("X = \\left[")
+cat(paste0(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = mat_x, pnDigits = 0), collapse = "\n"), "\n")
+cat("\\right], \\quad \n")
+cat("y = \\left[")
+cat(paste0(rmddochelper::sConvertVectorToLaTexArray(pvec_avector = vec_y, pnDigits = 0), collapse = "\n"), "\n")
+cat("\\right]\n")
+cat("$$\n")
+```
+
+The result for $\hat{b}$ is then
+
+```{r}
+xtx <- crossprod(mat_x)
+n_hat_b  <- solve(xtx,crossprod(mat_x, vec_y))
+n_hat_b
+```
+
+We can verify this result using the `lm()` function of R
+
+```{r}
+lm_bwbc <- lm(`Body Weight` ~ `Breast Circumference`, data = tbl_reg)
+summary(lm_bwbc)
+```
+
+
+\clearpage
+\pagebreak
+
+## Problem 2: Prediction {-}
+Given the measurement of the trait `Breast Circumference` for two additional animals. The measurements are shown in the following table
+
+```{r tablenewanimal, echo=FALSE, results='asis'}
+tbl_new_ani <- tibble::tibble(Animal = c("Animal 11", "Calf 12"),
+                              `Breast Circumference` = c(181.2, 99.5))
+knitr::kable(tbl_new_ani, 
+             booktabs = TRUE, 
+             longtable = TRUE, 
+             caption = "Breast Circumference Measurements For Two Animals Used To Predict Body Weight")
+```
+
+We want to use the results of Problem 1 to computed the predicted values for `Body Weight` for the two animals. The observed value for `Breast Circumference` of "Calf 12" is outside of the range of the values used in Problem 1. Predicting values of response variables based on predictors that are outside of the range of values used for the parameter estimation is called __extrapolation__. Based on the result of the predicted value of the trait `Body Weight` for "Calf 12" what can be said about the process of extrapolation? 
+
+
+### Your Tasks {-}
+* Compute the predicted value of `Body Weight` for "Animal 11" using the results from Problem 1
+* Compute the predicted value of `Body Weight` for "Calf 12" using the results from Problem 1
+* Make a statement about the validity of the extrapolated value of `Body Weight` for "Calf 12"
+
+
+### Solution {-}
+The equation to predict `Body Weight` from `Breast Circumference` is based on the regression equation that was derived in Problem 1.
+
+$$\widehat{y_k} = \widehat{b_0} + \widehat{b_1} * x_k$$
+
+where $\widehat{b_0}$ and $\widehat{b_1}$ are the estimates of the intercept and the regression coefficient from Problem 1. The variable $x_k$ is the `Breast Circumference` for the newly measured animal $k$. 
+
+Assume that the results from Problem 1 are stored in a variable `n_hat_b`, and that the measured values for `Breast Circumference` are stored in a dataframe with the name `tbl_new_ani` in a column called `Breast Circumference. The value $\widehat{y_k}$ for the two newly measured animals "Animal 11" and "Calf 12" can be computed as
+
+```{r}
+vec_x_k <- tbl_new_ani$`Breast Circumference`
+vec_y_k <- n_hat_b[1] + n_hat_b[2] * vec_x_k;vec_y_k
+```
+
+Collecting these results in a table leads to 
+
+```{r predictionresulttable, echo=FALSE, results='asis'}
+tbl_reg_results <- dplyr::bind_cols(tbl_new_ani, tibble::tibble(`Predicted Body Weight` = round(vec_y_k, digits = 0)))
+knitr::kable(tbl_reg_results, 
+             booktabs = TRUE, 
+             longtable = TRUE, 
+             caption = "Prediction Results")
+```
+
+The result of the predicted `Body Weight` for "Animal 11" corresponds to `r tbl_reg_results[1,3]` which is a plausible result. The predicted `Body Weight` for "Calf 12" is `r tbl_reg_results[2,3]` which does not make any sense. As a consequence, we can say that extrapolation of response values based on predictors that are so far away from the range of predictors used to estimate the regression equation is not allowed. 
+
+
+
+## Problem 3: Fixed Linear Effects Model {-}
+We want to analyse a dataset with genetic information using a fixed linear effects model. The dataset is taken from the course notes and is shown in Table \@ref(tab:dataflemsnpobs). 
+
+We assume that the SNP loci have a purely additive effect on the trait. That means for a SNP locus $L$ the absolute value of the genotypic value of the homozygous genotypes ($L_1L_1$ and $L_2L_2$) is taken to be $a_L$ and the genotypic value of the heterozygous genotype ($L_1L_2$) is taken to be $0$. The fixed linear effects model contains the observation in Table \@ref(tab:dataflemsnpobs) as the response variable, an intercept and the genotypic values of the the genotypes at the two SNP Loci $G$ and $H$ as predictor variables.
+
+For the observation $y_i$ of animal $i$, we can specify the model as
+
+$$y_i = \beta_0 + W_i \cdot a + \epsilon_i$$
+
+where $\beta_0$ is the intercept, $a$ is the vector of additive SNP-effects, $W_i$ is a row vector denoting the SNP-Genotypes and $\epsilon_i$ is the random error term.
+
+```{r dataflemsnpobs, echo=FALSE}
+### # fix the number of animals
+n_nr_animal <- 20
+### # intercept
+n_inter_cept <- 500
+### # residual standard deviation
+n_res_sd <- 12.13
+### # vector of genotype value coefficients
+vec_geno_value_coeff <- c(-1,0,1)
+### # sample genotypes of unlinked SNP randomly
+set.seed(436)
+### # fix allele frequency of positive allele
+n_prob_snps <- .45
+### # genotypic values 
+vec_geno_val <- c(27.2, 7.3)
+n_nr_snp <- length(vec_geno_val)
+### # put together the genotypes into a matrix
+mat_geno_snp <- matrix(c(sample(vec_geno_value_coeff, n_nr_animal, prob = c((1-n_prob_snps)^2, 
+                                                                   2*(1-n_prob_snps)*n_prob_snps, 
+                                                                   n_prob_snps^2), 
+                       replace = TRUE),
+                       sample(vec_geno_value_coeff, n_nr_animal, prob = c(n_prob_snps^2, 
+                                                                   2*(1-n_prob_snps)*n_prob_snps, 
+                                                                   (1-n_prob_snps)^2), 
+                       replace = TRUE)),
+                       nrow = n_nr_snp)
+mat_obs_y <- n_inter_cept + crossprod(mat_geno_snp, vec_geno_val) + rnorm(n = n_nr_animal, mean = 0, sd = n_res_sd)
+### # mapping the -1,0,1 codes to genotypes
+geno_code_map <- tibble::tibble(code = c(-1, 0, 1),
+                            `SNP G` = c("$G_2G_2$", "$G_1G_2$", "$G_1G_1$"),
+                            `SNP H` = c("$H_2H_2$", "$H_1H_2$", "$H_1H_1$"),
+                            `Genotypic Value G` = c("$-a_G$", "$0$", "$a_G$"),
+                            `Genotypic Value H` = c("$-a_H$", "$0$", "$a_H$"))
+geno_code <- tibble::tibble(`Code G` = mat_geno_snp[1,],
+                            `Code H` = mat_geno_snp[2,])
+
+### # use dplyr to macht genotypes to codes
+suppressPackageStartupMessages( require(dplyr) )
+geno_code %>% 
+  inner_join(geno_code_map, by = c("Code G" = "code")) %>%
+  select(`SNP G`, `Genotypic Value G`) -> geno_snp_g
+geno_code %>% 
+  inner_join(geno_code_map, by = c("Code H" = "code")) %>%
+  select(`SNP H`, `Genotypic Value H`) -> geno_snp_h
+geno_snp_all <- bind_cols(geno_snp_g, geno_snp_h)
+### # add the data
+mat_obs_y_rounded <- round(mat_obs_y, digits = 0)
+tbl_obs <- tibble::tibble(Observation = mat_obs_y_rounded[,1])
+geno_snp_all %>% bind_cols(tbl_obs) -> tbl_all_data
+### # add animal ids
+tbl_all_data <- bind_cols(Animal = c(1:n_nr_animal),tbl_all_data)
+
+# tbl_flemsnppbs <- tibble::tibble()
+knitr::kable(tbl_all_data,
+             booktabs = TRUE,
+             longtable = TRUE,
+             caption = "Animals With Two SNP Loci Affecting A Quantitative Trait",
+             escape = FALSE)
+```
+
+
+### Your Tasks {-}
+* Specify the fixed linear effects model in matrix-vector notation by putting the information from the dataset into the model. Use the same parametrization as shown in the course notes where the intercept $\beta_0$ and the vector $a$ are combined into a single parameter vector $b$. The design matrix that links elements in $b$ to observations $y$ is then called $X$. 
+* Use the function `rank()` on the matrix $X$ to find out the rank of the design matrix.
+* Depending on the rank of $X$ compute an estimate for $b$
+* Verify your results using the `lm()` function
+
+### Solution {-}

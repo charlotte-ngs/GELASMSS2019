@@ -424,7 +424,7 @@ tbl_all_data <- bind_cols(Animal = c(1:n_nr_animal),tbl_all_data)
 knitr::kable(tbl_all_data,
              booktabs = TRUE,
              longtable = FALSE,
-             caption = "Animals With A Single SNP Locus Affecting A Quantitative Trait",
+             caption = "Animals With Two SNP Loci Affecting A Quantitative Trait",
              escape = FALSE)
 ```
 

@@ -1,0 +1,122 @@
+---
+title: "Compute Regression Coefficient"
+output: html_notebook
+---
+
+## Disclaimer
+Experiments with different approaches to compute the regression coefficient
+
+
+## Data
+Use the data on `body weight` and `breast circumference` from Essl1987.
+
+```{r}
+suppressPackageStartupMessages( require(dplyr) )
+tbl_reg <- tibble::tibble(`Breast Circumference` = c(176, 177, 178, 179, 179, 180, 181, 182,183, 184),
+                          `Body Weight` = c(471, 463, 481, 470, 496, 491, 518, 511, 510, 541))
+n_nr_ani <- nrow(tbl_reg)
+tbl_reg <- bind_cols(tibble::tibble(Animal = 1:n_nr_ani),
+                     tbl_reg)
+knitr::kable(tbl_reg)
+```
+
+## Least Squares
+The least squares solution is 
+
+$$\hat{b} = (X^TX)^{-1}X^Ty$$
+
+For our data set this gives
+
+```{r}
+vec_x <- tbl_reg$`Breast Circumference`
+vec_y <- tbl_reg$`Body Weight`
+n_hat_b <- solve(crossprod(vec_x),crossprod(vec_x,vec_y))
+n_hat_b
+```
+
+## Using `lm()`
+
+```{r}
+lm_bw_bc <- lm(`Body Weight` ~ 0 + `Breast Circumference`, data = tbl_reg)
+summary(lm_bw_bc)
+```
+
+
+## Conclusions
+The above two analyses were regressions through the origin, i.e. without fitting an intercept. It might be argued that this makes sense from a biological point of view. But because the data points are very far from the origin, it might be better to allow for an intercept. 
+
+## Classical Univariate
+This example is done according to chapter 9 of Essl1987 (p. 137 ff). In that example the regression model is fit using an intercept. Hence the model can be stated as
+
+$$y_i = \beta_0 + \beta_1 * x_i + \epsilon_i$$
+
+For a fixed value of $x_k$ we get the expected value $E(y | x)$ of $y_k$ as the estimate $\hat{y}$ for $y$ being 
+
+$$\hat{y} = E(y_k | x = x_k) = b_0 + b_1 * x_k$$
+
+where $b_1$ is computed using least-squares. The value of $b_0$ is determined by a certain point that is an element on the regression line. With $\bar{x}$ being defined as the mean of all $x$ values we get
+
+$$b_0 + b_1 * \bar{x} = b_0 + b_1 * {1 \over n}\sum_{k=1}^n x_k = {1 \over n}\sum_{k=1}^n (b_0 + b_1 * x_k) = {1 \over n}\sum_{k=1}^n y_k = \bar{y}$$
+Hence $b_0 = \bar{y} - b_1 * \bar{x}$. 
+
+In a univariate analysis, we get
+
+$$\hat{b} = \frac{cov(x,y)}{var(x)}$$
+
+```{r}
+n_uni_hat_b <- cov(vec_x,vec_y)/var(vec_x)
+n_uni_hat_b
+```
+
+```{r}
+cov(vec_x,vec_y)
+```
+
+```{r}
+(sprod <- sum((vec_x-mean(vec_x)) * (vec_y - mean(vec_y))))
+```
+
+```{r}
+(cov_xy <- sprod/(length(vec_y)-1))
+```
+
+The estimated variance $var(x)$ is
+
+```{r}
+var(vec_x)
+```
+
+```{r}
+(ssq <- sum((vec_x-mean(vec_x))^2))
+```
+
+```{r}
+(var_x <- ssq/(length(vec_x)-1))
+```
+
+```{r}
+(n_hat_b_uni <- cov_xy / var_x)
+```
+
+
+## Fitting An Additional Intercept
+We have to augment the design matrix by an additional column of all ones.
+
+```{r}
+mat_x <- matrix(c(rep(1,n_nr_ani), vec_x), ncol = 2)
+(vec_b_hat <- crossprod(solve(crossprod(mat_x)), crossprod(mat_x, vec_y)))
+```
+
+Using `lm()`
+
+```{r}
+lm_bw_bc_inter <- lm(`Body Weight` ~ `Breast Circumference`, data = tbl_reg)
+summary(lm_bw_bc_inter)
+```
+
+Showing a diagnostics plot
+
+```{r}
+plot(lm_bw_bc_inter)
+```
+

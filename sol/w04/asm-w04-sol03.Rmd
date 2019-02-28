@@ -1,0 +1,30 @@
+---
+title: Applied Statistical Methods - Solution 3
+author: Peter von Rohr
+date: 2019-03-11
+output:
+  bookdown::pdf_document2:
+    toc: false
+    number_sections: false
+    keep_tex: false
+header-includes:
+ \usepackage{longtable}
+ \usepackage{float}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, results = 'asis', fig.pos = 'H')
+knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
+```
+
+## Problem 1: 
+
+ 
+### Solution
+
+
+## Problem 2: 
+
+
+### Solution
+
