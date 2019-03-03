@@ -1,0 +1,71 @@
+---
+title:  Applied Statistical Methods -- Exercise 2
+author: Peter von Rohr
+date: 2019-03-04
+output: 
+  bookdown::pdf_document2:
+    toc: FALSE
+---
+
+```{r setup, include=FALSE}
+# knitr::opts_chunk$set(echo = FALSE, results = 'asis')
+knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
+```
+
+
+## Problem 1: Regression Model {-}
+During the lecture the regression model was explained using the dataset given in Table \@ref(tab:dataregression). 
+
+```{r dataregression, echo=FALSE, results='asis', message=FALSE}
+### # define constant paths
+s_data_root_online <- "https://charlotte-ngs.github.io/GELASMSS2019"
+s_data_root_local <- here::here() 
+s_data_dir <- "ex/w03/bw_bc_reg.csv"
+### # define data path depending on whether we are online or not
+b_online <- FALSE
+if (b_online){
+  s_data_root <- s_data_root_online
+} else {
+  s_data_root <- s_data_root_local
+}
+s_data_path <- file.path(s_data_root, s_data_dir)
+### # read data from s_data_path
+tbl_reg <- readr::read_csv(file = s_data_path)
+knitr::kable(tbl_reg,
+             booktabs = TRUE,
+             longtable = TRUE,
+             caption = "Dataset for Regression of Body Weight on Breast Circumference for ten Animals")
+```
+
+The same dataset is also available from the website at `r paste(s_data_root_online, s_data_dir, sep = "/")`. 
+
+
+
+### Your Task {-}
+* Setup the linear regression model with an intercept for the data given in Table \@ref(tab:dataregression)
+* Compute the solution for the unknown parameter $b$
+* Verify the result with the output from the function `lm()` in R
+
+
+
+## Problem 2: Prediction {-}
+Given the measurement of the trait `Breast Circumference` for two additional animals. The measurements are shown in the following table
+
+```{r tablenewanimal, echo=FALSE, results='asis'}
+tbl_new_ani <- tibble::tibble(Animal = c("Animal 11", "Calf 12"),
+                              `Breast Circumference` = c(181.2, 99.5))
+knitr::kable(tbl_new_ani, 
+             booktabs = TRUE, 
+             longtable = TRUE, 
+             caption = "Breast Circumference Measurements For Two Animals Used To Predict Body Weight")
+```
+
+We want to use the results of Problem 1 to computed the predicted values for `Body Weight` for the two animals. The observed value for `Breast Circumference` of "Calf 12" is outside of the range of the values used in Problem 1. Predicting values of response variables based on predictors that are outside of the range of values used for the parameter estimation is called __extrapolation__. Based on the result of the predicted value of the trait `Body Weight` for "Calf 12" what can be said about the process of extrapolation? 
+
+
+### Your Tasks {-}
+* Compute the predicted value of `Body Weight` for "Animal 11" using the results from Problem 1
+* Compute the predicted value of `Body Weight` for "Calf 12" using the results from Problem 1
+* Make a statement about the validity of the extrapolated value of `Body Weight` for "Calf 12"
+
+
