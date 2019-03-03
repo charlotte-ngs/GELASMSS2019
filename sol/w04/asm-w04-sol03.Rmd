@@ -17,10 +17,87 @@ knitr::opts_chunk$set(echo = FALSE, results = 'asis', fig.pos = 'H')
 knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
 ```
 
-## Problem 1: 
 
- 
-### Solution
+## Problem 1: Fixed Linear Effects Model {-}
+We want to analyse a dataset with genetic information using a fixed linear effects model. The dataset is taken from the course notes and is shown in Table \@ref(tab:dataflemsnpobs). 
+
+We assume that the SNP loci have a purely additive effect on the trait. That means for a SNP locus $L$ the absolute value of the genotypic value of the homozygous genotypes ($L_1L_1$ and $L_2L_2$) is taken to be $a_L$ and the genotypic value of the heterozygous genotype ($L_1L_2$) is taken to be $0$. The fixed linear effects model contains the observation in Table \@ref(tab:dataflemsnpobs) as the response variable, an intercept and the genotypic values of the the genotypes at the two SNP Loci $G$ and $H$ as predictor variables.
+
+For the observation $y_i$ of animal $i$, we can specify the model as
+
+$$y_i = \beta_0 + W_i \cdot a + \epsilon_i$$
+
+where $\beta_0$ is the intercept, $a$ is the vector of additive SNP-effects, $W_i$ is a row vector denoting the SNP-Genotypes and $\epsilon_i$ is the random error term.
+
+```{r dataflemsnpobs, echo=FALSE}
+### # fix the number of animals
+n_nr_animal <- 20
+### # intercept
+n_inter_cept <- 500
+### # residual standard deviation
+n_res_sd <- 12.13
+### # vector of genotype value coefficients
+vec_geno_value_coeff <- c(-1,0,1)
+### # sample genotypes of unlinked SNP randomly
+set.seed(436)
+### # fix allele frequency of positive allele
+n_prob_snps <- .45
+### # genotypic values 
+vec_geno_val <- c(27.2, 7.3)
+n_nr_snp <- length(vec_geno_val)
+### # put together the genotypes into a matrix
+mat_geno_snp <- matrix(c(sample(vec_geno_value_coeff, n_nr_animal, prob = c((1-n_prob_snps)^2, 
+                                                                   2*(1-n_prob_snps)*n_prob_snps, 
+                                                                   n_prob_snps^2), 
+                       replace = TRUE),
+                       sample(vec_geno_value_coeff, n_nr_animal, prob = c(n_prob_snps^2, 
+                                                                   2*(1-n_prob_snps)*n_prob_snps, 
+                                                                   (1-n_prob_snps)^2), 
+                       replace = TRUE)),
+                       nrow = n_nr_snp)
+mat_obs_y <- n_inter_cept + crossprod(mat_geno_snp, vec_geno_val) + rnorm(n = n_nr_animal, mean = 0, sd = n_res_sd)
+### # mapping the -1,0,1 codes to genotypes
+geno_code_map <- tibble::tibble(code = c(-1, 0, 1),
+                            `SNP G` = c("$G_2G_2$", "$G_1G_2$", "$G_1G_1$"),
+                            `SNP H` = c("$H_2H_2$", "$H_1H_2$", "$H_1H_1$"),
+                            `Genotypic Value G` = c("$-a_G$", "$0$", "$a_G$"),
+                            `Genotypic Value H` = c("$-a_H$", "$0$", "$a_H$"))
+geno_code <- tibble::tibble(`Code G` = mat_geno_snp[1,],
+                            `Code H` = mat_geno_snp[2,])
+
+### # use dplyr to macht genotypes to codes
+suppressPackageStartupMessages( require(dplyr) )
+geno_code %>% 
+  inner_join(geno_code_map, by = c("Code G" = "code")) %>%
+  select(`SNP G`, `Genotypic Value G`) -> geno_snp_g
+geno_code %>% 
+  inner_join(geno_code_map, by = c("Code H" = "code")) %>%
+  select(`SNP H`, `Genotypic Value H`) -> geno_snp_h
+geno_snp_all <- bind_cols(geno_snp_g, geno_snp_h)
+### # add the data
+mat_obs_y_rounded <- round(mat_obs_y, digits = 0)
+tbl_obs <- tibble::tibble(Observation = mat_obs_y_rounded[,1])
+geno_snp_all %>% bind_cols(tbl_obs) -> tbl_all_data
+### # add animal ids
+tbl_all_data <- bind_cols(Animal = c(1:n_nr_animal),tbl_all_data)
+
+# tbl_flemsnppbs <- tibble::tibble()
+knitr::kable(tbl_all_data,
+             booktabs = TRUE,
+             longtable = TRUE,
+             caption = "Animals With Two SNP Loci Affecting A Quantitative Trait",
+             escape = FALSE)
+```
+
+
+### Your Tasks {-}
+* Specify the fixed linear effects model in matrix-vector notation by putting the information from the dataset into the model. Use the same parametrization as shown in the course notes where the intercept $\beta_0$ and the vector $a$ are combined into a single parameter vector $b$. The design matrix that links elements in $b$ to observations $y$ is then called $X$. 
+* Use the function `rank()` on the matrix $X$ to find out the rank of the design matrix.
+* Depending on the rank of $X$ compute an estimate for $b$
+* Verify your results using the `lm()` function
+
+### Solution {-}
+
 
 
 ## Problem 2: 

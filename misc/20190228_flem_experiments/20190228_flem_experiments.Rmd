@@ -31,15 +31,22 @@ n_prob_snps <- .45
 vec_geno_val <- c(27.2, 7.3)
 n_nr_snp <- length(vec_geno_val)
 ### # put together the genotypes into a matrix
-mat_geno_snp <- matrix(c(sample(vec_geno_value_coeff, n_nr_animal, prob = c((1-n_prob_snps)^2, 
+# mat_geno_snp <- matrix(c(sample(vec_geno_value_coeff, n_nr_animal, prob = c((1-n_prob_snps)^2, 
+#                                                                    2*(1-n_prob_snps)*n_prob_snps, 
+#                                                                    n_prob_snps^2), 
+#                        replace = TRUE),
+#                        sample(vec_geno_value_coeff, n_nr_animal, prob = c(n_prob_snps^2, 
+#                                                                    2*(1-n_prob_snps)*n_prob_snps, 
+#                                                                    (1-n_prob_snps)^2), 
+#                        replace = TRUE)),
+#                        nrow = n_nr_snp)
+### # sample all genotypes at once
+mat_geno_snp <- matrix(sample(vec_geno_value_coeff, n_nr_snp * n_nr_animal, prob = c((1-n_prob_snps)^2, 
                                                                    2*(1-n_prob_snps)*n_prob_snps, 
                                                                    n_prob_snps^2), 
                        replace = TRUE),
-                       sample(vec_geno_value_coeff, n_nr_animal, prob = c(n_prob_snps^2, 
-                                                                   2*(1-n_prob_snps)*n_prob_snps, 
-                                                                   (1-n_prob_snps)^2), 
-                       replace = TRUE)),
                        nrow = n_nr_snp)
+
 mat_obs_y <- n_inter_cept + crossprod(mat_geno_snp, vec_geno_val) + rnorm(n = n_nr_animal, mean = 0, sd = n_res_sd)
 ### # mapping the -1,0,1 codes to genotypes
 geno_code_map <- tibble::tibble(code = c(-1, 0, 1),
@@ -85,7 +92,66 @@ The parameters $\beta_0$ and $a$ are combined into a single vector $b$ where
 
 $$b = \left[\begin{array}{c} \beta_0 \\ a_G \\ a_H \end{array} \right]$$
 
-and $X$ is the single design matrix.
+and $X$ is the single design matrix. As a result, the model can be written in matrix-vector notation as
+
+$$y = X \cdot b + \epsilon$$.
+
+The design matrix $X$ is given by
+
+```{r}
+(mat_X_flem <- cbind(rep(1,n_nr_animal), t(mat_geno_snp)))
+```
+
+In order to see who the solutions of the flem can be determined, we check on the rank of $X$
+
+```{r}
+Matrix::rankMatrix(mat_X_flem)
+```
+
+
+Hence the solution can still be computed as
+
+```{r}
+n_bhat_flem <- crossprod((solve(crossprod(mat_X_flem))),crossprod(mat_X_flem,mat_obs_y_rounded));n_bhat_flem
+```
+
+The same with `lm()`
+
+
+```{r}
+tbl_geno_code_data <- dplyr::bind_cols(geno_code, tbl_obs)
+lm_geno_code <- lm(Observation ~ `Code G` + `Code H`, data = tbl_geno_code_data)
+summary(lm_geno_code)
+```
+
+
+## More SNP Loci
+In reality the number of SNP loci is much larger than what we have used so far. For our experiment we increase the number of loci and generate a new genotype dataset. 
+
+```{r}
+### # total number of SNP
+n_nr_snp_large <- 500
+### # number of snp with non-zero effect
+n_nr_nz_snp <- 10
+### # vector of genotypic effects
+vec_geno_val_large <- rep(0, n_nr_snp_large)
+### # genotypic effect sampled from normal distribution
+n_geno_mean <- 19.3
+n_geno_sd <- 7.13
+vec_geno_val_large[1:n_nr_nz_snp] <- rnorm(n = n_nr_nz_snp, mean = n_geno_mean, sd = n_geno_sd)
+### # sample the genotype matrix
+mat_geno_large <- matrix(sample(vec_geno_value_coeff, n_nr_snp_large * n_nr_animal, prob = c((1-n_prob_snps)^2, 
+                                                                   2*(1-n_prob_snps)*n_prob_snps, 
+                                                                   n_prob_snps^2), 
+                       replace = TRUE),
+                       nrow = n_nr_snp_large)
+
+```
+
+For the genotypic values, we assume that only the first `r n_nr_nz_snp` have an effect on the observation. 
+
+
+
 
 
 
