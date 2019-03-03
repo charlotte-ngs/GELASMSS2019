@@ -19,7 +19,7 @@ knitr::include_graphics(path = "odg/selectsnploci.png")
 
 
 ## Stepwise Approach {#asm-gblup-stepwise}
-In fixed linear effects model when the number of predictors is excessively large it is often desirable to find the subset of predictors that have a relevant effect on the response variable. Having too many predictors in a model decreases the power to predict future values of responses. To find a subset of relevant predictor variables out of a large set of predictors can be done with two stepwise approaches. 
+In fixed linear effects model when the number of predictors is excessively large it is often desirable to find the subset of predictors that have a relevant effect on the response variable. Having too many predictors in a model decreases the power to predict future values of responses. To find a subset of relevant predictor variables out of a large set of predictors can be done with two step-wise approaches. 
 
 1. Forward selection
 2. Backward elimination
@@ -28,7 +28,7 @@ In what follows these two approaches are only described very shortly. Due to som
 
 
 ### Forward Selection {#asm-gblup-forward}
-The starting point of the forward approach is the empty model with no predictor variables. In an interative sequence of steps additional predictors are included into the model until a pre-defined model quality criterion cannot be improved any further. As model quality criterion, different quantities can be used. In a summary output of R's `lm()` function, the quantity `adjusted` $R^2$ is shown. Alternative quantities are the Mallow $C_p$ value, the Akaike Information Criterion (AIC) or Bayes Information Criterion (BIC). The problem with the forward selection approach is that it is heavily dependent on the starting point, that means the resulting subset of predictors depends on the predictor with which we started. Similarly the order in which the predictors are tested can also have an influence on the final result. These problems make it very difficult to end up with a stable selection procedure for relevant predictor variables.
+The starting point of the forward approach is the empty model with no predictor variables. In an iterative sequence of steps additional predictors are included into the model until a pre-defined model quality criterion cannot be improved any further. As model quality criterion, different quantities can be used. In a summary output of R's `lm()` function, the quantity `adjusted` $R^2$ is shown. Alternative quantities are the Mallow $C_p$ value, the Akaike Information Criterion (AIC) or Bayes Information Criterion (BIC). The problem with the forward selection approach is that it is heavily dependent on the starting point, that means the resulting subset of predictors depends on the predictor with which we started. Similarly the order in which the predictors are tested can also have an influence on the final result. These problems make it very difficult to end up with a stable selection procedure for relevant predictor variables.
 
 
 ### Backward Elimination {#asm-gblup-backward}
@@ -36,17 +36,17 @@ Backward elimination starts with the full model where the full model contains al
 
 
 ## Model Selection With Genomic Data {#asm-gblup-model-selection-genomic-data}
-In real-world genomic data analyses, the number of predictors can be as high as $1.5 * 10^5$. Therefore the forward selection approach as described in \@ref(asm-gblup-forward) cannot be used because of the above shown problems. Also the backward elimination approach does not yield a stable procedure for finding the subset of relevant SNPs. This has serveral reasons which are shortly described in the following subsections. 
+In real-world genomic data analyses, the number of predictors can be as high as $1.5 * 10^5$. Therefore the forward selection approach as described in \@ref(asm-gblup-forward) cannot be used because of the above shown problems. Also the backward elimination approach does not yield a stable procedure for finding the subset of relevant SNPs. This has several reasons which are shortly described in the following subsections. 
 
 
 ### Fitting The Full Model {#asm-gblup-fitting-full-model}
-Fitting the full model with such a high number of predictors leads to the problem that the design matrix $X$ will not have full column rank. The solution of the least squares normal equation then depends on a generalized inverse $(X^TX)^{-}$ of $X^TX$. Generalized inverses are not unique and furthermore for a given generalized inverse, there are infinitely many solutions that satisfy the normal equation coming out of least squares. Instead of the non-unique solutions, we have to focus on estimable functions of the solutions which are independent of the choice of a concrete solution. Although, even if it is possible to fit the full model of a genomic dataset, applying the backward elimination procedure is very time consuming and due to its greediness is not exptected to result in a stable subset of relevant SNPs that has an influence on a given trait of interest.
+Fitting the full model with such a high number of predictors leads to the problem that the design matrix $X$ will not have full column rank. The solution of the least squares normal equation then depends on a generalized inverse $(X^TX)^{-}$ of $X^TX$. Generalized inverses are not unique and furthermore for a given generalized inverse, there are infinitely many solutions that satisfy the normal equation coming out of least squares. Instead of the non-unique solutions, we have to focus on estimable functions of the solutions which are independent of the choice of a concrete solution. Although, even if it is possible to fit the full model of a genomic dataset, applying the backward elimination procedure is very time consuming and due to its greediness is not expected to result in a stable subset of relevant SNPs that has an influence on a given trait of interest.
 
 
 ## Mixed Linear Effects Model {#asm-gblup-mlem}
-Based on the above described problems with the use of the fixed linear effects model for analysing genomic data, animal breeders were looking for an alternative. In traditional genetic evaluation in animal breeding the BLUP animal model was used world-wide. The term `traditional genetic evaluation` refers to the prediction of breeding values based on phenotypic observation and pedigree relationships between animals in a given population. When looking at Figure \@ref(fig:infinitesimalvspolygenic) the traditional genetic evaluation is shown on the left side. The BLUP animal model is a mixed linear effects model where the breeding values of all animals in the populations are taken as random effects. In most of these traditional genetic evaluations the number of predicted breeding values exceeds the number of observations. This is possible due to the BLUP methodology which uses the variance-covariance matrix between the random effects to distribute the information of the observations also to predicted breeding values of animals which do not have any observations. In a BLUP animal model the variance-covariance matrix is proportional to the numerator relationship matrix $A$. We will see later that when using the genomic version of BLUP the matrix $A$ will be replaced by its equivalent which is called the __genomic relationship matrix__. 
+Based on the above described problems with the use of the fixed linear effects model for analyzing genomic data, animal breeders were looking for an alternative. In traditional genetic evaluation in animal breeding the BLUP animal model was used world-wide. The term `traditional genetic evaluation` refers to the prediction of breeding values based on phenotypic observation and pedigree relationships between animals in a given population. When looking at Figure \@ref(fig:infinitesimalvspolygenic) the traditional genetic evaluation is shown on the left side. The BLUP animal model is a mixed linear effects model where the breeding values of all animals in the populations are taken as random effects. In most of these traditional genetic evaluations the number of predicted breeding values exceeds the number of observations. This is possible due to the BLUP methodology which uses the variance-covariance matrix between the random effects to distribute the information of the observations also to predicted breeding values of animals which do not have any observations. In a BLUP animal model the variance-covariance matrix is proportional to the numerator relationship matrix $A$. We will see later that when using the genomic version of BLUP the matrix $A$ will be replaced by its equivalent which is called the __genomic relationship matrix__. 
 
-Mixed linear effects models can be applied to genomic data using two different parametrizations. At this point, we are using the terminology proposed by `r mrmt$add("Fernando2016")`. In the first approach SNP loci also referred to as markers are modelled as random effects. These models are called `marker effect models` (MEM). In a second parametrization, breeding values of animals corresponding to a linear combination of marker effects are modeled as random effects. This second type of models are refered to as `breeding value models` (BVM). Figure \@ref(fig:memvsbvm) illustrates the difference between the two types of models.
+Mixed linear effects models can be applied to genomic data using two different parametrisations. At this point, we are using the terminology proposed by `r mrmt$add("Fernando2016")`. In the first approach SNP loci also referred to as markers are modeled as random effects. These models are called `marker effect models` (MEM). In a second parametrisation, breeding values of animals corresponding to a linear combination of marker effects are modeled as random effects. This second type of models are referred to as `breeding value models` (BVM). Figure \@ref(fig:memvsbvm) illustrates the difference between the two types of models.
 
 
 ```{r memvsbvm, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg", fig.cap="Two Types Of Mixed Linear Effects Models For Genomic Data"}
@@ -76,7 +76,7 @@ In MEM random effects of markers are directly included in the model. For an idea
          &  $e$    &  vector of length $n$ of random error terms
 \end{tabular}
 
-The vector $q$ contains a separate random effect for each SNP. Because the SNP effects are random, the expected value $E\left[q\right]$ and the variance $var(q)$ must be specified. In general, the random effects are defined as deviations and hence their expected value si $0$. This means $E\left[q\right] = 0$. The variance $var(q)$ can be computed as $var(q) = WW^T\sigma_q^2$. The variance explained by each SNP corresponds to $\sigma_q^2$ and is assumed to be constant. The variance $var(e)$ of the random error terms is taken to be $var(e) = I * \sigma_e^2$ where $I$ is the identity matrix and $\sigma_e^2$ is the error variance. 
+The vector $q$ contains a separate random effect for each SNP. Because the SNP effects are random, the expected value $E\left[q\right]$ and the variance $var(q)$ must be specified. In general, the random effects are defined as deviations and hence their expected value is $0$. This means $E\left[q\right] = 0$. The variance $var(q)$ can be computed as $var(q) = WW^T\sigma_q^2$. The variance explained by each SNP corresponds to $\sigma_q^2$ and is assumed to be constant. The variance $var(e)$ of the random error terms is taken to be $var(e) = I * \sigma_e^2$ where $I$ is the identity matrix and $\sigma_e^2$ is the error variance. 
 
 
 ### Breeding Value Models {#asm-gblup-bvm}
@@ -103,13 +103,13 @@ Mostly the older animals for which SNP information is available may have observa
 
 1. The length of the vector $g$ is $t$ which corresponds to the number of genotyped animals which in most cases is smaller than the length of the vector $q$ which is $m$ corresponding to the number of SNPs. 
 2. Accuracies of genomic breeding values can be computed analogously to the traditional BLUP animal model. This is analogy of accuracies does not exist in MEM.
-3. BVM can be combined with pedigree-based animal model analysis which is then refered to as __single step__ approach.
+3. BVM can be combined with pedigree-based animal model analysis which is then referred to as __single step__ approach.
 
 More recently with the number of genotyped animals growing very fast, these advantages are no longer as important as they used to be. 
 
 
 ## Genomic Relationship Matrix {#asm-gblup-grm}
-The variance-covariance matrix between the genetic effects $g$ in model \@ref(eq:asmgblupbvm) is proportional to the genomic relationship matrix $G$. Analogously to the traditional BlUP animal model where the variance-covariance matrix of the random breeding values is proportional to the numerator relationship matrix $A$. 
+The variance-covariance matrix between the genetic effects $g$ in model \@ref(eq:asmgblupbvm) is proportional to the genomic relationship matrix $G$. Analogously to the traditional BLUP animal model where the variance-covariance matrix of the random breeding values is proportional to the numerator relationship matrix $A$. 
 
 
 ### Derivation of $G$ {#asm-gblup-deriv-grm}
@@ -118,7 +118,7 @@ Because the traditional pedigree-based BLUP animal model is very well respected 
 1. The genetic effects $g$ should correspond to a linear combination of the single SNP-effects $q$
 2. The genetic effects $g$ should be defined as deviations from a common mean, leading to the expected value $E\left[g \right] = 0$.
 3. The variance-covariance matrix of the vector $g$ corresponds to the product of $G$ times a common variance component $\sigma_g^2$.
-4. The genomic relationship matrix $G$ should be similar to the numerator relationship matrix $A$. The diagnoal elements should be close to $1$ and offdiagonal elements of animals that are related should have higher values than elements between unrelated animals.
+4. The genomic relationship matrix $G$ should be similar to the numerator relationship matrix $A$. The diagonal elements should be close to $1$ and off-diagonal elements of animals that are related should have higher values than elements between unrelated animals.
 
 The matrix $G$ can be computed based on SNP genotypes. In what follows the material of `r mrmt$add("VanRaden2008")` and `r mrmt$add("Gianola2009")` is used to derive the genomic relationship matrix.
 
@@ -163,7 +163,7 @@ The matrix $U$ is computed as the difference between the matrix $W$ and the matr
 \begin{center}
 \begin{tabular}{|l|l|l|}
 \hline
-Genotypen     &  Genotypischer Wert            &  Codierung in Matrix $U$\\
+Genotype      &  Genotypic Value            &  Coding in Matrix $U$\\
 \hline
 $(G_2G_2)_j$  &  $-2p_jq_j$      &  $-1-2(p_j-0.5) = -2p_j$\\
 $(G_1G_2)_j$  &  $(1-2p_j)q_j$   &  $-2(p_j-0.5) = 1-2p_j$\\
@@ -181,12 +181,101 @@ Here we assume that for a locus $G_j$, the allele $(G_1)_j$ has a positive effec
 
 
 ### Variance of Genetic Effects {#asm-gblup-vargeneffect}
+As already postulated the variance-covariance matrix of the genetic effects should be proportional to the genomic relationship matrix $G$. 
+
+\begin{equation}
+var(g) = G * \sigma_g^2
+(\#eq:asm-gblup-varcovargeneffect)
+\end{equation}
+
+Computing the same variance-covariance matrix based on equation \@ref(eq:asm-gblup-gfromq)
+
+\begin{equation}
+var(g) = U \cdot var(q) \cdot U^T
+(\#eq:asm-gblup-uvarqut)
+\end{equation}
+
+The variance-covariance matrix of the SNP effects is $var(q) = I * \sigma_q^2$. Inserting this into \@ref(eq:asm-gblup-uvarqut) we get $var(g) = UU^T \sigma_q^2$. 
+
+In [@Gianola2009] the variance component $\sigma_g^2$ was derived from $\sigma_q^2$ leading to 
+
+\begin{equation}
+\sigma_g^2 = 2 \sum_{j=1}^m p_j(1-p_j)\sigma_q^2
+(\#eq:asm-gblup-defsigmag2)
+\end{equation}
+
+Now we combine all relationships for $var(g)$ leading to
+
+\begin{equation}
+var(g) = G * \sigma_g^2 = UU^T\sigma_q^2
+(\#eq:asm-gblup-derivegstep1)
+\end{equation}
+
+In \@ref(eq:asm-gblup-derivegstep1), $\sigma_g^2$ is replaced by the result of \@ref(eq:asm-gblup-defsigmag2).
+
+\begin{equation}
+G * 2 \sum_{j=1}^m p_j(1-p_j)\sigma_q^2 = UU^T\sigma_q^2
+(\#eq:asm-gblup-derivegstep2)
+\end{equation}
+
+Dividing both sides of \@ref(eq:asm-gblup-derivegstep2) by $\sigma_q^2$ and solving for $G$ gives us a formula for the genomic relationship matrix $G$
+
+\begin{equation}
+G = \frac{UU^T}{2 \sum_{j=1}^m p_j(1-p_j)}
+(\#eq:asm-gblup-derivegresult)
+\end{equation}
+
+
+## How Does GBLUP Work {#asm-gblup-howdoesgblupwork}
+The genomic relationship matrix $G$ allows to predict genomic breeding values for animals with SNP-Genotypes without any observation in the dataset. This fact is the basis of the large benefit of genomic selection. As soon as a young animal is born, its SNP genotypes can be determined and a genomic breeding value can be predicted. This genomic breeding value is much more accurate then the traditional breeding value based only on ancestral information. 
+
+The BVM model given in \@ref(eq:asmgblupbvm) is a mixed linear effects model. The solution for the unknown parameters can be obtained by solving the mixed model equations shown in \@ref(eq:asm-gblup-gblupmme). In this form the Inverse $G^{-1}$ of $G$ and the vector $\hat{g}$ of predicted genotypic breeding values are split into one part corresponding to the animals with observations and a second part for the animals without phenotypic information.
+
+```{r GblupMme, echo=FALSE, results='asis'}
+matCoeff <- matrix(c("X^TX","X^TZ","0",
+                     "Z^TX","Z^TZ + G^{(11)}","G^{(12)}",
+                     "0","G^{(21)}","G^{(22)}"), ncol = 3, byrow = TRUE)
+vecSol <- c("\\hat{b}","\\hat{g}_1","\\hat{g}_2")
+vecRhs <- c("X^Ty","Z^Ty","0")
+### # show mme
+cat("\\begin{equation}\n")
+cat("\\left[\n")
+cat(paste(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = matCoeff), collapse = "\n"))
+cat("\\right]\n")
+cat("\\left[\n")
+cat(paste(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = as.matrix(vecSol, ncol=1)), collapse = "\n"))
+cat("\\right]\n")
+cat(" = \\left[\n")
+cat(paste(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = as.matrix(vecRhs, ncol=1)), collapse = "\n"))
+cat("\\right]\n")
+cat("(\\#eq:asm-gblup-gblupmme)")
+cat("\\end{equation}\n")
+```
+
+The matrix $G^{(11)}$ denotes the part of $G^{-1}$ corresponding to the animals with phenotypic observations. Similarly, $G^{(22)}$ stands for the part of the animals without genotypic observations. The matrices $G^{(12)}$ and $G^{(21)}$ are the parts of $G^{-1}$ which link the two groups of animals. The same partitioning holds for the vector of predicted breeding values. The vector $\hat{g}_1$ contains the predicted breeding values for the animals with observations and the vector $\hat{g}_2$ contains the predicted breeding values of all animals without phenotypic observations. 
+
+Based on the last line of \@ref(eq:asm-gblup-gblupmme) the predicted breeding values $\hat{g}_2$ of all animals without phenotypic observations can be computed from the predicted breeding values $\hat{g}_1$ from the animals with observations.
+
+\begin{equation}
+\hat{g}_2 = -\left( G^{22}\right)^{-1}G^{21}\hat{g}_1
+(\#eq:GenomicBvAnimalNoPhen)
+\end{equation}
+
+Equation \@ref(eq:GenomicBvAnimalNoPhen) is referred to as genomic regression of predicted breeding values of animals without observation on the predicted genomic breeding values of animals with observations.
 
 
 
 
 
- 
+
+
+
+
+
+
+
+
+
 
 
 
