@@ -298,6 +298,9 @@ ggplot(data = tbl_all_data_ascii, aes(x = `SNP S`, y = Observation)) +
 2. Fit the linear model of the observations
 
 ```{r lmfit, echo=TRUE, results='markup'}
+s_asm_w02_ex01_p02_genodatafile <-
+  "https://charlotte-ngs.github.io/GELASMSS2019/ex/w02/asm_w02_ex01_p02_genodatafile.csv"
+tbl_all_data_ascii <- readr::read_csv(file = s_asm_w02_ex01_p02_genodatafile)
 tbl_all_data_ascii$`SNP R` <- as.factor(tbl_all_data_ascii$`SNP R`)
 tbl_all_data_ascii$`SNP S` <- as.factor(tbl_all_data_ascii$`SNP S`)
 lm_fit_geno_snp_r <- lm(Observation ~ 0 + `SNP R`, data = tbl_all_data_ascii)
