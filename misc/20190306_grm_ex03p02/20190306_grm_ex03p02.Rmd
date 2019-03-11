@@ -1,0 +1,144 @@
+---
+title: "Genomic Relationship Matrix GRM"
+output: html_notebook
+---
+
+## Disclaimer
+Construct a genomic data set to be used in Problem 2 of Exercise 3 (ex03p02) to set up a genomic relationship matrix. 
+
+
+## Background
+The genomic relationship matrix $G$ is used to model the covariance between random genomic breeding values $u$ in a breeding value model. The bvm is specified as 
+
+$$y = Xb + Zg + e$$
+
+with $E\left[g \right] = 0$ and  $var(g) = G * \sigma_g^2$. The random variable $g$ is defined as a linear combination of the single SNP effects denoted by the vector $q$. Then $g$ can be written as 
+
+$$g = U \cdot q$$
+
+
+## Literature
+In [@Gianola2009] the relationship between the variance of marker effects and the additive genetic variance is derived in great detail. At this point, we try to summarize the most important point of their arguments. 
+
+- __Additive genetic variance__: The phenotypic value $y$ for a quantitative trait is described by the linear model
+
+$$ y = wa + E $$
+
+where $a$ is the additive effect of a biallelic locus on the trait and $w$ is a random indicator variable (covariate) relating $a$ to the phenotype. $E$ is an independently distributed random deviate with $E \sim (0, V_E)$ where $V_E$ is the residual variance, provided additive gene action. Under HWE the genotype frequencies are 
+
+\begin{align}
+Pr(MM) &= p^2 \notag \\
+Pr(Mm) &= 2pq \notag \\
+Pr(mm) &= q^2 \notag
+\end{align}
+
+with allele frequencies $Pr(M) = p$ and $Pr(m) = q = 1-p$. ${$ _Here, we silently assume that $M$ is the positive allele_ $}$
+
+Coding the states of $w$ with
+
+\begin{equation}
+w = \left\{ 
+  \begin{array}{lll} 
+  1   &  \text{ with probability }  &  p^2 \\
+  0   &  \text{ with probability }  &  2pq \\
+  -1  &  \text{ with probability }  &  q^2
+  \end{array}
+\right.
+\end{equation}
+
+The genetic values of individuals with the three genotypes $MM$, $Mm$ and $mm$ are $a$, $0$ and $-a$, respectively. Then for the random variable $w$ we get
+
+$$E(w) = p-q$$
+
+$$E(w^2) = 1 - 2pq$$
+and with that
+
+$$var(w) = 2pq$$
+
+
+## Genetic Effects and Additive Genetic Variance
+Analogously to [@Gianola2009], the phenotypic observation $y$ for a given quantitative trait can be decomposed into a genetic ($wa$) and environmental part ($e$). 
+
+$$y = wa + e$$
+where $a$ is the additive effect of a biallelic locus and $w$ is the random indicator variable that connects $a$ to $y$. The term $e$ denotes an independently distributed random deviate with $e \sim (0, \sigma_e^2)$. In the course notes the above specified model is called __genetic model__. 
+
+In terms of the genomic breeding literature, this is clearly a marker effect model. In a standard quantitative genetics treatment, the additive effect $a$ is treated as a fixed parameter and $w$ is a random variable that determines the random sample of genotypes out of the population. 
+
+The genetic part in the above marker effect model is clearly represented by $wa$. In a transition from a marker effect model to a breeding value model where the genetic part will be modelled by a random deviate $g$, the question is how can we link the marker effects $a$ to the random deviate $g$. In a breeding value model the random effect $g$ is distributed as $g \sim (0, V_G)$ where $V_G$ is the genetic variance. In a later section, we will see that the structure of $V_G = G \sigma_g^2$ where $G$ is the genomic relationship matrix.
+
+From a biological point of view, it does make sense that $g$ is composed by a linear combination of the additive marker effects. The question is what is the linear coefficient that we have to apply to the additive effects such that independently of $a$, $E(g) = 0$
+
+Based on the above model specification where $w$ is assumed random and $a$ is a given fixed factor, the conditional expectation $E(y | a)$ of the phenotypic observation $y$ is 
+
+$$E(y | a) = E(wa + e) = E(wa) + E(e) = E(wa) = a * E(w) = (p-q) * a$$
+
+## Breeding Value Model
+In a breeding value model the single locus model does no longer make sense. Hence $a$ is now a vector of all additive SNP effects and we want to find a linear combination $U \cdot a$ that can be used as a representative of a genomic breeding value. For a single animal $i$ its observation $y_i$ can be written under a MEM as 
+
+$$y_i = w_i^T \cdot a + e_i$$
+where $a$ is the vector of fixed additive SNP effects and $w_i$ is a random vector of encoded genotype covariates. When writing the same observation $y_i$ in terms of a breeding value model, we get
+
+$$y_i = g_i + e_i$$
+where $g_i$ is the random genomic breeding value. The two models mem and bvm should be equivalent hence the component $w_i^T\cdot a$ in the marker effect model must correspond to $g_i$ in the breeding value model. Furthermore $E(g_i) = 0$ is a requirement that comes out of the mixed linear effects model specification. Moreover, $g_i$ should be a linear combination of the vector $a$. To fullfill both conditions, we have 
+
+$$g_i = (w_i^T - s_i^T) \cdot a$$
+The vector $s_i$ is determined such that the condition $E(g_i) = 0$ holds, leading to 
+
+$$E(g_i) =  E\left[(w_i^T - s_i^T) \cdot a\right] = \left[E(w_i^T - s_i^T)\right] \cdot a = \left[E(w_i^T) - E(s_i^T)\right] \cdot a = \left[E(w_i) - s_i\right] a = 0$$
+
+The above equation is satisfied independently of $a$, if we choose $s_i = E(w_i) = p - q = p - (1 - p) = 2p - 1$ where $p$ is the vector of the frequencies of the positive SNP alleles. Doing the same thing for all observations $(g_i \ |\ i = 1, \ldots , N)$ and collecting everything into matrix-vector notation results in 
+
+$$g = U \cdot a = (W - S) \cdot a$$
+
+where $W$ is the matrix with the SNP genotype encodings and $S$ is a matrix with column vectors $s_j \ |\ j = 1, \ldots, k$ where $k$ is the number of SNP loci. Each column vector $s_j$ corresponds to $2p_j - 1$ where $p_j$ is the frequency of the positive allele at SNP locus $j$. 
+
+
+## Genetic Variance
+Without going into the details of the conceptual framework and the different interpretations, for the derivation of the GRM, we are just taking the result of [@Gianola2009] that
+
+$$\sigma_g^2 = \sigma_a^2 * \sum_{j=1}^k (1 - 2p_jq_j)$$
+
+In contrast to the earlier specification where $a$ was a fixed constant, we are now assuming that $a$ is a random variable with $a \sim (0, \sigma_a^2)$. To the best of our knowledge, [@Gianola2009] were the first authors to point out different possible interpretations mainly of $\sigma_a^2$ and reveal some inconsistencies in [@Meuwissen2001]. 
+
+The variance of all genomic breeding values is specified according to one of our requirements as
+
+$$var(g) = G * \sigma_g^2$$
+
+From one of the results of [@Gianola2009] we further get that $\sigma_g^2 = \sigma_a^2 * \sum_{j=1}^k (1 - 2p_jq_j)$. Inserting this in the above equation leads to 
+
+$$var(g) = G * \sigma_a^2 * \sum_{j=1}^k (1 - 2p_jq_j)$$
+
+From the relationship between $g$ and $a$, we can also compute the $var(g)$ as 
+
+$$var(g) = var(U \cdot a) = U \cdot var(a) \cdot U^T = UU^T * \sigma_a^2$$
+
+Setting both equations for $var(g)$ equal to each other, we get
+
+$$var(g) = G * \sigma_a^2 * \sum_{j=1}^k (1 - 2p_jq_j) = UU^T * \sigma_a^2$$
+From this we can compute $G$ as
+
+$$G = \frac{UU^T}{\sum_{j=1}^k (1 - 2p_jq_j)}$$
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

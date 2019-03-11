@@ -1,0 +1,120 @@
+---
+title: "Genomic BLUP"
+author: "Peter von Rohr"
+date: "04.03.2019"
+output: beamer_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
+```
+
+## So Far
+
+- Estimate effect of few SNP loci linked to QTL
+- Use parameter estimates to predict genomic breeding values
+- __New__: Many SNP, find the important ones
+
+
+## Situation
+
+```{r selectsnploci, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/selectsnploci.odg")
+knitr::include_graphics(path = "odg/selectsnploci.png")
+```
+
+
+## Approaches in Fixed Linear Model Framework
+
+Two Approaches
+
+1. Forward selection: Start with empty model, include predictors that improve model
+2. Backward elimination: Start with full model, remove predictors as long as model does not get worse
+
+
+## Forward Selection
+
+```{r forwardselection, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/forwardselection.odg")
+knitr::include_graphics(path = "odg/forwardselection.png")
+```
+ 
+
+## Backward Elimination
+
+```{r backwardelimination, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/backwardelimination.odg")
+knitr::include_graphics(path = "odg/backwardelimination.png")
+```
+ 
+
+## Model Selection With Genomic Data
+
+- Only backward elimination really works in practical problems
+- Large number of predictors ($1.5 * 10^5$)
+- How to determine sequence of predictors to eliminate
+- Fitting the full model is problematic
+
+
+## Mixed Linear Effect Model
+
+- One solution: replace fixed linear effect model by __mixed__ linear effect model (mle)
+- MLE: additional random effect besides error term
+- Random effects are specified by expected value and variance
+- In livestock breeding MLE have a good reputation from BLUP animal model
+
+
+## MLE In Genomics
+
+- Two different parametrizations
+
+1. Marker Effect Model (MEM)
+2. Breeding Value Model (BVM)
+
+
+## Overview
+
+```{r memvsbvm, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/memvsbvm.odg")
+knitr::include_graphics(path = "odg/memvsbvm.png")
+```
+
+
+## Marker Effect Model
+
+In MEM random effects of markers are directly included in the model. For an idealized data set we can write
+
+\begin{equation}
+  y = 1_n \mu + Wq + e \notag
+\end{equation}
+
+\begin{tabular}{lll}
+  where  &  &  \\
+         &  $y$  &  vector of length $n$ with observations  \\
+         &  $\mu$  &  general mean denoting fixed effects   \\
+         &  $1_n$  &  vector of length $n$ of all ones      \\
+         &  $q$    &  vector of length $m$ of random SNP effects \\
+         &  $W$    &  design matrix relating SNP-genotypes to observations \\
+         &  $e$    &  vector of length $n$ of random error terms
+\end{tabular}
+
+
+## Breeding Value Model
+
+\begin{equation}
+  y = Xb + Zg + e \notag
+\end{equation}
+
+\begin{tabular}{lll}
+  where  &  &  \\
+         &  $y$  &  vector of length $n$ with observations  \\
+         &  $b$  &  vector of length $r$ with fixed effects \\
+         &  $X$  &  incidence matrix linking elements in $b$ to observations \\
+         &  $g$  &  vector of length $t$ with random genomic breeding values \\
+         &  $Z$  &  incidence matrix linking elements in $g$ to observations \\
+         &  $e$  &  vector of length $n$ of random error terms
+\end{tabular}
+
+
+

@@ -1,0 +1,62 @@
+---
+title: "Generate Data For Ex 03 Problem 01"
+output: html_notebook
+---
+
+
+## Generate Data
+The following code junk was used in the course notes `02-flem2.Rmd` to generate the data that is also used in `ex03P01`. In this exercise the SNP-effects are to be estimated using a least squares approach, the same way as for the regression model.
+
+```{r dataflemsnpobs, echo=TRUE}
+### # fix the number of animals
+n_nr_animal <- 20
+### # intercept
+n_inter_cept <- 500
+### # residual standard deviation
+n_res_sd <- 12.13
+### # vector of genotype value coefficients
+vec_geno_value_coeff <- c(-1,0,1)
+### # sample genotypes of unlinked SNP randomly
+set.seed(436)
+### # fix allele frequency of positive allele
+n_prob_snps <- .45
+### # genotypic values 
+vec_geno_val <- c(27.2, 7.3)
+n_nr_snp <- length(vec_geno_val)
+### # put together the genotypes into a matrix
+mat_geno_snp <- matrix(c(sample(vec_geno_value_coeff, n_nr_animal, prob = c((1-n_prob_snps)^2, 
+                                                                   2*(1-n_prob_snps)*n_prob_snps, 
+                                                                   n_prob_snps^2), 
+                       replace = TRUE),
+                       sample(vec_geno_value_coeff, n_nr_animal, prob = c(n_prob_snps^2, 
+                                                                   2*(1-n_prob_snps)*n_prob_snps, 
+                                                                   (1-n_prob_snps)^2), 
+                       replace = TRUE)),
+                       nrow = n_nr_snp)
+mat_obs_y <- n_inter_cept + crossprod(mat_geno_snp, vec_geno_val) + rnorm(n = n_nr_animal, mean = 0, sd = n_res_sd)
+### # combine SNP genotypes into a tibble
+geno_code <- tibble::tibble(`SNP G` = mat_geno_snp[1,],
+                            `SNP H` = mat_geno_snp[2,])
+
+### # add the data
+mat_obs_y_rounded <- round(mat_obs_y, digits = 0)
+tbl_obs <- tibble::tibble(Observation = mat_obs_y_rounded[,1])
+geno_code %>% bind_cols(tbl_obs) -> tbl_all_data
+### # add animal ids
+tbl_all_data <- bind_cols(Animal = c(1:n_nr_animal),tbl_all_data)
+
+# tbl_flemsnppbs <- tibble::tibble()
+knitr::kable(tbl_all_data,
+             booktabs = TRUE,
+             longtable = TRUE,
+             caption = "Animals With Two SNP Loci Affecting A Quantitative Trait",
+             escape = FALSE)
+```
+
+The tibble is saved to a csv file. Which is then used to read as input.
+
+```{r}
+s_ex03p01_data <- "ex03p01_data.csv"
+readr::write_csv(tbl_all_data, path = s_ex03p01_data)
+```
+

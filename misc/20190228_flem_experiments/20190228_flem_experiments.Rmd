@@ -145,10 +145,97 @@ mat_geno_large <- matrix(sample(vec_geno_value_coeff, n_nr_snp_large * n_nr_anim
                                                                    n_prob_snps^2), 
                        replace = TRUE),
                        nrow = n_nr_snp_large)
+### # sample the observations, only the genetic part changes compared to the small example
+mat_obs_y_large <- n_inter_cept + crossprod(mat_geno_large, vec_geno_val_large) + rnorm(n = n_nr_animal, mean = 0, sd = n_res_sd)
+### # combine everything into a tibble
+tbl_geno_large <- tibble::as.tibble(t(mat_geno_large))
+colnames(tbl_geno_large) <- sapply(1:n_nr_snp_large, function(x) paste0("SNP", x), USE.NAMES = FALSE)
+tbl_data_large <- bind_cols(tibble::tibble(Animal = 1:n_nr_animal), 
+                            tibble::tibble(Observation = round(mat_obs_y_large[,1], digits = 0)), 
+                            tbl_geno_large)
 
 ```
 
-For the genotypic values, we assume that only the first `r n_nr_nz_snp` have an effect on the observation. 
+In this second example, we consider to the total number of loci to be `r n_nr_snp_large`. But for the genotypic values, we assume that only the first `r n_nr_nz_snp` have an effect on the observation. 
+
+
+## Rank of Large Design Matrix
+Extend design matrix of large dataset by intercept and compute rank
+
+```{r}
+mat_X_flem_large <- cbind(rep(1, n_nr_animal), t(mat_geno_large))
+dim(mat_X_flem_large)
+```
+
+The rank
+
+```{r}
+Matrix::rankMatrix(mat_X_flem_large)
+```
+
+What is the result of $X^TX$ and `solve()` 
+
+```{r}
+mat_xtx_large <- crossprod(mat_X_flem_large)
+solve(mat_xtx_large)
+```
+
+The dimension of $X^TX$ is 
+
+```{r}
+dim(mat_xtx_large)
+```
+
+The condition number is coming out of the eigenvalues
+
+```{r}
+vec_abs_ev <- abs(eigen(mat_xtx_large, only.values = TRUE)$values)
+min(vec_abs_ev)/max(vec_abs_ev)
+```
+
+
+## Solutions To Normal Equations
+### Pre-requisites
+__Definition__: A general inverse $G$ of any matrix $A$ is defined as one of the matrices that satisfies $AGA = A$.
+
+__Lemma 3__: $PX^TX = QX^TX$ implies $PX^T = QX^T$. Based on the fact that, if $X^TX = 0$ implying that $X=0$, we can apply the same fact with $(PX^TX - QX^TX)(P-Q)^T = (PX^T - QX^T)(PX^T - QX^T)^T = 0$ which is true because we started with $PX^TX = QX^TX$, hence the first factor is $0$. Further it can only be true, if $PX^T - QX^T = 0$ and therefore $PX^T = QX^T$.
+
+### Material of Section 5 in Searle 1971
+Independently of the fact that our design matrix $X$ for the large system is column rank deficient, the least squares normal equation still hold. Hence, we can still write
+
+$$ X^TX \hat{b} = X^T y$$
+
+But because $X^TX$ is singular, it cannot be inverted and the unique solution that was known from the regression model can no longer be obtained.
+
+In what follows, we are replicating some of the material of section 5 in chapter 1 of Searle 1971. Special attention is given to properties of generalized inverses of symmetric matrices like $X^TX$. Four useful properties of such generalized inverses are given in Theorem 7. 
+
+__Theorem 7__. When $G$ is a generlized invers of $X^TX$ then
+
+(i) $G^T$ is also a generlized inverse of $X^TX$
+(ii) $XGX^TX = X$, hence $GX^T$ is a generalized inverse of $X$
+(iii) $XGX^T$ is invariant to $G$
+(iv) $XGX^T$ is symmetric, whether $G$ is or not
+
+__Proof__. By definition $G$ satisfies $X^TXGX^TX = X^TX$
+
+(i) Transposing the relationship in the definition yields $X^TXG^TX^TX = X^TX$ which establishes property (i)
+(ii) Follows from Lemma 3. Transpose both sides of the statement gives $X^TP^TX = X^TQ^TX$ and hence $P^TX = Q^TX$. For our case we have $P^T = XGX^T$ and $Q = I$
+
+
+## Estimable Functions
+In section 4 of chapter 5 (p 180) the concept of estimable functions is explained.
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

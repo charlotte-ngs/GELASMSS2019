@@ -13,15 +13,15 @@ header-includes:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, results = 'asis', fig.pos = 'H')
+knitr::opts_chunk$set(echo = TRUE, results = 'asis', fig.pos = 'H')
 knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
 ```
 
 
 ## Problem 1: Fixed Linear Effects Model {-}
-We want to analyse a dataset with genetic information using a fixed linear effects model. The dataset is taken from the course notes and is shown in Table \@ref(tab:dataflemsnpobs). 
+We want to analyse a dataset with genetic information using a fixed linear effects model. The dataset is taken from the course notes and is shown in Table \@ref(tab:datatable). 
 
-We assume that the SNP loci have a purely additive effect on the trait. That means for a SNP locus $L$ the absolute value of the genotypic value of the homozygous genotypes ($L_1L_1$ and $L_2L_2$) is taken to be $a_L$ and the genotypic value of the heterozygous genotype ($L_1L_2$) is taken to be $0$. The fixed linear effects model contains the observation in Table \@ref(tab:dataflemsnpobs) as the response variable, an intercept and the genotypic values of the the genotypes at the two SNP Loci $G$ and $H$ as predictor variables.
+We assume that the SNP loci have a purely additive effect on the trait. That means for a SNP locus $L$ the absolute value of the genotypic value of the homozygous genotypes ($L_1L_1$ and $L_2L_2$) is taken to be $a_L$ and the genotypic value of the heterozygous genotype ($L_1L_2$) is taken to be $0$. The fixed linear effects model contains the observation in Table \@ref(tab:datatable) as the response variable, an intercept and the genotypic values of the the genotypes at the two SNP Loci $G$ and $H$ as predictor variables.
 
 For the observation $y_i$ of animal $i$, we can specify the model as
 
@@ -29,79 +29,192 @@ $$y_i = \beta_0 + W_i \cdot a + \epsilon_i$$
 
 where $\beta_0$ is the intercept, $a$ is the vector of additive SNP-effects, $W_i$ is a row vector denoting the SNP-Genotypes and $\epsilon_i$ is the random error term.
 
-```{r dataflemsnpobs, echo=FALSE}
-### # fix the number of animals
-n_nr_animal <- 20
-### # intercept
-n_inter_cept <- 500
-### # residual standard deviation
-n_res_sd <- 12.13
-### # vector of genotype value coefficients
-vec_geno_value_coeff <- c(-1,0,1)
-### # sample genotypes of unlinked SNP randomly
-set.seed(436)
-### # fix allele frequency of positive allele
-n_prob_snps <- .45
-### # genotypic values 
-vec_geno_val <- c(27.2, 7.3)
-n_nr_snp <- length(vec_geno_val)
-### # put together the genotypes into a matrix
-mat_geno_snp <- matrix(c(sample(vec_geno_value_coeff, n_nr_animal, prob = c((1-n_prob_snps)^2, 
-                                                                   2*(1-n_prob_snps)*n_prob_snps, 
-                                                                   n_prob_snps^2), 
-                       replace = TRUE),
-                       sample(vec_geno_value_coeff, n_nr_animal, prob = c(n_prob_snps^2, 
-                                                                   2*(1-n_prob_snps)*n_prob_snps, 
-                                                                   (1-n_prob_snps)^2), 
-                       replace = TRUE)),
-                       nrow = n_nr_snp)
-mat_obs_y <- n_inter_cept + crossprod(mat_geno_snp, vec_geno_val) + rnorm(n = n_nr_animal, mean = 0, sd = n_res_sd)
-### # mapping the -1,0,1 codes to genotypes
-geno_code_map <- tibble::tibble(code = c(-1, 0, 1),
-                            `SNP G` = c("$G_2G_2$", "$G_1G_2$", "$G_1G_1$"),
-                            `SNP H` = c("$H_2H_2$", "$H_1H_2$", "$H_1H_1$"),
-                            `Genotypic Value G` = c("$-a_G$", "$0$", "$a_G$"),
-                            `Genotypic Value H` = c("$-a_H$", "$0$", "$a_H$"))
-geno_code <- tibble::tibble(`Code G` = mat_geno_snp[1,],
-                            `Code H` = mat_geno_snp[2,])
+The data can be read from `https://charlotte-ngs.github.io/GELASMSS2019/ex/w04/ex03p01_data.csv`. It can be read using the following statement
 
-### # use dplyr to macht genotypes to codes
-suppressPackageStartupMessages( require(dplyr) )
-geno_code %>% 
-  inner_join(geno_code_map, by = c("Code G" = "code")) %>%
-  select(`SNP G`, `Genotypic Value G`) -> geno_snp_g
-geno_code %>% 
-  inner_join(geno_code_map, by = c("Code H" = "code")) %>%
-  select(`SNP H`, `Genotypic Value H`) -> geno_snp_h
-geno_snp_all <- bind_cols(geno_snp_g, geno_snp_h)
-### # add the data
-mat_obs_y_rounded <- round(mat_obs_y, digits = 0)
-tbl_obs <- tibble::tibble(Observation = mat_obs_y_rounded[,1])
-geno_snp_all %>% bind_cols(tbl_obs) -> tbl_all_data
-### # add animal ids
-tbl_all_data <- bind_cols(Animal = c(1:n_nr_animal),tbl_all_data)
-
-# tbl_flemsnppbs <- tibble::tibble()
-knitr::kable(tbl_all_data,
-             booktabs = TRUE,
-             longtable = TRUE,
-             caption = "Animals With Two SNP Loci Affecting A Quantitative Trait",
-             escape = FALSE)
+```{r datainput, message=FALSE}
+### # specify path to data file depending on online status
+s_data_file <- "https://charlotte-ngs.github.io/GELASMSS2019/ex/w04/ex03p01_data.csv"
+### # read the data into a tibble
+tbl_geno_data <- readr::read_csv(file = s_data_file)
 ```
 
+```{r datatable, echo=FALSE, results='asis'}
+knitr::kable(tbl_geno_data,
+             booktabs = TRUE, 
+             longtable = TRUE, 
+             caption = "Genotypic Data Used for Fitting a Fixed Linear Effect Model")
+```
 
 ### Your Tasks {-}
 * Specify the fixed linear effects model in matrix-vector notation by putting the information from the dataset into the model. Use the same parametrization as shown in the course notes where the intercept $\beta_0$ and the vector $a$ are combined into a single parameter vector $b$. The design matrix that links elements in $b$ to observations $y$ is then called $X$. 
-* Use the function `rank()` on the matrix $X$ to find out the rank of the design matrix.
-* Depending on the rank of $X$ compute an estimate for $b$
+* Use the function `Matrix::rankMatrix()` from the `Matrix` package on the matrix $X$ to find out the rank of the design matrix.
+* Depending on the rank of $X$ compute an estimate for $b$, if the rank of the matrix is equal to the number of columns of matrix $X$, then the same forumla as was used in the regression model can be used
 * Verify your results using the `lm()` function
+
+
+### Hints {-}
+* Read the data using the function `readr::read_csv()`
 
 ### Solution {-}
 
 
+__Model Specification__: The fixed linear effect model in matrix-vector notation is given by 
 
-## Problem 2: 
+$$y = X\cdot b + e$$
+where the vector $b$ contains all unknown parameters which means, $b = \left[\begin{array}{c}\beta_0 \\ a \end{array} \right]$ and $X$ is the design matrix consisting of a column of all ones and with one column for each SNP locus. For our example we have 
+
+$$b = \left[\begin{array}{c}\beta_0 \\ a_G \\ a_H \end{array} \right]$$
+
+The matrix $X$ comes from the data. The first columns of $X$ is all ones and the second and the third column are codes corresponding to $-1$, $0$ or $1$, depending on the genotypes of the animals at the SNP loci $G$ and $H$. 
+
+```{r}
+n_nr_animal <-  nrow(tbl_geno_data)
+mat_X <- matrix(c(rep(1, n_nr_animal), tbl_geno_data$`SNP G`, tbl_geno_data$`SNP H`), ncol = 3)
+```
+
+The matrix $X$ corresponds then to
+
+```{r showmatx, echo=FALSE, results='asis'}
+cat("$$\n")
+cat("X = \\left[\n")
+cat(paste0(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = mat_X, pnDigits = 0), collapse = "\n"), "\n")
+cat("\\right]\n")
+cat("$$\n")
+```
+
+The vector $y$ corresponds to 
+
+```{r showvecy, echo=FALSE, results='asis'}
+vec_y <- tbl_geno_data$Observation
+cat("$$\n")
+cat("y = \\left[\n")
+cat(paste0(rmddochelper::sConvertVectorToLaTexArray(pvec_avector = vec_y, pnDigits = 0), collapse = "\n"), "\n")
+cat("\\right]\n")
+cat("$$\n")
+```
 
 
-### Solution
+__Rank of Matrix $X$__: The rank of the matrix $X$ is obtained by
+
+```{r rankmatrixx, results='markup'}
+Matrix::rankMatrix(mat_X)
+```
+
+__Solution for $\hat{b}$__: Because matrix $X$ has full column rank which means the rank of the matrix is the same as the number of columns, the solution for $\hat{b}$ can be computed the same way as for the regression model. Hence
+
+$$\hat{b} = (X^TX)^{-1}X^Ty$$
+
+In R this corresponds to 
+
+```{r solhatb, results='markup'}
+(vec_hatb <- crossprod(solve(crossprod(mat_X)), crossprod(mat_X, vec_y)))
+```
+
+__Verify Results in R__:
+
+```{r lmsnpflem, results='markup'}
+lm_snpflem <- lm(Observation ~ `SNP G` + `SNP H`, data = tbl_geno_data)
+summary(lm_snpflem)
+```
+
+
+## Problem 2: Genomic Relationship Matrix {-}
+From the given dataset that can be obtained from 
+
+`https://charlotte-ngs.github.io/GELASMSS2019/ex/w04/ex03p02_data.csv`, 
+
+compute the genomic relationship matrix $G$. The dataset is organised such that animals are in rows and SNPs are in columns.
+
+
+### Hints {-}
+* Read the data using the function `readr::read_csv()`
+* Convert the input data with the function `as.matrix()` to a matrix
+* Use the function `apply(mat, 2, mean)` to compute the columnwise mean of matrix `mat`
+* Use the `matrix` function to construct the matrix $P$ from the vector of SNP allele frequencies
+
+
+### Solution {-}
+Start by reading the data from the file. 
+
+```{r readdataex03p02}
+s_data_ex03p02 <- "https://charlotte-ngs.github.io/GELASMSS2019/ex/w04/ex03p02_data.csv"
+tbl_grm_data <- readr::read_csv(file = s_data_ex03p02)
+n_nr_animal <- nrow(tbl_grm_data)
+n_nr_snp <- ncol(tbl_grm_data)
+```
+
+The frequency of the positive alleles for all SNP positions is computed as 
+
+```{r}
+mat_W <- as.matrix(tbl_grm_data)
+vec_allele_freq <- apply(mat_W+1, 2, mean)/2
+```
+
+The sum of $p_jq_j$ is computed as
+
+```{r}
+sumpq <- sum(vec_allele_freq * (1-vec_allele_freq))
+```
+
+The matrix $U$ is computed from the matrix $W$ and the matrix $P$
+
+```{r}
+mat_P <- matrix(2*vec_allele_freq-1, nrow = n_nr_animal, ncol = n_nr_snp, byrow = TRUE)
+mat_U <- mat_W - mat_P
+```
+
+The genomic relationship matrix is obtained by
+
+```{r}
+mat_grm <- tcrossprod(mat_U) / (2*sumpq)
+```
+
+
+## Additional Problem {-}
+Write a function in R that accepts a matrix of genotypes and that computes the genomic relationship matrix. Verify your results from Problem 2.
+
+
+### Solution {-}
+The following function computes the genomic relationship matrix
+
+```{r}
+#' Compute genomic relationship matrix based on data matrix
+computeMatGrm <- function(pmatData) {
+  matData <- pmatData
+  # check the coding, if matData is -1, 0, 1 coded, then add 1 to get to 0, 1, 2 coding
+  if (min(matData) < 0) matData <- matData + 1
+  # Allele frequencies, column vector of P and sum of frequency products
+  freq <- apply(matData, 2, mean) / 2
+  P <- 2 * (freq - 0.5)
+  sumpq <- sum(freq*(1-freq))
+  # Changing the coding from (0,1,2) to (-1,0,1) and subtract matrix P
+  Z <- matData - 1 - matrix(P, nrow = nrow(matData), 
+                             ncol = ncol(matData), 
+                             byrow = TRUE)
+  # Z%*%Zt is replaced by tcrossprod(Z)
+  return(tcrossprod(Z)/(2*sumpq))
+}
+```
+
+The function is tested with
+
+```{r, results='markup'}
+mat_grm_func <- computeMatGrm(pmatData = mat_W)
+all.equal(mat_grm, mat_grm_func)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

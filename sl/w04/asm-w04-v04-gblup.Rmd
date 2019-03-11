@@ -1,0 +1,148 @@
+---
+title: "How Genomic BLUP Works"
+author: "Peter von Rohr"
+date: "11.03.2019"
+output: beamer_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
+```
+
+
+## Advantage of Genomic Selection
+* Big advantage of genomic selection: __shorter generation interval__
+* Old days: selection mainly based on performance tested sires
+    + fine in species where generation inverval is low, e.g. pigs
+    + problem when generation interval is long like cattle
+    
+    
+## Performance Testing
+```{r performancetest, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/performancetest.odg")
+knitr::include_graphics(path = "odg/performancetest.png")
+```
+ 
+
+## Genomic Selection
+* SNP Genotype can be determined when calf is born
+* Genomic Breeding value can be computed as soon as SNP genotype is determined
+* Full sibs get different genomic breeding values
+$\rightarrow$ increase accuracy
+
+
+## Genomic Selection (II)
+```{r gstest, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/gstest.odg")
+knitr::include_graphics(path = "odg/gstest.png")
+```
+ 
+
+## Prediction of Genomic Breeding Values
+Genomic breeding values can be predicted using either
+
+* Two step approach or 
+* Single step GBLUP
+
+
+## Two Step Approach
+
+```{r twostepapproachfigure, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/twostepapproachfigure.odg")
+knitr::include_graphics(path = "odg/twostepapproachfigure.png")
+```
+
+
+## Single Step GBLUP
+* Use a mixed linear effect model
+* Genomic breeding values $g$ are random effects
+
+$$y = Xb + Zg + e$$
+with 
+
+* $E(e) = 0$, $var(e) = I * \sigma_e^2$
+* $E(g) = 0$, $var(g) = G * \sigma_g^2$ 
+* Genomic relationship matrix $G$
+
+ 
+## Solution Via Mixed Model Equations
+* All animals have genotypes and observations
+
+$$\left[ 
+  \begin{array}{ll}
+  X^TX  &  X^TZ  \\
+  Z^TX  &  Z^TZ + \lambda * G^{-1}
+  \end{array}
+\right]
+\left[
+  \begin{array}{c}
+  \hat{b} \\
+  \hat{g}
+  \end{array}
+\right]
+=
+\left[
+  \begin{array}{c}
+  X^Ty \\
+  Z^Ty
+  \end{array}
+\right]
+$$
+with $\lambda = \sigma_e^2 / \sigma_g^2$.
+
+
+## Animals Without Observations
+* Young animals do not have observations
+* Partition $\hat{g}$ into 
+    + $\hat{g}_1$ animals with observations and
+    + $\hat{g}_2$ animals without observations
+* Resulting Mixed Model Equations are (assume $\lambda = 1$)
+
+$$\left[ 
+  \begin{array}{lll}
+  X^TX  &  X^TZ             &  0 \\
+  Z^TX  &  Z^TZ + G^{(11)}  &  G^{(12)} \\
+  0     &  G^{(21)}         &  G^{(22)}
+  \end{array}
+\right]
+\left[
+  \begin{array}{c}
+  \hat{b} \\
+  \hat{g}_1  \\
+  \hat{g}_2
+  \end{array}
+\right]
+=
+\left[
+  \begin{array}{c}
+  X^Ty \\
+  Z^Ty \\
+  0
+  \end{array}
+\right]
+$$
+    
+   
+Predicted Genomic Breeding Values
+
+* Last line of Mixed model equations
+
+$$ G^{(21)} \cdot \hat{g}_1 + G^{(22)} \cdot \hat{g}_2 = 0$$
+
+## Solutions
+
+* Solving for $\hat{g}_2$
+
+$$\hat{g}_2 = -  (G^{(22)})^{-1} \cdot G^{(21)} \cdot \hat{g}_1$$
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,47 @@
+---
+title: "Generate Data For Ex 03 Problem 02"
+output: html_notebook
+---
+
+
+## Generate Data
+The following SNP data is supposed to be used to compute the genomic relationship matrix
+
+
+```{r dataflemsnpobs, echo=TRUE}
+### # fix the number of animals
+n_nr_animal <- 20
+### # vector of genotype value coefficients
+vec_geno_value_coeff <- c(-1,0,1)
+### # sample genotypes of unlinked SNP randomly
+set.seed(436)
+### # fix allele frequency of positive allele
+n_prob_snps <- .4
+### # fixed value
+n_nr_snp <- 100
+### # put together the genotypes into a matrix
+mat_geno_snp <- matrix(sample(vec_geno_value_coeff, n_nr_snp*n_nr_animal, prob = c((1-n_prob_snps)^2, 
+                                                                   2*(1-n_prob_snps)*n_prob_snps, 
+                                                                   n_prob_snps^2),  
+                       replace = TRUE),
+                       ncol = n_nr_snp)
+
+### # combine SNP genotypes into a tibble
+tbl_geno_code <- tibble::as.tibble(mat_geno_snp)
+names(tbl_geno_code) <- sapply(1:n_nr_snp, function(x) paste0("SNP", x), USE.NAMES = FALSE)
+```
+
+The tibble is saved to a csv file. Which is then used to read as input.
+
+```{r}
+s_ex03p02_data <- "ex03p02_data.csv"
+readr::write_csv(tbl_geno_code, path = s_ex03p02_data)
+```
+
+Read data again to check
+
+```{r}
+tbl_data_ex03p02 <- readr::read_csv(file = s_ex03p02_data)
+dim(tbl_data_ex03p02)
+```
+
