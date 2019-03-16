@@ -1,0 +1,166 @@
+---
+title: "Data Generation Exercise 4"
+output: html_notebook
+---
+
+
+## Disclaimer
+Outline and documentation of how the data for exercise 4 are generated is given in this notebook.
+
+
+## The Data
+Different types of data are used for exercise 4. These types are
+
+* phenotypic observations
+* pedigree information
+* genomic information
+
+
+## Requirements
+The combined use of genomic information and a pedigree implies that Mendelian laws of inheritance are satisfied. Furthermore, we assume that some of the loci are closely linked to QTLs which is implemented in giving some SNP loci a certain effect. At this point the following questions must be answered: 
+
+1. How many loci do we need to get a more or less normally distributed quantitative trait?
+2. Is it worthwhile to use a tool like XSim for this kind of task?
+
+
+### Answer 1
+```{r distrcheckdata, echo=FALSE}
+n_nr_ani <- 100
+vec_nr_loci <- c(5, 10, 30)
+list_effectq <- list(min = 0, max = 10)
+n_allele_freq <- 0.35
+```
+
+A little experiment with different numbers of loci could help answering the first question. Let us assume we have $`r n_nr_ani`$ animals and we let a quantitative trait be determined by different numbers of loci stored in the vector `vec_nr_loci`. Each of these loci has an effect that is sampled from a uniform distribution between $`r list_effectq$min`$ and $`r list_effectq$max`$. The allele frequency of the positive allele is assumed to be constant at $`r n_allele_freq`$. 
+
+```{r distrcheckdata, echo=TRUE}
+```
+
+With this information, a function `sample_obs()` is created. This function generates an observation for each animal and returns all these values in a vector.
+
+```{r sample_obs_func}
+sample_obs <- function(pn_nr_animal, pn_nr_loci, plist_effect, pn_allel_freq, pn_digits = 0){
+  mat_sample <- matrix(sample(x = c(-1,0,1), 
+                              size = pn_nr_animal * pn_nr_loci, 
+                              replace = TRUE, 
+                              prob = c((1-pn_allel_freq)^2,
+                                        2 * pn_allel_freq*(1-pn_allel_freq),
+                                        pn_allel_freq^2)),
+                       nrow = pn_nr_loci, byrow = TRUE)
+  vec_effect <- runif(pn_nr_loci, min = plist_effect$min, max = plist_effect$max)
+  mat_obs <- crossprod(mat_sample, vec_effect)
+  return(round(mat_obs[,1], digits = pn_digits))
+}
+```
+
+Testing the function can be done with
+
+```{r}
+set.seed(154)
+vec_test_obs <- sample_obs(pn_nr_animal = n_nr_ani, pn_nr_loci = vec_nr_loci[1], plist_effect = list_effectq, pn_allel_freq = n_allele_freq)
+```
+
+Showing the histogram
+
+```{r}
+ggplot2::qplot(vec_test_obs, geom = "histogram", binwidth = 2.5)
+```
+
+For all elements in `vec_nr_loci`
+
+```{r}
+l_test_obs <- sapply(vec_nr_loci, function(x) return(sample_obs(n_nr_ani, x, list_effectq, n_allele_freq)), USE.NAMES = FALSE)
+```
+
+```{r samplehist, fig.show='hold', out.width='33%'}
+ggplot2::qplot(l_test_obs[,1], geom = "histogram", binwidth = 3)
+ggplot2::qplot(l_test_obs[,2], geom = "histogram", binwidth = 3)
+ggplot2::qplot(l_test_obs[,3], geom = "histogram", binwidth = 3)
+```
+
+### Answer 2
+All requirements can be met with such a tool. The problem is that it takes time to re-familiarize with the tool.
+
+
+## Using XSim
+The data that is needed for this exercise can be generated using XSim. XSim comes as a julia package in a docker container. Hence the question is how can we interact from an RStudio project with the XSim package in the docker container. The following options are available
+
+1. Running everything in a docker container. We are starting with rocker/rstudio and we are adding the XSim package. This can be done in a `Dockerfile` or XSim can be installed interactively. The relevant data from the host-system can be made available as usual via an appropriate directory mount. 
+
+2. We are using the docker image qtlrocks/jwas-docker and we are just generating the genomic data inside the docker container. 
+
+
+## Generate Data Using XSim
+XSim is run in the docker container `qtlrocks/jwas-docker:mini`. The container is started with
+
+```
+docker run -it --rm -p 8888:8888 -v `pwd`:/home/jovyan/work qtlrocks/jwas-docker:mini
+```
+
+This mounts the current directory into the container. The julia code used to produce the data is stored in a ipython notebook called `SimulateDataEx04.ipynb`. The data is fixed with formatted and organized in different files. We are reading the data and are storing them in csv files.
+
+```{r}
+outfilestem <- "data_ex04"
+gen_file <- paste(outfilestem, "gen", sep=".")
+ped_file <- paste(outfilestem, "ped", sep=".")
+phe_file <- paste(outfilestem, "phe", sep=".")
+### # read the file using fixed delimiters
+### # start with the genotypes and re-code from 0,1,2 to -1,0,1
+require(readr)
+tbl_gen <- read_delim(file = gen_file, delim = " ", col_names = FALSE)
+dim(tbl_gen)
+mat_gen <- matrix(as.integer(as.matrix(tbl_gen)), ncol = ncol(tbl_gen))
+mat_gen[,2:ncol(mat_gen)] <- mat_gen[,2:ncol(mat_gen)] - 1L
+tbl_gen_recd <- tibble::as.tibble(mat_gen)
+colnames(tbl_gen_recd) <- c("Animal", sapply(1:(ncol(tbl_gen)-1), function(x) paste0("SNP", x), USE.NAMES = FALSE))
+ofs_gen <- paste0(outfilestem, "_gen", ".csv", collapse = "")
+write_csv(tbl_gen_recd, path = ofs_gen)
+
+### # pedigree
+tbl_ped <- read_delim(file = ped_file, delim = " ", col_names = FALSE)
+### # only use the first three columns
+tbl_ped <- tbl_ped[,1:3]
+colnames(tbl_ped) <- c("Animal", "Sire", "Dam")
+tbl_ped$Animal <- as.integer(tbl_ped$Animal)
+tbl_ped$Sire <- as.integer(tbl_ped$Sire)
+tbl_ped$Dam <- as.integer(tbl_ped$Dam)
+### # replace 0 in sire and dams with NA
+tbl_ped$Sire[tbl_ped$Sire == 0] <- NA
+tbl_ped$Dam[tbl_ped$Dam == 0] <- NA
+ofs_ped <- paste0(outfilestem, "_ped", ".csv", collapse = "")
+write_csv(tbl_ped, path = ofs_ped)
+
+### # phenotypes
+tbl_phe <- read_delim(file = phe_file, delim = " ", col_names = FALSE)
+tbl_phe
+### # use first two columns
+tbl_phe <- tbl_phe[,1:2]
+### # add column names
+colnames(tbl_phe) <- c("Animal", "Observation")
+### # change column format
+tbl_phe$Animal <- as.integer(tbl_phe$Animal)
+tbl_phe$Observation <- as.numeric(tbl_phe$Observation)
+ofs_phe <- paste0(outfilestem, "_phe", ".csv", collapse = "")
+write_csv(tbl_phe, path = ofs_phe)
+```
+
+
+
+## Genomic Information
+Genomic information for founders can be generated from an assumed distribution. Then for offspring of two parents we have the following possibilities for a given locus
+
+```{r}
+tbl_inherit <- tibble::tibble(Parent1 = c("", "-1","0","1"), 
+                              Parent2first = c("-1", "-1", "(-1/0)", "0"),
+                              Parent2second = c("0", "(-1/0)", "(-1/0/0/1)", "(0/1)"),
+                              Parent2third = c("1", "0", "(0/1)", "1"))
+knitr::kable(tbl_inherit)
+```
+
+
+
+## Pedigree Information
+
+
+## Phenotypic Observations
+

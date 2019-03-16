@@ -1,0 +1,172 @@
+---
+title: Applied Statistical Methods - Solution 4
+author: Peter von Rohr
+date: "2019-03-18"
+output:
+  bookdown::pdf_document2:
+    toc: false
+    number_sections: false
+    keep_tex: false
+header-includes:
+ \usepackage{longtable}
+ \usepackage{float}
+---
+
+```{r setup, include=FALSE}
+knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
+```
+
+## Problem 1: Traditional Predicted Breeding Values
+```{r p01setup, echo=FALSE}
+genvar <- 25
+resvar <- 75
+```
+
+Given the following data set with observations and a pedigree for a group of animals.
+
+```{r tpbvreaddata, echo=FALSE, results='hide', message=FALSE}
+s_course_url <- "https://charlotte-ngs.github.io/GELASMSS2019"
+s_phe_path <- file.path(s_course_url, "ex/w05/data_ex04_phe.csv")
+tbl_phe <- readr::read_csv(file = s_phe_path)
+```
+
+```{r tpbvshowdata, echo=FALSE, results='asis'}
+knitr::kable(tbl_phe, booktabs = TRUE, longtable = TRUE, caption = "Phenotypic Observations")
+```
+
+The observations in Table \@ref(tab:tpbvshowdata) can be read from 
+
+`r s_phe_path`. 
+
+The pedigree showing the ancestral relationships is shown below
+
+```{r tpbvreadped, echo=FALSE, results='hide', message=FALSE}
+s_ped_path <- file.path(s_course_url, "ex/w05/data_ex04_ped.csv")
+tbl_ped <- readr::read_csv(file = s_ped_path)
+```
+
+```{r tpbvshowped, echo=FALSE, results='asis'}
+knitr::kable(tbl_ped, booktabs = TRUE, longtable = TRUE, caption = "Pedigree")
+```
+
+The pedigree can be read from 
+
+`r s_ped_path`
+
+
+### Your Task
+Predict breeding values for the animals given in the dataset and in the pedigree without using any genotypic information using a BLUP animal model. Set up the mixed model equations for the BLUP animal model and use the package `pedigreemm` to get the inverse of the relationship matrix.
+
+
+### Hints
+* Use a mixed linear model with a constant intercept as a fixed effect and the breeding values of all animals as random effects. Hence the following model can be assumed
+
+$$y = Xb + Za + e$$
+where $y$ is the vector of all observations, $b$ has just one element and $X$ has one column with all ones. The vector $a$ contains the breeding values for all animals. The matrix $Z$ links the breeding values to the phenotypic observations. The random errors are represented by the vector $e$.
+
+* Then residual variance $\sigma_e^2$ can be assumed to be $\sigma_e^2 = `r resvar`$. The genetic additive variance $\sigma_a^2$ is $\sigma_a^2 = `r genvar`$
+
+ 
+### Solution
+The phenotypic data is read using the following statements
+
+```{r tpbvreaddata, echo=TRUE, message=FALSE}
+```
+
+Similarily the pedigree is read using
+
+```{r tpbvreadped, echo=TRUE, message=FALSE}
+```
+
+The mixed model equations for the traditional BLUP animal model has the following structure
+
+$$
+\left[ 
+  \begin{array}{ll}
+  X^TX  &  X^TZ \\
+  Z^TX  &  Z^TZ + \lambda * A^{-1} 
+  \end{array}
+\right]
+\left[ 
+  \begin{array}{c}
+  \hat{b} \\
+  \hat{a}
+  \end{array}
+\right]
+=
+\left[ 
+  \begin{array}{c}
+  X^Ty \\
+  Z^Ty
+  \end{array}
+\right]
+$$
+The matrix $X$ has just one column which contains all ones. Because all animals have an observation, the matrix $Z$ is an identity matrix. The matrix $A$ is the numerator relationship matrix. The variable $\lambda$ is the ratio between $\sigma_e^2$ and $\sigma_a^2$. 
+
+The single components of the mixed model equations have the following structure. 
+
+* $X^TX$ is a single number and corresponds to the number of observations. 
+* $X^TZ$ is a matrix with one row with all ones
+* $Z^TX$ is a matrix with one column with all ones
+* $Z^TZ$ is an identity matrix
+* $\lambda = \sigma_e^2 / \sigma_a^2$
+* $A^{-1}$ is the inverse numerator relationship matrix
+* $X^Ty$ is the sum of all observations
+* $Z^Ty$ is the matrix with one colum with all observations
+
+The above points are now implemented with the following computations
+
+```{r}
+### # number of observations and matrix X
+n_nr_obs <- nrow(tbl_phe)
+matX <- matrix(1, nrow = n_nr_obs, ncol = 1)
+### # number of animals in pedigee and matrix Z
+n_nr_ani <- nrow(tbl_ped)
+matZ <- diag(nrow = n_nr_ani)
+### # observations
+vecY <- tbl_phe$Observation
+### # numerator relationship matrix
+ped <- pedigreemm::pedigree(sire = tbl_ped$Sire, 
+                            dam = tbl_ped$Dam, 
+                            label = as.character(tbl_ped$Animal))
+matAinv <- as.matrix(pedigreemm::getAInv(ped))
+lambda <- resvar/genvar
+### # left hand side of mme
+matxtx <- crossprod(matX)
+matxtz <- crossprod(matX,matZ)
+matztzlainv <- crossprod(matZ) + lambda * matAinv
+matlhs <- rbind(cbind(matxtx,matxtz),cbind(t(matxtz), matztzlainv))
+matrhs <- rbind(crossprod(matX,vecY), crossprod(matZ,vecY))
+matSol <- solve(matlhs, matrhs)
+```
+
+The matrix `matSol` contains the solutions of the mixed model equations. It has just one column. The first element is the estimate of the intercept. All other elements are the estimated breeding values of all animals. We can now show the soltutions in tabular form.
+
+```{r tabestfixeffect, echo=FALSE, results='asis'}
+tbl_estfixeff <- tibble::tibble(Effect = "General Mean (b)",
+                                Estimate = matSol[1,1])
+knitr::kable(tbl_estfixeff, booktabs = TRUE, longtable = TRUE, caption = "Estimate of fixed Effect (b)")
+```
+
+The results for the predicted breeding values are
+
+```{r tabprodbv, echo=FALSE, results='asis'}
+tbl_pred_bv <- tibble::tibble(Animal = 1:n_nr_ani,
+                              `Predicted Breeding Value` = matSol[2:nrow(matSol),1])
+knitr::kable(tbl_pred_bv, booktabs = TRUE, longtable = TRUE, caption = "Predicted Breeding Values for all Animals")
+```
+
+
+
+
+## Problem 2: 
+
+
+### Solution
+
+
+## Problem 3: 
+
+
+### Solution
+
