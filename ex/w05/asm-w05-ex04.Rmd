@@ -1,0 +1,100 @@
+---
+title: Applied Statistical Methods - Exercise 4
+author: Peter von Rohr
+date: "2019-03-18"
+output:
+  bookdown::pdf_document2:
+    toc: false
+    number_sections: false
+    keep_tex: false
+header-includes:
+ \usepackage{longtable}
+ \usepackage{float}
+---
+
+```{r setup, include=FALSE}
+knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
+```
+
+## Problem 1: Traditional Predicted Breeding Values
+```{r p01setup, echo=FALSE}
+genvar <- 25
+resvar <- 75
+```
+
+Given the following data set with observations and a pedigree for a group of animals.
+
+```{r tpbvreaddata, echo=FALSE, results='hide', message=FALSE}
+s_course_url <- "https://charlotte-ngs.github.io/GELASMSS2019"
+s_phe_path <- file.path(s_course_url, "ex/w05/data_ex04_phe.csv")
+tbl_phe <- readr::read_csv(file = s_phe_path)
+```
+
+```{r tpbvshowdata, echo=FALSE, results='asis'}
+knitr::kable(tbl_phe, booktabs = TRUE, longtable = TRUE, caption = "Phenotypic Observations")
+```
+
+The observations in Table \@ref(tab:tpbvshowdata) can be read from 
+
+`r s_phe_path`. 
+
+The pedigree showing the ancestral relationships is shown below
+
+```{r tpbvreadped, echo=FALSE, results='hide', message=FALSE}
+s_ped_path <- file.path(s_course_url, "ex/w05/data_ex04_ped.csv")
+tbl_ped <- readr::read_csv(file = s_ped_path)
+```
+
+```{r tpbvshowped, echo=FALSE, results='asis'}
+knitr::kable(tbl_ped, booktabs = TRUE, longtable = TRUE, caption = "Pedigree")
+```
+
+The pedigree can be read from 
+
+`r s_ped_path`
+
+
+### Your Task
+Predict breeding values for the animals given in the dataset and in the pedigree without using any genotypic information using a BLUP animal model. Set up the mixed model equations for the BLUP animal model and use the package `pedigreemm` to get the inverse of the relationship matrix.
+
+
+### Hints
+* Use a mixed linear model with a constant intercept as a fixed effect and the breeding values of all animals as random effects. Hence the following model can be assumed
+
+$$y = Xb + Za + e$$
+where $y$ is the vector of all observations, $b$ has just one element and $X$ has one column with all ones. The vector $a$ contains the breeding values for all animals. The matrix $Z$ links the breeding values to the phenotypic observations. The random errors are represented by the vector $e$.
+
+* Then residual variance $\sigma_e^2$ can be assumed to be $\sigma_e^2 = `r resvar`$. The genetic additive variance $\sigma_a^2$ is $\sigma_a^2 = `r genvar`$
+
+ 
+
+
+## Problem 2: Prediction of Genomic Breeding Values Using GBLUP
+```{r ex04p02genread, echo=FALSE, results='hide', message=FALSE}
+s_gen_path <- file.path(s_course_url, "ex/w05/data_ex04_gen.csv")
+tbl_gen <- readr::read_csv(file = s_gen_path)
+```
+
+Use the same phenotypic observations as in Problem 1. In addition to that we use genomic information available in 
+
+`r s_gen_path`
+
+
+### Your Tasks
+Predict the genomic breeding values using the GBLUP approach.
+
+
+### Hints
+* Use an analogous mixed linear effect model as was used in Problem 1. Instead of the vector of breeding values use the vector $g$ of genomic breeding values as random effects of the model. Hence the following model can be assumed
+
+$$y = Xb + Zg + e$$
+where $y$ is the vector of all observations, $b$ has just one element and $X$ has one column with all ones. The vector $g$ contains the genomic breeding values for all animals. The matrix $Z$ links the breeding values to the phenotypic observations. The random errors are represented by the vector $e$.
+
+* Use the genomic relationship matrix in the mixed model equations
+* The ratio $\lambda$ of between the variances is assumed to be the same as in Problem 1.
+* If the inverse of the genomic relationship matrix cannot be computed, adjust the genomic relationship matrix with the numerator relationship matrix $A$ according to the following formula
+
+$$G^{*} = 0.95 * G + 0.05 * A$$
+where $G$ is the matrix determined based on th given data and the nummerator relationship matrix $A$ can be computed with the function `pedigreemm::getA()` from package `pedigreemm`. 
+
+
