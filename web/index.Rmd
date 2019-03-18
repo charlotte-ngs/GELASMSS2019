@@ -122,7 +122,7 @@ vec_topics_notes[which(Datum == format(as.Date("2019/02/18"), "%d.%m"))] <- past
 vec_topics_notes[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- paste0("[Fixed Linear Effects Model (Part 1)](", s_cn_asm_url, "asm-flem1.pdf", "), [Part2](", s_cn_asm_url, "asm-flem2.pdf)") 
 vec_topics_notes[which(Datum == format(as.Date("2019/03/04"), "%d.%m"))] <- paste0("[GBLUP](", s_cn_asm_url, "asm-gblup.pdf)") 
 vec_topics_notes[which(Datum == format(as.Date("2019/03/11"), "%d.%m"))] <- paste0("[LASSO](", s_cn_asm_url, "asm-lasso.pdf)") 
-vec_topics_notes[which(Datum == format(as.Date("2018/03/18"), "%d.%m"))] <- paste0("[](", s_cn_asm_url, "", ")") 
+vec_topics_notes[which(Datum == format(as.Date("2018/03/18"), "%d.%m"))] <- paste0("[Bayes](", s_cn_asm_url, "asm-bayes.pdf)") 
 vec_topics_notes[which(Datum == format(as.Date("2018/03/25"), "%d.%m"))] <- paste0("[](", s_cn_asm_url, "", ")") 
 
 vec_topics_notes[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")") 

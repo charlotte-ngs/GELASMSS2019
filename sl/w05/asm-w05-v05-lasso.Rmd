@@ -1,0 +1,162 @@
+---
+title: "Least Absolute Shrinkage And Selection Operator (LASSO)"
+author: "Peter von Rohr"
+date: "18.03.2019"
+output: beamer_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
+```
+
+
+## Fixed Linear Effect Model
+
+* Back to
+
+$$
+y_i = \beta_0 + \sum_{j=1}^p \beta_jx_{ij} + \epsilon_i
+$$
+
+* All $\beta_0, \beta_1, \ldots, \beta_p$ into vector $\beta$ of length $(p+1)$
+
+$$y = X\beta + \epsilon$$
+
+* Only random componente: $\epsilon$ with
+
+$$E(\epsilon) = 0 \text{ and } var(\epsilon) = I * \sigma^2$$
+
+
+## Parameter Estimation
+* Least Squares
+
+$$\hat{\beta}_{LS} = argmin_{\beta}||y - X\beta||^2$$
+
+* Normal Equations
+
+$$(X^TX) \hat{\beta}_{LS} = X^Ty$$
+
+* Existence of $(X^TX)^{-1}$?
+
+1. Yes: $\hat{\beta}_{LS} = (X^TX)^{-1}X^Ty$
+2. No: $b_0 = (X^TX)^-X^Ty$
+
+with $(X^TX)^-$ being a generalized inverse of $(X^TX)$
+
+
+## Generalized Inverse
+
+* System of equations
+
+$$Ax = y$$
+
+with coefficient matrix $A$, vector of unknowns $x$ and vector of right hand side $y$
+
+* If $A^{-1}$ exists, then unknowns $x = A^{-1}y$
+
+* If $A^{-1}$ does not exist, $x = A^{-}y$ is one solution with $A^{-}$ being a generalized inverse
+
+* Generalized inverse $A^{-}$ defined by
+
+$$AA^{-}A = A$$
+
+
+## Solutions
+
+* Why is $A^{-}$ a solution
+    + if $AA^{-}A = A$, then $AA^{-}Ax = Ax$
+    + when $Ax = y$, this gives $A(A^{-}y) = y$
+    + hence $A^{-}y = x$ is a solution
+    
+* If $A^{-}$ is a generalized inverse of $A$ then $Ax = y$ has solutions
+
+$$\tilde{x} = A^{-}y + (A^{-}A - I)z$$
+
+for aribitrary $z$
+    
+* Proof
+$$A\tilde{x} = AA^{-}y + A(A^{-}A - I)z = AA^{-}y + (AA^{-}A - AI)z = AA^{-}y = y$$
+
+because $AA^{-}A = A$.
+
+
+## Results
+
+* $b_0 = (X^TX)^-X^Ty$ is a solution to $(X^TX)b_0 = X^Ty$
+* But $b_0$ is not unique, because for any $ (X^TX)^-$
+
+$$\tilde{b}_0 = (X^TX)^-X^Ty + ((X^TX)^-(X^TX) - I)z$$
+is also a solution
+
+* $b_0$ cannot be an estimate for $\beta$
+
+
+## Estimable Functions
+
+Idea: construct linear functions ($q^T\beta$) of the parameters $\beta$ such that 
+
+* estimator can be found from $b_0$
+* independent of choice of $b_0$
+
+Such linear functions $q^T\beta$ must satisfy
+
+$$q^T\beta = t^TE(y)$$
+for any vector $t$, then $q^T\beta$ is __estimable__
+
+* Determine $q$ as
+
+$$q^T = t^TX$$
+
+
+## Invariance to $b_0$
+
+When $q^T\beta$ is estimable, then 
+
+* $q^Tb_0$ is always the same, independent of choice of $b_0$
+* Why?
+* With $q^T = t^TX$
+
+$$q^Tb_0 = t^TXb_0 = t^TX(X^TX)^-X^Ty$$
+
+is independent of choice of $b_0$ because $X(X^TX)^-X^T$ is independent of choice of $(X^TX)^-$
+
+
+## Summary
+
+Use of generalized inverse (X^TX)^- of normal equations  yields 
+
+* solutions $b_0$
+* estimatble functions $q^Tb_0$ which estimate $q^T\beta$
+* independent of $b_0$
+
+But for genomic data
+
+* no possibility to determine important SNP loci
+* need an alternative to least squares
+
+
+## Alternatives To Least Squares
+
+Desirable properties
+
+1. __Subset Selection__: determine important predictors
+2. __Shrinkage__: limit parameter estimates to certain area
+3. __Dimension Reduction__: Reduce $p$ predictors to $m$ linear combinations where $m<p$
+
+
+## LASSO
+
+
+
+
+
+
+
+
+
+
+
+
+
+

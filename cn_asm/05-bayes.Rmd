@@ -1,0 +1,220 @@
+# Bayesian Approaches {#asm-bayes}
+```{r mrmt-bayes-reset, include=FALSE}
+mrmt$set_this_rmd_file(ps_this_rmd_file = ifelse(rstudioapi::isAvailable(), 
+                                                 rstudioapi::getSourceEditorContext()$path, 
+                                                 rprojroot::thisfile()))
+```
+## Introduction {#asm-bayes-intro}
+In statistics there are two fundamentally different philosophies. The main difference is in their understanding of the term __probability__. 
+
+* __Frequentists__ understand probability as a measure of how often a certain event happens.
+* __Bayesians__ use probability as a tool to quantify uncertainty about a certain event. Uncertainty and its perception can vary between different individuals. This fact has been a big point for criticizing Bayesian approaches. 
+
+All methods that were presented in this course so far are Frequentist concepts. The relevant differences between Bayesians and Frequentists can be found in the following points.
+
+* understanding of probability
+* differentiation between components of a model and the data
+* techniques to estimate parameters. 
+
+The following table gives an overview over the differences.
+
+```{r FreqBayesTable, eval=TRUE, echo=FALSE, results='asis'}
+Topic <- c("Probability", "Model and Data", "Parameter Estimation")
+Frequentists <- c("Ratio between cardinalities of sets",
+                   "Parameter are unknown, data are known",
+                   "ML or REML are used for parameter estimation")
+Bayesians <-  c("Measure of uncertainty",
+                 "Differentiation between knowns and unknowns",
+                 "MCMC techniques to approximate posterior distributions")
+dfTabCaptOut <- tibble::tibble(Topic         = Topic,
+                           Frequentists  = Frequentists,
+                           Bayesians     = Bayesians)
+knitr::kable(dfTabCaptOut, 
+             format = "latex", 
+             align = c("p{3cm}","p{5.5cm}","p{5.5cm}"),
+             longtable = TRUE,
+             caption = "Differences between Frequentists and Bayesians")
+```
+
+
+## Linear Model {#asm-bayes-linearmodel}
+The Bayesian way to estimate parameter is shown with the following simple linear model^[In Bayesian statistics there is no separation into fixed and random effects. Hence, we call this model just linear model.]. Let us assume the following linear model for a single observation $y_i$
+
+\begin{equation}
+y_i = \beta_0 + \beta_1 x_{i1} + \epsilon_i
+(\#eq:BayLinMod)
+\end{equation}
+
+where $\beta_0$ is the intercept and $x_{i1}$ is a predictor variable. The error term is denoted by $\epsilon_i$ with a variance $\sigma^2$.
+
+
+### Knowns and Unknowns {#asm-bayes-knownsunknowns}
+In Bayesian statistics, the separation into knowns and unknowns replaces the differentiation between data and parameter from frequentist statistics. Whenever there are no missing data the separation into knowns and unknowns correspond to the differentiation into data and parameter. For our model \@ref(eq:BayLinMod) the separation into knowns and unknowns is given in the following table.
+
+```{r BayesianUnKnowsTab, eval=TRUE, echo=FALSE, results='asis'}
+Term <- c("$y_i$", "$x_1$", "$\\beta_0$", "$\\beta_1$", "$\\sigma^2$")
+Known <- c("X", "X", "", "", "X")
+Unknown <- c("", "", "X", "X", "")
+knitr::kable(tibble::tibble(Term = Term,
+                        Known = Known,
+                        Unknown = Unknown), 
+             format = "latex", 
+             align = c("c","c","c"),
+             longtable = TRUE, 
+             escape = FALSE,
+             caption = "Separation Into Knowns And Unknowns")
+```
+
+
+### Bayesian Parameter Estimation {#asm-bayes-parameterestimation}
+Bayesians base their estimation of unknowns on the __posterior distribution__ of the unknowns given the knowns. The posterior distribution is computed using __Bayes Theorem__ based on the prior distribution of all unknowns and based on the likelihood. The terms "prior" and "posterior" are to be understood relative to the point in time where the data to be analysed was collected. This concept is shown in Figure \@ref(fig:asmbayespriorposterior). 
+
+```{r asmbayespriorposterior, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg", fig.cap="Distinctions between Prior and Posterior in Bayesian Statistics"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/asmbayespriorposterior.odg")
+knitr::include_graphics(path = "odg/asmbayespriorposterior.png")
+```
+
+For the linear model \@ref(eq:BayLinMod), we define the vector $\beta$ as
+
+$$\beta = \left[\begin{array}{c} \beta_0  \\  \beta_1 \end{array} \right].$$
+
+The observations are collected in the vector $y$. For this simple example, we assume that the variance $\sigma^2$ is known^[As a consequence, $\sigma^2$ is omitted from all subsequent derivations.]. In Bayesian statistics the estimate of the unknown $\beta$ is based on the posterior distribution $f(\beta | y)$. Using Bayes Theorem, the posterior distribution can be written as
+
+\begin{align}
+f(\beta | y) & =       \frac{f(\beta, y)}{f(y)} \notag \\
+             & =       \frac{f(y | \beta)f(\beta)}{f(y)} \notag \\
+                       \propto & f(y | \beta)f(\beta)
+(\#eq:LinModAPostProb)
+\end{align}
+
+In equation \@ref(eq:LinModAPostProb) the posterior distribution $f(\beta|y)$ is expressed as a product of the prior distribution $f(\beta)$ and the likelihood $f(y|\beta)$. The factor $f(y)^{-1}$ corresponds to the normalizing constant and is not of further interest to us. Hence in the final result, the posterior distribution is given as a proportionality relation. 
+
+The posterior distribution $f(\beta | y)$ can in many cases not be expressed explicitly. For a long time this has been a problem restricting the use of Bayesian methods. Two important developments have contributed important solutions to this problem. 
+
+1. In `r mrmt$add("Besa1974")`, it was shown that every posterior distribution can be expressed in terms of their full conditional distribution. For our example of the linear model \@ref(eq:BayLinMod), the full conditional distributions are: (i) the conditional distribution of $\beta_0$ given all other parameters, hence $f(\beta_0 | \beta_1, y)$ and (ii) the conditional distribution of $\beta_1$ given all other parameters which corresponds to $f(\beta_1 | \beta_0, y)$. 
+2. The second important development consists of the development of efficient pseudo-random number generators that are easy to use on computers.
+
+
+## Gibbs Sampler {#asm-bayes-gibbssamper}
+The implementation of the above two mentioned developments has lead to a procedure that is referred to as the __Gibbs Sampler__. Most of the times `r mrmt$add("Geman1984")` is given credit for a first application of the described parameter estimation technique. When the Gibbs Sampling technique is applied to a simple linear model, the following procedure can be derived. In general, a data analysis with the Gibbs Sampler can always be done by going through the following steps.
+
+1. Determine the prior distributions for the unknowns
+2. Determine the likelihood
+3. Determine the full conditional distributions. 
+
+
+### Prior Distributions {#asm-bayes-priordistributions}
+In our example of the simple linear model, the prior distribution corresponds to $f(\beta)$. In most cases when a certain type of dataset is analysed for the first time, there is no prior information about the unknowns available. In such a case an uninformative prior is chosen. That means $f(\beta)$ is chosen as a constant. For our example, we would use an uninformative prior for $\beta$ and hence, we set $f(\beta) = c$ where $c$ is a constant. 
+
+A well established alternative to uninformative priors are prior distributions of unknowns that have been used in many data analyses. As a result such prior distributions can be considered as de-facto standard due to their wide-spread usage. 
+
+
+### Likelihood {#asm-bayes-likelihood}
+Similarly to frequentist statistics, the likelihood is defined as the conditional distribution $f(y|\beta)$ of the data $y$ given the parameter $\beta$. In the case where not data are missing, the Bayesian likelihood is the same. 
+
+
+### Full Conditional Distribution {#asm-bayes-fullconditional}
+With full conditional distributions, we mean that for every unknown, the conditional distribution of that unknown given everything else has to be determined. In our example of the simple linear model, there are two unknowns $\beta_0$ and $\beta_1$. Hence, we have two full conditional distributions. Assuming that the data $y$ follow a normal distribution, the full conditional distribution can be written as shown in the following table. 
+
+\begin{center}
+\begin{tabular}{lll}
+\hline
+Unknown            &  full conditional                    &  resulting distribution \\
+\hline
+$\beta_0$          &  $f(\beta_0 | \beta_1, y)$  &  $\mathcal{N}\left(\hat{\beta}_0, var(\hat{\beta}_0)\right)$ \\
+$\beta_1$          &  $f(\beta_1 | \beta_0, y)$  &  $\mathcal{N}\left(\hat{\beta}_1, var(\hat{\beta}_1)\right)$ \\
+\hline
+\end{tabular}
+\end{center}
+
+
+Based on a series of computations not shown here the full conditional distributions can be converted into the resulting distributions. The symbol $\mathcal{N}$ stands for normal distribution where the first argument is the mean and the second argument is the variance. To compute the mean and the variance that are included in the full conditional distributions, the model \@ref(eq:BayLinMod) has to be re-formulated as follows.
+
+\begin{equation}
+y = 1\beta_0 + x\beta_1 + \epsilon
+(\#eq:fullcondmodel1)
+\end{equation}
+
+The model \@ref(eq:fullcondmodel1) is now written such that we have a new linear model with $\beta_0$ as its only parameter. This means
+
+\begin{equation}
+w_0 = 1\beta_0 + \epsilon
+(\#eq:fullcondmodel2)
+\end{equation}
+
+with $w_0 = y-x\beta_1$. The least squares estimate $\widehat{\beta}_0$ can be written as
+
+\begin{equation}
+\hat{\beta}_0 = (\mathbf{1}^T\mathbf{1})^{-1}\mathbf{1}^T\mathbf{w}_0
+(\#eq:Beta0LsEst)
+\end{equation}
+
+The variance of $\hat{\beta}_0$ is
+
+\begin{equation}
+var(\hat{\beta}_0) = (\mathbf{1}^T\mathbf{1})^{-1}\sigma^2
+(\#eq:VarBeta0LsEst)
+\end{equation}
+
+What was shown for $\beta_0$ can also be done for $\beta_1$. 
+
+\begin{equation}
+\hat{\beta}_1 = (\mathbf{x}^T\mathbf{x})^{-1}\mathbf{x}^T\mathbf{w}_1
+(\#eq:Beta1LsEst)
+\end{equation}
+
+where $\mathbf{w}_1 = \mathbf{y} - \mathbf{1}\beta_0$
+
+\begin{equation}
+var(\hat{\beta}_1) = (\mathbf{x}^T\mathbf{x})^{-1}\sigma^2
+(\#eq:VarBeta1LsEst)
+\end{equation}
+
+
+### Implementation Of The Gibbs Sampler {#asm-bayes-implgibbssampler}
+The Gibbs Sampler is implemented by repeated drawing of random samples from the full conditional distributions. That means, we use starting values for all unknowns. For $\beta_0$ and $\beta_1$ we use $0$ as a starting value. In the second step, we compute the expected value and the variance for the full conditional distributions and we draw a random sample from this distribution. The random sample are then used for the computation of the moments of the full conditional distributions in the next round. This procedure of computing expectations and variance of the full conditional distributions and drawing random samples from these distributions is repeated about 10000 times. All drawn samples for $\beta_0$ and $\beta_1$ are stored. From the drawn sample, we compute the mean and the standard deviation. These are used as representatives of Bayesian parameter estimates and standard deviation of these estimates.
+
+The following R code chunk gives an implementation of the Gibbs Sampler for the unknowns $\beta_0$ and $\beta_1$. For reasons of simplicity $\sigma^2$ was assumed to be constant with a value of $\sigma^2 = 1$. 
+
+```{r RGibbsSampler, eval=FALSE, echo=TRUE}
+# ### starting values for beta0 and beta1
+beta <– c(0, 0)
+# ### set the number of iterations
+niter <– 10000
+# ### initialize the vector of results
+meanBeta <– c(0, 0)
+### # loop over iterations
+for (iter in 1:niter) {
+  # get expected value and variance for 
+  # full conditional of beta_0
+  w <– y - X[, 2] * beta[2]
+  x <– X[, 1]
+  xpxi <– 1/(t(x) %*% x)
+  betaHat <– t(x) %*% w * xpxi
+  # ### draw random value for beta0
+  beta[1] <– rnorm(1, betaHat, sqrt(xpxi))
+  # expected valuea nd variance for beta1
+  w <– y - X[, 1] * beta[1]
+  x <– X[, 2]
+  xpxi <– 1/(t(x) %*% x)
+  betaHat <– t(x) %*% w * xpxi
+  # ### new random number for beta1
+  beta[2] <– rnorm(1, betaHat, sqrt(xpxi))
+  meanBeta <– meanBeta + beta
+}
+# ### Output of results
+cat(sprintf("Achsenabschnitt = %6.3f \n", meanBeta[1]/iter))
+cat(sprintf("Steigung = %6.3f \n", meanBeta[2]/iter))
+```
+
+The application of this procedure to a real data set will be the topic of an exercise.
+
+
+
+
+
+
+
+
+
+ 
