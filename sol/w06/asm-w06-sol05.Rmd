@@ -1,0 +1,300 @@
+---
+title: Applied Statistical Methods - Solution 5
+author: Peter von Rohr
+date: "2019-03-25"
+output:
+  bookdown::pdf_document2:
+    toc: false
+    number_sections: false
+    keep_tex: false
+header-includes:
+ \usepackage{longtable}
+ \usepackage{float}
+---
+
+```{r setup, include=FALSE}
+knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
+```
+
+## Problem 1: Predicted Traditional Breeding Values For Progeny
+```{r ex05prob01setup, echo=FALSE, results='hide'}
+n_id_sire <- 6
+n_id_dam <- 9
+```
+
+According to the results from Exercise 4, animals `r n_id_sire` and `r n_id_dam` are mated to each other. The result of this mating are two male and two female offspring. From the two brothers and the two sisters the better male offspring and the better female offspring should be selected. Figure \@ref(fig:pedigreemating) shows the pedigree of the described matings.
+
+```{r pedigreemating, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg", fig.cap="Pedigree Of Mating Between Parent Animals", fig.pos="H", out.width="100%"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/pedigreemating.odg")
+knitr::include_graphics(path = "odg/pedigreemating.png")
+```
+
+
+### Your Tasks
+* Compute the predicted breeding values for all offspring from mating animals `r n_id_sire` and `r n_id_dam`, assuming that the offspring do not have any observations.
+* Is it possible to find the better male and female offspring based on the predicted
+
+
+### Hints
+* The breeding values of the offspring can either be derived using an argument from quantiative genetics about the relationship of predicted breeding values of parents and progeny or it can be computed by extending the mixed model equation from Problem 1 in Exercise 4. 
+
+
+### Solution
+The argument from quantitative genetics about predicted breeding values of parents and progeny is that for an animal $i$ with parents $s$ and $d$ the predicted breeding value $\hat{a}_i$ is the average of the predicted breeding values $\hat{a}_s$ and $\hat{a}_d$ of parents $s$ and $d$, provided that animal $i$ does not have any own performance records. Because the two brothers and sisters have the same parents $`r n_id_sire`$ and $`r n_id_dam`$, they all have the same predicted breeding values. With this it is clear that the task of finding the better male and female of the brothers and sisters cannot be solved with the traditionally predicted breeding values.
+
+We are going to verify the above described argument by extending the computations of Problem 1 from Exercise 4. The same procedure is used to come up with the predicted breeding values for the extended pedigree. We start by specifying the model components such as the design matrices $X$ and $Z$ and the vector $y$ of phenotypic observations. Together with the numerator relationship matrix, we can set up the mixed model equations.
+
+Because the four offspring $22$, $23$, $24$ and $25$ do not have any phenotypic observations, the vector $y$ and the design matrix $X$ do not changed compared to the solution of Problem 1 in Exercise 4. Because there are four offspring animals added to the pedigree, the vector $a$ of all breeding values and with that the matrices $Z$ and $A$ have to be changed. 
+
+```{r, message=FALSE}
+### # read the phenotypic data again and extract the vector of observations
+s_course_url <- "https://charlotte-ngs.github.io/GELASMSS2019"
+### # this part is only needed for local execution, it can be cut out in the final version
+bOnline <- FALSE
+if (!bOnline) s_course_url <- here::here()
+### # end of local execution stuff
+```
+
+```{r tpbvreaddata, message=FALSE}
+### # define the path to the phenotypic data
+s_phe_path <- file.path(s_course_url, "ex/w05/data_ex04_phe.csv")
+tbl_phe <- readr::read_csv(file = s_phe_path)
+```
+
+```{r, message=FALSE}
+### vector of phenotypic observations
+vec_y <- tbl_phe$Observation
+### # the matrix X
+n_nr_obs <- nrow(tbl_phe)
+mat_X <- matrix(1, nrow = n_nr_obs, ncol = 1)
+```
+
+
+The extended pedigree is read and the inverse of the numerator relationship matrix is constructed
+
+```{r, message=FALSE}
+s_ped_ext_path <- file.path(s_course_url, "ex/w06/data_ex05_ped.csv")
+tbl_ped_ext <- readr::read_csv(file = s_ped_ext_path, col_types = "iii")
+ped_ext <- pedigreemm::pedigree(sire = tbl_ped_ext$Sire, 
+                                dam = tbl_ped_ext$Dam, 
+                                label = as.character(tbl_ped_ext$Animal))
+mat_Ainv_ext <- as.matrix(pedigreemm::getAInv(ped = ped_ext))
+```
+
+The matrix $Z$ for the extended pedigree has four columns more, because there are four animals more in the pedigree. The number of rows stays the same as it was in Problem 1 of Exercise 4. The matrix $Z$ can be written as
+
+```{r}
+n_nr_animal_ext <- nrow(tbl_ped_ext)
+mat_Z_ext <- cbind(diag(nrow = n_nr_obs), 
+                        matrix(0, nrow = n_nr_obs, 
+                               ncol= n_nr_animal_ext - n_nr_obs))
+```
+
+All compoents of the mixed model equations are ready to be setup
+
+```{r}
+genvar <- 25
+resvar <- 75
+lambda <- resvar / genvar
+mat_xtx <- crossprod(mat_X)
+mat_xtz <- crossprod(mat_X, mat_Z_ext)
+mat_ztzlainv <- crossprod(mat_Z_ext) + lambda * mat_Ainv_ext
+mat_M <- rbind(cbind(mat_xtx, mat_xtz), cbind(t(mat_xtz), mat_ztzlainv))
+mat_rhs <- rbind(crossprod(mat_X, vec_y), crossprod(mat_Z_ext, vec_y))
+mat_sol <- solve(mat_M, mat_rhs)
+```
+
+The solutions are shown in the following tables.
+
+
+```{r tabestfixeffect, echo=FALSE, results='asis'}
+tbl_estfixeff <- tibble::tibble(Effect = "General Mean (b)",
+                                Estimate = mat_sol[1,1])
+knitr::kable(tbl_estfixeff, booktabs = TRUE, longtable = TRUE, caption = "Estimate of fixed Effect (b)")
+```
+
+The results for the predicted breeding values are
+
+```{r tabprodbv, echo=FALSE, results='asis'}
+tbl_pred_bv <- tibble::tibble(Animal = 1:n_nr_animal_ext,
+                              `Predicted Breeding Value` = mat_sol[2:nrow(mat_sol),1])
+knitr::kable(tbl_pred_bv, booktabs = TRUE, longtable = TRUE, caption = "Predicted Breeding Values for all Animals")
+```
+
+From the results shown in Table \@ref(tab:tabprodbv), we can see that the brothers and sisters 22, 23, 24 and 25 all have the same predicted breeding value. This predicted breeding value corresponds to the average of the predicted breeding values of the parents `r n_id_sire` and `r n_id_dam`. The predicted breeding values of the parents are 
+
+```{r, results='markup', message=FALSE}
+require(dplyr)
+tbl_pred_bv %>%
+  filter(Animal == n_id_sire) -> tbl_sire_bv
+tbl_pred_bv %>%
+  filter(Animal == n_id_dam) -> tbl_dam_bv
+cat("Predicted breeding value of sire ", n_id_sire, ": ", tbl_sire_bv$`Predicted Breeding Value`, "\n", 
+    "Predicted breeding value of dam  ", n_id_dam,  ": ", tbl_dam_bv$`Predicted Breeding Value`)
+```
+
+The mean of the predicted breeding values of the parents is computed as
+
+```{r}
+mean(c(tbl_sire_bv$`Predicted Breeding Value`, tbl_dam_bv$`Predicted Breeding Value`))
+```
+
+With the fact that all brothers and sisters from parents `r n_id_sire` and `r n_id_dam` without own performance observations have the same predicted breeding value, it becomes clear, that we cannot select between the four animals 22, 23, 24 and 25. With the traditionally predicted breeding values, selection among brothers and sisters is only possible as soon as they get own performance records or as soon as they get records based on their own progeny. This fact increases the generation interval in species such as cattle.
+
+The solution of Problem 2 illustrates how this can be changed by including genomic information on the brothers and sisters which allows for selection between brothers and sisters as soon as the genomic information is available.
+
+
+
+## Problem 2: Genomic Breeding Values For Progeny
+```{r ex05p02genread, echo=FALSE, results='hide', message=FALSE}
+s_gen_path <- file.path(s_course_url, "ex/w06/data_ex05_gen.csv")
+tbl_gen <- readr::read_csv(file = s_gen_path)
+```
+
+The four offsprings of parents `r n_id_sire` and `r n_id_dam` also have genotype data. The complete genomic data for all animals can be read from 
+
+`r s_gen_path`
+
+
+### Your Tasks
+* Predict genomic breeding values as in Problem 2 of Exercise 4 using a GBLUP approach. But this time the four offsprings of parents `r n_id_sire` and `r n_id_dam` are also included in the analysis. 
+* Try to rank the four offpsring according to their genomic breeding value.
+
+
+## Hints
+* Use the same phenotypic information as in Problem 1. 
+* Use the same procedure to make the genomic relationship matrix $G$ invertible as shown in Problem 2 of Exercise 4.
+* Use the same model as in Problem 2 of Exercise 4.
+
+
+### Solution 
+The genomic information is read using the following statements.
+
+```{r ex05p02genread, echo=TRUE, message=FALSE}
+```
+
+The phenotypic observations are read the same way as in Problem 1.
+
+```{r tpbvreaddata, echo=TRUE, message=FALSE}
+```
+
+The mixed model equations for the GBLUP model has the following structure in which the partitioning between genotyped animals with and without observations is reflected in the MME.
+
+$$
+\left[ 
+  \begin{array}{lll}
+  X^TX  &  X^TZ  &  0  \\
+  Z^TX  &  Z^TZ + \lambda * G^{(11)}  &  \lambda * G^{(12)}  \\
+  0     &  \lambda * G^{(21)}         &  \lambda * G^{(22)}
+  \end{array}
+\right]
+\left[ 
+  \begin{array}{c}
+  \hat{b} \\
+  \hat{g}_1 \\
+  \hat{g}_2
+  \end{array}
+\right]
+=
+\left[ 
+  \begin{array}{c}
+  X^Ty \\
+  Z^Ty \\
+  0
+  \end{array}
+\right]
+$$
+
+The genomic relationship matrix $G$ is computed using the function proposed in the solution of Exercise 3. This function is shown here once again.
+
+```{r}
+computeMatGrm <- function(pmatData) {
+  matData <- pmatData
+  # check the coding, if matData is -1, 0, 1 coded, then add 1 to get to 0, 1, 2 coding
+  if (min(matData) < 0) matData <- matData + 1
+  # Allele frequencies, column vector of P and sum of frequency products
+  freq <- apply(matData, 2, mean) / 2
+  P <- 2 * (freq - 0.5)
+  sumpq <- sum(freq*(1-freq))
+  # Changing the coding from (0,1,2) to (-1,0,1) and subtract matrix P
+  Z <- matData - 1 - matrix(P, nrow = nrow(matData), 
+                             ncol = ncol(matData), 
+                             byrow = TRUE)
+  # Z%*%Zt is replaced by tcrossprod(Z)
+  return(tcrossprod(Z)/(2*sumpq))
+}
+```
+
+The first step is to convert the the genomic information read from the file into a matrix where only genotypes are present. The file with the genotypic information contains the animal IDs in the first column. These IDs must be removed before we can compute the genomic relationship matrix. 
+
+```{r}
+### # convert data_frame into matrix and remove animal IDs
+matGeno <- as.matrix(tbl_gen[,2:ncol(tbl_gen)])
+### # compute genotypic relationship matrix
+matGrm <- computeMatGrm(pmatData = matGeno)
+### # correction with A because matGrm is singular
+matA_ext <- as.matrix(pedigreemm::getA(ped = ped_ext))
+matGrmPD <- 0.95 * matGrm + 0.05 * matA_ext
+matGrmInv <- solve(matGrmPD)
+```
+
+In the coefficient matrix, we have to replace $A^{-1}$ by $G^{-1}$. Everything else can be taken from the solution of Problem 1.
+
+```{r}
+matztzlginv <- crossprod(mat_Z_ext) + lambda * matGrmInv
+matlhsgblup <- rbind(cbind(mat_xtx,mat_xtz),cbind(t(mat_xtz), matztzlginv))
+matSolgblup <- solve(matlhsgblup, mat_rhs)
+```
+
+The results are presented the same way as in Problem 1.
+
+```{r tabestfixeffectgblup, echo=FALSE, results='asis'}
+tbl_estfixeff <- tibble::tibble(Effect = "General Mean (b)",
+                                Estimate = matSolgblup[1,1])
+knitr::kable(tbl_estfixeff, booktabs = TRUE, longtable = TRUE, caption = "Estimate of fixed Effect (b)")
+```
+
+The results for the predicted breeding values are
+
+```{r tabpredbvgblup, echo=FALSE, results='asis'}
+tbl_pred_bv <- tibble::tibble(Animal = 1:n_nr_animal_ext,
+             `Predicted Genomic Breeding Value` = matSolgblup[2:nrow(matSolgblup),1])
+knitr::kable(tbl_pred_bv, booktabs = TRUE, longtable = TRUE, 
+             caption = "Predicted Genomic Breeding Values for all Animals")
+```
+
+The predicted genomic breeding values for the four offspring are:
+
+```{r}
+tbl_pred_bv_prog <- tbl_pred_bv %>% filter(Animal > 21)
+knitr::kable(tbl_pred_bv_prog, booktabs = TRUE, longtable = TRUE, 
+             caption = "Predicted Genomic Breeding Values for four Offspring")
+```
+
+
+From the last line of the mixed model equations shows how the genomic breeding values $\hat{g}_2$ for genotyped animals without observations can be predicted. 
+
+$$\hat{g}_2 =  - (G^{(22)})^{-1} \cdot G^{(21)} \cdot \hat{g}_1$$
+
+For our example this means
+
+```{r}
+(mat_comp_gbv <- -solve(matGrmInv[22:25,22:25]) %*% matGrmInv[22:25,1:21] %*% matSolgblup[2:22,1])
+```
+
+The ranking of the four offspring corresponds to
+
+```{r}
+order(mat_comp_gbv, decreasing = TRUE)
+```
+
+
+
+
+
+
+
+
+
+
+

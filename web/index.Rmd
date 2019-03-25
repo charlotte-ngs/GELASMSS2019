@@ -90,9 +90,9 @@ vec_topics_schedule[which(Datum == format(as.Date("2019/03/04"), "%d.%m"))] <- "
 vec_topics_schedule[which(Datum == format(as.Date("2019/03/11"), "%d.%m"))] <- "GBLUP - Breeding Value Models"
 vec_topics_schedule[which(Datum == format(as.Date("2019/03/18"), "%d.%m"))] <- "Lasso"
 vec_topics_schedule[which(Datum == format(as.Date("2019/03/25"), "%d.%m"))] <- "Bayesian Approaches"
-
+### # ========================================================= ###
 vec_topics_schedule[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- "Introduction"
-vec_topics_schedule[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- "Aspects of Modern Breeding Programs"
+vec_topics_schedule[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- "Suisag and The Swiss Pig Breeding Program - Patrick Stratz (Suisag)"
 vec_topics_schedule[which(Datum == format(as.Date("2019/04/15"), "%d.%m"))] <- "Model Selection"
 vec_topics_schedule[which(Datum == format(as.Date("2019/04/29"), "%d.%m"))] <- "Genetic Groups"
 vec_topics_schedule[which(Datum == format(as.Date("2019/05/06"), "%d.%m"))] <- "Longitudinal Data"
@@ -148,7 +148,7 @@ vec_topics_slides[which(Datum == format(as.Date("2019/02/18"), "%d.%m"))] <- pas
 vec_topics_slides[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- paste0("[Fixed Linear Effects Model](", s_sl_url, "w02/asm-w02-v02-flem.pdf", ")") 
 vec_topics_slides[which(Datum == format(as.Date("2019/03/04"), "%d.%m"))] <- paste0("[GBLUP](", s_sl_url, "w03/asm-w03-v03-gblup.pdf)") 
 vec_topics_slides[which(Datum == format(as.Date("2019/03/11"), "%d.%m"))] <- paste0("[GRM](", s_sl_url, "w04/asm-w04-v04-grm.pdf), [GBLUP II](", s_sl_url, "w04/asm-w04-v04-gblup.pdf)") 
-vec_topics_slides[which(Datum == format(as.Date("2018/03/18"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")") 
+vec_topics_slides[which(Datum == format(as.Date("2018/03/18"), "%d.%m"))] <- paste0("[LASSO](", s_sl_url, "w05/asm-w05-v05-lasso.pdf)") 
 vec_topics_slides[which(Datum == format(as.Date("2018/03/25"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")") 
 
 vec_topics_slides[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")")

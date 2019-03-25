@@ -147,6 +147,38 @@ Desirable properties
 
 ## LASSO
 
+* ... stands for Least Absolute Shrinkage and Selection Operator
+* ... combines subset selection (1) and shrinkage (2)
+* shrinkage is achieved by introduction of penality term
+* subset selection is due to the form of penalty term
+
+
+## Shrinkage
+
+* penalty term added to least squares criterion
+
+$$\hat{\beta}_{LASSO}  =  argmin_{\beta} \left\{\sum_{i=1}^n\left(y_i - \beta_0 - \sum_{j=1}^p \beta_j x_{ij} \right)^2 + \lambda\sum_{j=1}^p|\beta_j| \right\}$$
+
+* large values of $|\beta_j|$ are penalized compared to small $|\beta_j|$
+
+
+## Subset Selection
+
+```{r lassosubsetselection, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/lassosubsetselection.odg")
+knitr::include_graphics(path = "odg/lassosubsetselection.png")
+```
+
+
+## Find $\lambda$
+
+* $\lambda$ is an additional parameter to be estimated from data
+* use cross validation
+    + split data randomly into training set ($80-90\%$) and test set ($10-20\%$)
+    + assume a certain $\lambda$ value and do parameter estimation with training data
+    + try to predict test data with estimated parameters
+    + repeat this many times
+    + take that $\lambda$ with the best predictive performance
 
 
 
@@ -156,7 +188,4 @@ Desirable properties
 
 
 
-
-
-
-
+ 

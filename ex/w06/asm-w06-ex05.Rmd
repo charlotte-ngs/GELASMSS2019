@@ -1,0 +1,67 @@
+---
+title: Applied Statistical Methods - Exercise 5
+author: Peter von Rohr
+date: "2019-03-25"
+output:
+  bookdown::pdf_document2:
+    toc: false
+    number_sections: false
+    keep_tex: false
+header-includes:
+ \usepackage{longtable}
+ \usepackage{float}
+---
+
+```{r setup, include=FALSE}
+knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
+```
+
+## Problem 1: Predicted Traditional Breeding Values For Progeny
+```{r ex05prob01setup, echo=FALSE, results='hide'}
+n_id_sire <- 6
+n_id_dam <- 9
+```
+
+According to the results from Exercise 4, animals `r n_id_sire` and `r n_id_dam` are mated to each other. The result of this mating are two male and two female offspring. From the two brothers and the two sisters the better male offspring and the better female offspring should be selected. Figure \@ref(fig:pedigreemating) shows the pedigree of the described matings.
+
+```{r pedigreemating, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg", fig.cap="Pedigree Of Mating Between Parent Animals", fig.pos="H", out.width="100%"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/pedigreemating.odg")
+knitr::include_graphics(path = "odg/pedigreemating.png")
+```
+
+
+### Your Tasks
+* Compute the predicted breeding values for all offspring from mating animals `r n_id_sire` and `r n_id_dam`, assuming that the offspring do not have any observations.
+* Is it possible to find the better male and female offspring based on the predicted
+
+
+### Hints
+* The breeding values of the offspring can either be derived using an argument from quantiative genetics about the relationship of predicted breeding values of parents and progeny or it can be computed by extending the mixed model equation from Problem 1 in Exercise 4. 
+
+
+
+
+
+## Problem 2: Genomic Breeding Values For Progeny
+```{r ex05p02genread, echo=FALSE, results='hide', message=FALSE}
+s_course_url <- "https://charlotte-ngs.github.io/GELASMSS2019"
+s_gen_path <- file.path(s_course_url, "ex/w06/data_ex05_gen.csv")
+tbl_gen <- readr::read_csv(file = s_gen_path)
+```
+
+The four offsprings of parents `r n_id_sire` and `r n_id_dam` also have genotype data. The complete genomic data for all animals can be read from 
+
+`r s_gen_path`
+
+
+### Your Tasks
+* Predict genomic breeding values as in Problem 2 of Exercise 4 using a GBLUP approach. But this time the four offsprings of parents `r n_id_sire` and `r n_id_dam` are also included in the analysis. 
+* Try to rank the four offpsring according to their genomic breeding value.
+
+
+## Hints
+* Use the same phenotypic information as in Problem 1. 
+* Use the same procedure to make the genomic relationship matrix $G$ invertible as shown in Problem 2 of Exercise 4.
+* Use the same model as in Problem 2 of Exercise 4.
+
+

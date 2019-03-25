@@ -1,0 +1,126 @@
+---
+title: "Phasing Founder Genotypes"
+output: html_notebook
+---
+
+# Disclaimer
+The term `phasing` in the title is misleading. Because we are only looking at founder animals with unknown parents, there is no real phasing information that can be applied. What is really done in this notebook is that we take genotype information and we re-foramt it to haplotypes. Whenever there is ambiguity about the parental origin, we might decide at random about which allele is assigned to which parental origin.
+
+
+# Reading The Data
+The following chunk reads the already published data.
+
+```{r ex04p02genread, echo=FALSE, results='hide', message=FALSE}
+s_course_url <- "https://charlotte-ngs.github.io/GELASMSS2019"
+s_gen_path <- file.path(s_course_url, "ex/w05/data_ex04_gen.csv")
+tbl_gen <- readr::read_csv(file = s_gen_path)
+tbl_gen
+```
+
+From the simulation input we know that there are 
+
+```{r}
+n_nr_founder <- 5
+```
+
+founder animals. The genotypes of these animals are on the first `r n_nr_founder` rows of the genotype data. The genotypes are encoded such that when there is a 
+
+* $-1$ the animal is homozygous and both alleles have a negative impact, 
+* $0$ the animal is heterozygous
+* $1$ the animal is homozygous with both alleles having a positive impact.
+
+
+
+# Reformatting The Genotype Data
+The first step is to select the genotypes of the founders
+
+```{r, message=FALSE}
+require(tidyverse)
+tbl_gen_founder <- tbl_gen %>% filter(Animal <= n_nr_founder)
+tbl_gen_founder
+```
+
+
+## Joining
+The map that relates genotypes to haplotypes is shown in the following tibble. 
+
+```{r}
+tbl_phase <- tibble::tibble(Genotype = c(-1, 0, 1), Maternal = c(0 , 1, 1), Paternal = c(0, 0, 1))
+tbl_phase
+```
+
+Experimenting with some `joins` leads to
+
+```{r}
+tbl_gen_founder %>% inner_join(tbl_phase, by = c("SNP1" = "Genotype"))  %>%  select(Animal, Maternal, Paternal)
+```
+
+
+## Transposing
+The founder genotype tibble is transposed using 
+
+```{r}
+n_nr_snp <- ncol(tbl_gen_founder) - 1
+tbl_gen_founder_t <- as.tibble(t(tbl_gen_founder[,2:ncol(tbl_gen_founder)]))
+tbl_gen_founder_t
+```
+
+Use mutate to come up with the mapping
+
+```{r}
+set.seed(4455)
+tbl_gen_founder_t %>% 
+  mutate(m1 = case_when(V1 == 1 ~ 1, V1 == 0 ~ round(runif(1), digits = 0), V1 == -1 ~ 0),
+         p1 = case_when(V1 == 1 ~ 1, V1 == 0 ~ 1 - m1, V1 == -1 ~ 0),
+         m2 = case_when(V2 == 1 ~ 1, V2 == 0 ~ round(runif(1), digits = 0), V2 == -1 ~ 0),
+         p2 = case_when(V2 == 1 ~ 1, V2 == 0 ~ 1 - m2, V2 == -1 ~ 0),
+         m3 = case_when(V3 == 1 ~ 1, V3 == 0 ~ round(runif(1), digits = 0), V3 == -1 ~ 0),
+         p3 = case_when(V3 == 1 ~ 1, V3 == 0 ~ 1 - m3, V3 == -1 ~ 0),
+         m4 = case_when(V4 == 1 ~ 1, V4 == 0 ~ round(runif(1), digits = 0), V4 == -1 ~ 0),
+         p4 = case_when(V4 == 1 ~ 1, V4 == 0 ~ 1 - m4, V4 == -1 ~ 0),
+         m5 = case_when(V5 == 1 ~ 1, V5 == 0 ~ round(runif(1), digits = 0), V5 == -1 ~ 0),
+         p5 = case_when(V5 == 1 ~ 1, V5 == 0 ~ 1 - m5, V5 == -1 ~ 0)) %>% 
+  select(m1, p1, m2, p2, m3, p3, m4, p4, m5, p5) -> tbl_hap_founder_t
+tbl_hap_founder_t
+```
+
+
+## Re-transpose back
+
+```{r}
+tbl_hap_founder <- as.tibble(t(tbl_hap_founder_t))
+tbl_hap_col <- tibble(Haplotype = colnames(tbl_hap_founder_t))
+bind_cols(tbl_hap_col, tbl_hap_founder)
+```
+
+
+## Writing the output
+The haplotype information must be written in space delimited columns. The Haplotype names must be separated with a tab. This will be done later.
+
+```{r}
+s_hap_tmp_file <- "founder_hap.tmp"
+write_delim(tbl_hap_founder, path = s_hap_tmp_file, col_names = FALSE)
+```
+
+Adding the haplotype names separated by a tab can be done as follows
+
+```{r}
+### # generate result file name from tmp file
+s_result_file <- sub(pattern = "tmp$", replacement = "txt", s_hap_tmp_file)
+### # if result file exists, delete it, because, we are going to append to it
+if (file.exists(s_result_file)) file.remove(s_result_file)
+### # add the haplotype names at the beginning of each line
+con_hap <- file(description = s_hap_tmp_file, open = "r")
+### # read haplotypes into a vector
+vec_hap <- readLines(con = con_hap)
+close(con_hap)
+### # length of read haplotype vector and haplotype names must have the same length
+if(length(tbl_hap_col$Haplotype) != length(vec_hap)) 
+  stop("[ERROR] Haplotype names and haplotypes not the same length")
+### # add haplotype names
+vec_hap_aug <- sapply(seq_along(vec_hap), 
+                      function(x) paste(tbl_hap_col$Haplotype[x], vec_hap[x], sep="\t"), 
+                      USE.NAMES = FALSE)
+writeLines(vec_hap_aug, s_result_file, sep ="\n")
+```
+
