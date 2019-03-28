@@ -1,0 +1,33 @@
+# Appendix {-}
+```{r mrmt-appendix-reset, include=FALSE}
+mrmt$set_this_rmd_file(ps_this_rmd_file = ifelse(rstudioapi::isAvailable(), 
+                                                 rstudioapi::getSourceEditorContext()$path, 
+                                                 rprojroot::thisfile()))
+```
+## Derivation of BLUP {-}
+The material in this section is not required but it is additional material for those who are interested in knowing more of the background and of the sources that have led to the methods presented earlier in these course notes.
+
+In chapter \@ref(asm-gblup) we have assumed the solution for the mixed linear effects model using BLUP as a given fact without deriving them. So far we were given the recipe to use mixed model equations to produce estimates of fixed effects and predictions of random effects. 
+
+There are many derivations and explanations about BLUP. But most of them including the original work by Henderson are not easy to understand. I found the derivation given by `r mrmt$add("Schaeffer2019")` to be in the same spirit as the derivation that we have used for the fixed linear effects model. In the chapter about prediction theory (`http://animalbiosciences.uoguelph.ca/~lrs/ABModels/NOTES/predict.pdf`) in the `Notes` section of `r mrmt$add("Schaeffer2019")` the BLUP solutions and the mixed model equations are derived in an understandable way. 
+
+At this point, we are going to replicate the complete derivation. We rather try to provide some additional explanations which might help in understanding the given derivation. Sections 1 and 2 of the chapter on prediction theory given an introduction and specify the mixed linear effects model. The introduction starts with a definition of the term `prediction`. It has to be noted here that the distinction between `estimation` for fixed effects and `prediction` for random effects is much sharper and much stricter in the English language than it is e.g. in German. The mixed linear effects model is called `General Linear Mixed Model` in the cited reference. But those terms mean the same model which is given by the model equation and by the specified expectations and variance-covariance matrices.
+
+In section 3 some general facts about different predictors are given. These facts are used as an explanation of why the given predictand used in section 4 where BLUP is derived. The term `predictand` is defined as the function of the unknown parameters. The `predictor` is the linear function of the data that is used to predict the predictand. The reason why the predictand is a linear function of the unknown parameters is similar to what was described about estimability in chapter \@ref(asm-lasso) about estimability of linear functions of parameters. The estimation and prediction problems often lead to over-determined systems of linear equations where the unknowns can be expressed as linear combinations of the data. The linear factors with which the data vector is multiplied usually involves some generalized inverses of a matrix. Since these generalized inverses are not unique and because many solutions do exist for the over-determined systems, only predictands are useful which are invariant that means which do not depend on the choice of a specific solution to the system of equations that arise in the prediction problem. Prediction and Estimation Theory has shown that there exist linear functions which are invariant to the choice of the equation solutions. Such functions are called estimable functions and in the context of mixed linear effects models they are written as 
+
+$$K^Tb + M^Tu$$
+
+The above shown linear function of the unknown parameter which is to be predicted by a linear function $L^Ty$ of the data $y$ together with the properties of 
+
+* unbiasedness and 
+* minimum error variance
+
+lead to the BLUP solutions for the estimates $\hat{b}$ for the fixed effects and the predictions $\hat{u}$ for the random effects. These correspond to 
+
+$$\hat{b} = (X^TV^{-1}X)^- X^TV^{-1}y$$
+
+and
+
+$$\hat{u} = GZ^TV^{-1}(y - X\hat{b})$$
+
+In sections 5 and 6 the variance of the predictors and the variance of the prediction error are shown. Section 7 then shows how the mixed model equations produce the same results as found in section 4. 

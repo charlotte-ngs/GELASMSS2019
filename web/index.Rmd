@@ -123,7 +123,7 @@ vec_topics_notes[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- past
 vec_topics_notes[which(Datum == format(as.Date("2019/03/04"), "%d.%m"))] <- paste0("[GBLUP](", s_cn_asm_url, "asm-gblup.pdf)") 
 vec_topics_notes[which(Datum == format(as.Date("2019/03/11"), "%d.%m"))] <- paste0("[LASSO](", s_cn_asm_url, "asm-lasso.pdf)") 
 vec_topics_notes[which(Datum == format(as.Date("2018/03/18"), "%d.%m"))] <- paste0("[Bayes](", s_cn_asm_url, "asm-bayes.pdf)") 
-vec_topics_notes[which(Datum == format(as.Date("2018/03/25"), "%d.%m"))] <- paste0("[](", s_cn_asm_url, "", ")") 
+vec_topics_notes[which(Datum == format(as.Date("2018/03/25"), "%d.%m"))] <- paste0("[Appendix](", s_cn_asm_url, "asm-appendix.pdf)") 
 
 vec_topics_notes[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")") 
 vec_topics_notes[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")") 
@@ -149,7 +149,7 @@ vec_topics_slides[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- pas
 vec_topics_slides[which(Datum == format(as.Date("2019/03/04"), "%d.%m"))] <- paste0("[GBLUP](", s_sl_url, "w03/asm-w03-v03-gblup.pdf)") 
 vec_topics_slides[which(Datum == format(as.Date("2019/03/11"), "%d.%m"))] <- paste0("[GRM](", s_sl_url, "w04/asm-w04-v04-grm.pdf), [GBLUP II](", s_sl_url, "w04/asm-w04-v04-gblup.pdf)") 
 vec_topics_slides[which(Datum == format(as.Date("2018/03/18"), "%d.%m"))] <- paste0("[LASSO](", s_sl_url, "w05/asm-w05-v05-lasso.pdf)") 
-vec_topics_slides[which(Datum == format(as.Date("2018/03/25"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")") 
+vec_topics_slides[which(Datum == format(as.Date("2018/03/25"), "%d.%m"))] <- paste0("[Bayes](", s_sl_url, "w06/asm-w06-v06-bayes.pdf)") 
 
 vec_topics_slides[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")")
 vec_topics_slides[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")")
@@ -174,8 +174,8 @@ vec_topics_ex[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- paste0(
 vec_topics_ex[which(Datum == format(as.Date("2019/03/04"), "%d.%m"))] <- paste0("[Fixed Linear Effect Model](", s_ex_url, "w03/asm-w03-ex02.pdf)") 
 vec_topics_ex[which(Datum == format(as.Date("2019/03/11"), "%d.%m"))] <- paste0("[Genomic Relationship Matrix](", s_ex_url, "w04/asm-w04-ex03.pdf)") 
 vec_topics_ex[which(Datum == format(as.Date("2018/03/18"), "%d.%m"))] <- paste0("[Genomic BLUP](", s_ex_url, "w05/asm-w05-ex04.pdf)") 
-vec_topics_ex[which(Datum == format(as.Date("2018/03/25"), "%d.%m"))] <- paste0("[](", s_ex_url, "", ")") 
-vec_topics_ex[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- paste0("[](", s_ex_url, "", ")")
+vec_topics_ex[which(Datum == format(as.Date("2018/03/25"), "%d.%m"))] <- paste0("[GBLUP II](", s_ex_url, "w06/asm-w06-ex05.pdf)") 
+vec_topics_ex[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- paste0("[Bayes](", s_ex_url, "w07/asm-w07-ex06.pdf)")
 vec_topics_ex[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- paste0("[](", s_ex_url, "", ")")
 vec_topics_ex[which(Datum == format(as.Date("2019/04/15"), "%d.%m"))] <- paste0("[](", s_ex_url, "", ")")
 vec_topics_ex[which(Datum == format(as.Date("2019/04/29"), "%d.%m"))] <- paste0("[](", s_ex_url, "", ")")
@@ -197,9 +197,9 @@ vec_topics_sol[which(Datum == format(as.Date("2019/02/18"), "%d.%m"))] <- paste0
 vec_topics_sol[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- paste0("[Breeding Values and Prediction of Effects](", s_sol_url, "w02/asm-w02-sol01.pdf", ")") 
 vec_topics_sol[which(Datum == format(as.Date("2019/03/04"), "%d.%m"))] <- paste0("[Fixed Linear Effect Model](", s_sol_url, "w03/asm-w03-sol02.pdf)")
 vec_topics_sol[which(Datum == format(as.Date("2019/03/11"), "%d.%m"))] <- paste0("[Genomic Relationship Matrix](", s_sol_url, "w04/asm-w04-sol03.pdf)")
-# vec_topics_sol[which(Datum == format(as.Date("2018/03/18"), "%d.%m"))] <- paste0("[Genomic BLUP](", s_sol_url, "w05/asm-w05-sol04.pdf)") 
-vec_topics_sol[which(Datum == format(as.Date("2018/03/25"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")") 
-vec_topics_sol[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")")
+vec_topics_sol[which(Datum == format(as.Date("2018/03/18"), "%d.%m"))] <- paste0("[Genomic BLUP](", s_sol_url, "w05/asm-w05-sol04.pdf)")
+vec_topics_sol[which(Datum == format(as.Date("2018/03/25"), "%d.%m"))] <- paste0("[GBLUP II](", s_sol_url, "w06/asm-w06-sol05.pdf)")
+vec_topics_sol[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- paste0("[Bayes](", s_sol_url, "w07/asm-w07-sol06.pdf)")
 vec_topics_sol[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")")
 vec_topics_sol[which(Datum == format(as.Date("2019/04/15"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")")
 vec_topics_sol[which(Datum == format(as.Date("2019/04/29"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")")
@@ -215,8 +215,10 @@ knitr::kable(df_sol)
 
 ### Additional Material
 ```{r AdditionalMaterial, echo=FALSE, results='asis'}
+s_misc_url <- paste0(sBaseUrl, "misc/")
 vec_topics_addmat <- vec_topics
 vec_topics_addmat[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- paste0("[Genotype Data Exercise 1](", s_ex_url, "w02/asm_w02_ex01_p02_genodatafile.csv", ")") 
+vec_topics_addmat[which(Datum == format(as.Date("2019/03/18"), "%d.%m"))] <- paste0("[Data Analysis Protocol](", s_misc_url, "20190318_demo_sol4p01/20190318_demo_sol4p01.html)")
 # dataframe and table with additional material
 df_addmat <- data.frame(Week = Woche, Date = Datum, Topic = vec_topics_addmat, stringsAsFactors = FALSE)
 knitr::kable(df_addmat)

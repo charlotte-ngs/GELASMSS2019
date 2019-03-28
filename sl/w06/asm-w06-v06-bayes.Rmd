@@ -1,0 +1,100 @@
+---
+title: "Bayesian Approaches"
+author: "Peter von Rohr"
+date: "25.03.2019"
+output: beamer_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
+```
+
+
+
+## Statistics
+
+The world of statistics is divided into
+
+* __Frequentists__ and 
+* __Bayesians__
+
+Divergence in 
+
+* understanding of probability
+* differentiation between components of a model and the data
+* techniques to estimate parameters
+
+
+
+## F vs B
+```{r FreqBayesTable, eval=TRUE, echo=FALSE, results='asis'}
+Topic <- c("Probability", "Model and Data", "Parameter Estimation")
+Frequentists <- c("Ratio between cardinalities of sets",
+                   "Parameter are unknown, data are known",
+                   "ML or REML are used for parameter estimation")
+Bayesians <-  c("Measure of uncertainty",
+                 "Differentiation between knowns and unknowns",
+                 "MCMC techniques to approximate posterior distributions")
+dfTabCaptOut <- tibble::tibble(Topic         = Topic,
+                           Frequentists  = Frequentists,
+                           Bayesians     = Bayesians)
+knitr::kable(dfTabCaptOut, 
+             format = "latex", 
+             align = c("p{2cm}","p{3.5cm}","p{3.5cm}"))
+```
+
+
+
+## Linear Model
+\begin{equation}
+y_i = \beta_0 + \beta_1 x_{i1} + \epsilon_i \notag
+\end{equation}
+
+```{r BayesianUnKnowsTab, eval=TRUE, echo=FALSE, results='asis'}
+Term <- c("$y_i$", "$x_1$", "$\\beta_0$", "$\\beta_1$", "$\\sigma^2$")
+Known <- c("X", "X", "", "", "X")
+Unknown <- c("", "", "X", "X", "")
+knitr::kable(tibble::tibble(Term = Term,
+                        Known = Known,
+                        Unknown = Unknown), 
+             format = "latex", 
+             align = c("c","c","c"),
+             escape = FALSE,
+             caption = "Separation Into Knowns And Unknowns")
+```
+
+
+
+
+## Example Dataset
+
+```{r dataregression, echo=FALSE, results='asis'}
+tbl_reg <- tibble::tibble(Animal = c(1:10),
+                          `Breast Circumference` = c(176, 177, 178, 179, 179, 180, 181, 182,183, 184),
+                          `Body Weight` = c(471, 463, 481, 470, 496, 491, 518, 511, 510, 541))
+knitr::kable(tbl_reg,
+             booktabs = TRUE,
+             caption = "Dataset for Regression of Body Weight on Breast Circumference for ten Animals")
+```
+
+
+
+## Estimation Of Unknowns
+* Estimates of unknowns $\beta = \left[\begin{array}{c} \beta_0  \\  \beta_1 \end{array} \right]$
+* Using Bayes Theorem:
+
+\begin{align}
+f(\beta | y) & =       \frac{f(\beta, y)}{f(y)} \notag \\
+             & =       \frac{f(y | \beta)f(\beta)}{f(y)} \notag \\
+             & \propto  f(y | \beta)f(\beta) \notag
+\end{align}
+
+where $f(\beta)$: prior distribution  and  $f(y|\beta)$: likelihood
+
+
+## Prior and Posterior
+```{r asmbayespriorposterior, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg", fig.cap="Distinctions between Prior and Posterior in Bayesian Statistics"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/asmbayespriorposterior.odg")
+knitr::include_graphics(path = "odg/asmbayespriorposterior.png")
+```
