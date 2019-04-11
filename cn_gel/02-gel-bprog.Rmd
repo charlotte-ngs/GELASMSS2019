@@ -1,0 +1,235 @@
+# Breeding Programs {#gel-bprog}
+```{r mrtminitbprog, include=FALSE}
+mrmt$set_this_rmd_file(ps_this_rmd_file = ifelse(rstudioapi::isAvailable(), 
+                                                 rstudioapi::getSourceEditorContext()$path, 
+                                                 rprojroot::thisfile()))
+```
+
+
+## Introduction {#gel-bprog-intro}
+As mentioned in chapter \@ref(gel-intro) applied prediction of breeding values is an integral part of breeding programs. Figure \@ref(fig:bprogdiag) shows the connection between the different parts of a breeding program. 
+
+```{r bprogdiag, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg", fig.pos='H', fig.cap="Connection Between Parts Of A Breeding Program"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/bprogdiag.odg")
+knitr::include_graphics(path = "odg/bprogdiag.png")
+```
+
+The design process and the implementation of a breeding program are determined by the following two questions.
+
+1. Which goals should be achieved with a breeding program?
+2. What types of measures should be used to achieve the breeding goal?
+
+In both questions the breeding goal is a central point and hence in order to be able to plan and to implement a breeding program, it is an absolute requirement to define a breeding goal. Breeding goals can be defined on different levels. For example, breeding goals can be 
+
+* _economic_
+* _biological_
+* _ethical_ or 
+* _tactical.
+
+Economic breeding goals are focusing on the profit obtained by livestock breeding. Biological goals are used when traits do not have any marketable value. In cattle breeding, biological goals are applied for secondary traits^[Examples of such traits are health traits, conformation or longevity.]. Ethical breeding goals are a more recent development. Their main focus is the prevention of phenotypes which do not allow the animals to lead a life that is free of pain and other health related restrictions. In some cases breeders might use tactical goals to stay in business which would not be justified by economic reasons. 
+
+There exist two types of breeding programs.
+
+* breeding programs which focus on __selection response__
+* breeding programs in which the ability to sell breeding product and services is of central importance.
+
+At first sight, one could think that all breeding programs are focusing on the achievment of a certain amount of selection response. Despite that it is still important to make this differentiation. The first type of breeding goals can mainly be observed in countries with scarce resources for human nutrition and with a restricted offer for animal food^[Such conditions could also be observed in Europe during the first half of the $20^th$ century.]. In such countries there is no infrastructure and the focus of livestock breeding is to use the available resources as efficiently as possible. This is only possible via the achievement of selection response. The first type of breeding programs can also be observed in countries with large herds or within private companies which run their own breeding programs. For such large farms or companies, their business success depends on the realisation of selection response. Examples where such breeding programs can be observed are large beef cattle farms in Australia or Argentina or in large companies in pig breeding or in chicken breeding. In cattle breeding this type of development is only at an early stage. But large companies in the area of artificial insemination (AI) start to take a dominating role in the breeding business.
+
+The second category of breeding programs can be observed in cattle breeding and pig breeding of developed countries. In this situation, only few farms and few AI companies determine the breeding program. The business success of these few companies is more important than the realisation of selection response of the population. Selection response is still desirable but only as far as it helps for maximizing the profit of the few important companies. The difference between the two types of breeding programs is only very small, but it is important to realise that this difference does exist.
+
+
+## Parts Of A Breeding Program {#gel-bprog-parts}
+Figure \@ref(fig:bprogdiag) shows the parts of a breeding program. The design of a breeding program starts with the definition of a breeding goal. The performance testing, the prediction of breeding values and the measurement of the selection response are parts of the information centered aspect of the breeding program (shown in green). The implementation parts consisting of reproduction technologies, selection and mating are displayed in red.
+
+
+### Performance Testing {#gel-bprog-perftest}
+Serious livestock breeding is always based on data. These data are used directly as selection criteria or they are used as input for predicting breeding values. The accuracy of the collected data determines the quality of the derived parameters such as heritability and predicted breeding values. As a consequence of that, as much data should be collected for every animal in the population. This cannot be done because it is too expensive. Therefore every breeding organisation has to optimise between the amount of data collected and the costs that are occurding for the data recording activities. 
+
+Existing data recording activities were often started for reasons that are not related to livestock breeding. The following list gives a few examples.
+
+* milk sample testing was started for reasons of quality assurance in milk industry companies
+* station based testing in pig breeding was introduced to make the observed performances comparable
+* own performance records of animals are still the most important source of information
+* in dairy cattle before the introduction of genomic selection, progeny testing was the most important source of information for bulls in traits that are only expressed in female offsprings.
+
+The performance testing programs determine at which time point and for which animals which types of data are available. The length of the generation interval does have an influence on when certain traits which are expressed only in one sex can be observed. 
+
+
+#### Classification of Performance Tests {#gel-bprog-classperftest}
+Performance tests can be classified according to the place where the test takes place. The two main types are __station tests__ and __field tests__. Stations tests allow for more standardized testing environments and for the collection of more traits per tested animal. In many cases testing stations are associated with or have their own research laboratories in which research about new traits is conducted. Testing stations are cost intensive and some people have doubts about the generalizability of station test results to the more general conditions in the field. 
+
+Field testing are more cost efficient and happen under field conditions. The introduction of BLUP animal models to predict breeding values allows for the simultaneous estimation of environmental effects together with the prediction of breeding values. Hence a constant and controlable testing environment has lost its justification. Field testing can be more vulnerable to special treatments of selection candidates. 
+
+In practical livestock breeding whenever possible data from testing stations and from field tests are combined to make optimal use of the collected data to provide predictions of breeding values with maximal accuracy. This is certainly the case in pig breeding since the late 1990s. In cattle breeding periodically returning experiments with station testing herds are performed. In the 1990s there were several testing herds using multiple ovulation and embryo transfer (MOET) technologies. More recently several experiments with mixed forms of station and field testing were started. The new types of membership forms of the large dairy cattle breeding organisations can also be viewed as such mixed performance testing forms. 
+
+A different classification criterion for performance tests are the relationship between the selection candidate and the tested animals. Based on that criterion the following tests can be differentiated: 
+
+* __own performance__ test: performance of the selection candidate is directly measured
+* __sib__ test: tested animals and selection candidate are full- or half-sibs
+* __progeny__ test: selection candate is a parent of the tested animals.
+
+
+#### Traits {#gel-bprog-perftesttrait}
+In a breeding program performance tests should be done for the most important traits. To be able to include a trait in a performance test, the following requirements must be met. 
+
+* measurable with high accuracy
+* economically important
+* sufficiently large genetic variance and reasonable heritability
+* measurement procedure should have high repeatability
+* measurement procedure must be unbiased with respect to different external factors
+* measured traits should have as closely related to physiological expression of trait of interest
+* whenever possible traits should be measure and not subjectively assessed
+
+Certain traits are too expensive to measure directly. In this cases __auxillary traits__ are used. Auxillary traits must be easy and efficient to measure and must be closely connected to the trait of interest. Examples of auxillary traits are backfat thickness in pigs used as proxy trait for meatiness. In dairy cattle somatic cell counts are used as a proxy for mastitis. When using auxillary or proxy traits, one has to periodically verify the connection between the proxy and the trait of interest. Because selection is a dynamic process connections between traits are subject to changes.
+
+
+### Prediction Of Breeding Values {#gel-bprog-predbv}
+The majority of the active breeding programs use predicted breeding values. In Switzerland, federal regulations prescribe the process of predicting breeding values in order to receive subsidies for the breeding program. The predictions should correct for the environmental factors. Especially when considering traits with low heritability, prediction of breeding values using a BLUP based model is a must. 
+
+The recording of the phenotypic measurements during the performance testing is often much more expensive than the prediction of the breeding values. This makes it clear that only the best methods should be used to evalute the precious data. Data evaluations on a routine basis were only made possible by the availability of cheap computing power. As a consequence of that the big performance gains in livestock animals did run parallel to the massive increase of cheap computing power. 
+
+The frequency how often breeding values are predicted depends on the species. In cattle breeding breeding values are predicted only three times per year. In pig breeding some evaluations are done every night. Pigs have much shorter generation intervals and therefore the cycle where new information about selection candidates arrive is much shorter compared to cattle. The duration of a lactation in cattle is much longer and hence the frequency with which new information arrives is smaller campared to pigs. With new technologies such as robot milking systems which allow for much more frequent data sampling and with evaluation methods that are based on daily milk yield and no longer on lactation yields, this differnce between the species is decreasing. From the point of view of genetic evaluation, we have to note that more frequent evaluations cannot be done with the same amount of manual input compared to less frequent evaluations.
+
+
+### Reproduction Technologies {#gel-bprog-reprotech}
+The introduction of reproduction technologies in livestock breeding has been responsible for the massive selection response since the $20^{th}$ century. Artificial insemination (AI) in cattle and pigs have almost removed the limit for the number of progeny per sire. For all species where AI is used the prediction of breeding values has massively improved. The use of sires across different farms connects the animals on the different farms on a genetic level. This leads to a better separation of genetic effects from environmental factors. 
+
+Future developments are focusing more on reproduction technologies for dams. Embryo transfer increases the number of progeny per mother. With the more wide-spread use of such technologies, selection intensity can be increased and the generation interval can be decreased. Both effects have a positive influence on the selection response.
+
+
+### Breedung Goals {#gel-bprog-breedinggoal}
+Breeding goals can be formulated in two ways
+
+1. _Political Breeding Goals_: Extensive descriptions of desirable properties of breeding animals which are required by the members of a breeding organisation. Such descriptions can be part of constitutions of a breeding organisation and they can contain un-achievable idealisations and incompatible combinations of trait realisations. Such breeding goals cannot be assessed from a scientific point of view. Futhermore it cannot be verified whether such a breeding goal can be reached or not.
+2. _Scientific Breeding Goals_: Mathematical function (aggregate genotype) which defines a direction of change in the different traits and a force of intensitiy with which changes are expected to happen. Such goals do not define the final goal, but they give a direction in which certain traits are expected to develop. Based on a scientific breeding goal the expected response to selection per year can be calculated. 
+
+
+## Different Species {#gel-bprog-species}
+Breeding programs for different species have a different architecture. There are two basically different structures. 
+
+1. __monolitic__ breeding programs with many active farms in the breeding program and with a low degree of specialisation of the single farm.
+2. __hierarchical__ breeding programs where farms have different tasks in the breeding program.
+
+
+```{r monoliticbreedingprogram, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg", fig.cap="Monolitic Structure of Cattle Breeding Program"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/monoliticbreedingprogram.odg")
+knitr::include_graphics(path = "odg/monoliticbreedingprogram.png")
+```
+
+Monolitic breeding programs (see Figure \@ref(fig:monoliticbreedingprogram)) are typically found in cattle and horse breeding organisations. Such structures are often chosen when state subsidies are paid to breeding organisations based on the number of animals in the herdbook. This gives incentive for breeding populations to include all animals in the herdbook. In species like cattle, progeny performance tests require large populations to achieve good test accuracies. Large breeding populations with many herds are easier to be organized in monolotic breeding programs. 
+
+```{r hierarchicalbreedingprogram, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg", fig.cap="Hierarchical Structure of Pig Breeding Program"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/hierarchicalbreedingprogram.odg")
+knitr::include_graphics(path = "odg/hierarchicalbreedingprogram.png")
+```
+
+Hierarchical structures are more frequently found in pigs and in chicken. Differences are rooted in biology and in economic circumstances. In pigs and in chicken population sizes are high and consequently the monetary value of a single animal is quite low. Performance tests for complete populations would be too expensive. Because pigs and chicken can have a high number of progeny per parent, performance testing and breeding is restricted to a small number of specialized herds. High number of progenies per parent and short generation intervals allow to transmit genetic progress quite rapidly. Cross-breeding to benefit from positive heterosis effects is used extensively in such breeding programs. Figure \@ref(fig:hierarchicalbreedingprogram) shows the structure of a hierarchical breeding program in pigs.
+
+In cattle and horse breeding, the situation is different. Single breeding animals can have a very high value. With the low numbers of progeny per parent it is well worth while to have all breeding animals under a performance test and to record as many traits as possible from each animal in the population. Furthermore, most data used for breeding evaluations are also used for management purposes. Hence it is normal that in such populations the vast majorities of the farms are members of a breeding organisation.
+
+
+## Success Of A Breeding Program {#gel-bprog-succbreedprog}
+In Figure \@ref(fig:bprogdiag) the influential components are shown. All these factors are to be considered when designing and when running a breeding program. The success of a breeding program as measured by the selection response is determined by just four factors which are given in the following formula.
+
+\begin{equation}
+\Delta G = \frac{i * r_{TI} * \sigma_T}{L} = \frac{SD}{L}
+(\#eq:gel-bprog-selresponse)
+\end{equation}
+
+\begin{tabular}{lll}
+where  &  &  \\
+       &  $i$         &  selection intensity \\
+       &  $r_{TI}$    &  accuracy of predicted breeding values \\
+       &  $\sigma_T$  &  additive genetic standard deviation \\
+       &  $L$         &  generation interval
+\end{tabular}
+
+
+The four determining factors can be modified to change the selection response. The denominator of the fraction in \@ref(eq:gel-bprog-selresponse) is also called selection difference ($SD$).
+
+
+### Selection Intensity {#gel-bprog-selintensity}
+Selection intensity $i$ measures the superiority of the selected animals compared to the population mean. Assuming the traits to be normally distributed, the selection intensity can be computed based on the selection boundary. Given a trait which is to be increased by selection, the animals to the right are called the selected animals. Only selected animals will be parents of the next generation. The mean of the selected animals corresponds to the selection difference (SD). Let us assume that the selection boundery $SB$ is one standard deviation $\sigma_P$ above the population mean $M$, hence 
+
+\begin{equation}
+SB = M + \sigma_P \notag
+\end{equation}
+
+```{r animalsselected, echo=FALSE}
+n_ani_sel <- pnorm(1, lower.tail = FALSE)
+n_sel_diff <- dnorm(1) / n_ani_sel
+```
+
+According to the laws implied by the normal distribution, this means that about $`r round(100 * n_ani_sel, digits = 0)`\%$ of the animals are selected. The selection difference (SD) corresponds to $`r round(n_sel_diff, digits = 2)`$, that means the mean of the selected animals is $`r round(n_sel_diff, digits = 2)`$ times the phenotypic standard deviation above the population mean.
+
+The selection intensity $i$ can be expressed as the selection difference (SD) in units of the phenotypic standard deviation
+
+\begin{equation}
+i = \frac{SD}{\sigma_p}
+(\#eq:gel-bprog-seltint)
+\end{equation}
+
+The selection intensity $i$ can also be computed only based on the selection boundary. Namely
+
+\begin{equation}
+i = \frac{z}{p}
+(\#eq:gel-bprog-seltintselbound)
+\end{equation}
+
+\begin{tabular}{lll}
+where  &  &  \\
+       &  $z$         &  density value at selection boundary \\
+       &  $p$         &  proportion of animals selected 
+\end{tabular}
+
+
+### Accuracy Of Predicted Breeding Values {#gel-bprog-accpredbv}
+The accuracy of the predicted breeding values is measured via the correlation between the true and the predicted breeding values. Intuitively it is clear that predicted breeding values with low accuracies lead to animals selected that are on the wrong side of the selection boundary. The more accurate the predicted breeding value, the lower the probability that the wrong animals are selected.
+
+
+### Additive-genetic Variance {#gel-bprog-addgenvar}
+Selection response is measured on the phenotypic scale, but it actually happens on the genetic scale. The additive-genetic variance determines how much a given phenotype can be changed for a given breeding investement. Low additive-genetic variances can explain why for some traits selection responses are small although large investements are made and breeding values are predicted with high accuracies.
+
+
+### Generation Interval {#gel-bprog-genint}
+The generation interval corresponds to the average age of the parents when their progeny is born. It can be influenced by planning and by the use of biotechnologies. Many practical breeders have problems to find a positive attitude towards shorter generation intervals. Very often short generation intervals are confounded with decreased longevities. The former term is an important parameter which determines the selection reponse per year. Longevity on the other hand is an important trait that influences the economic profitability of a production herd. 
+
+
+## Federal Regulations {#gel-bprog-fedreg}
+Swiss breeding organisations are obliged by federal regulations to predict breeding values on a regular basis in order to obtain any federal subsidies. Article 1 of the regulation contains the following points
+
+a. the recognition of breeding organisations and private breeding companies
+b. the payment of subsidies 
+c. the payment of subsidies to sustain rare breeds
+d. the pamyent of funding for research projects
+e. the introduction of breeding animals as well as semen, eggs and embryos
+f. the quotas to import breeding animals and semen 
+
+In Article 2 the term __prediction of breeding values__ is defined as an accepted procedure according to currently recognized statistical standards to predict the genetic values of an animal compared to other animals of the same population.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   

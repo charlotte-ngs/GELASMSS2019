@@ -1,0 +1,44 @@
+---
+title: "Applied Genetic Evaluation Of Livestock Populations"
+author: "Peter von Rohr"
+date: "2019-03-30"
+url: 'https\://github.com/charlotte-ngs/GELASMSS2019'
+github-repo: "charlotte-ngs/GELASMSS2019"
+site: bookdown::bookdown_site
+documentclass: book
+bibliography: [bibliography.bib]
+link-citations: true
+output: bookdown::gitbook
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
+```
+
+```{r mrtminit, include=FALSE}
+mrmt <- rmddochelper::MendeleyExportToolR6$new()
+mrmt$set_this_rmd_file(ps_this_rmd_file = ifelse(rstudioapi::isAvailable(), 
+                                                 rstudioapi::getSourceEditorContext()$path, 
+                                                 rprojroot::thisfile()))
+```
+
+
+# Preface {-}
+These course notes are based on `r mrmt$add("Goetz2014")` with a few adaptations with respect to special circumstances in Switzerland. The topic of __genetic evaluation__ is not viewed as an isolated topic, but the aim of this course is also to describe the broader context of this special evaluation procedure that is applied in its specific form almost exclusively in the area of livestock breeding. The material presented here is covered in a half-semester course in the masters program of Agricultural Science at ETH Zurich. The course is offered as a two hours lecture course. From the two hours the students are asked to work about $50\%$ independently on exercise problems.
+
+The following books are recommended as further readings for this course.
+
+* `r mrmt$add("Willam2011")`.  This book gives an introduction into evolution, livestock production and breeding programs.
+* `r mrmt$add("Falconer1996")`. The de-facto standard in the area of quantitative genetics uses many examples from experimental research to illustrate the concepts of quantitative genetics.
+* `r mrmt$add("Mrode2005")`. The main focus is on prediction of breeding values using different models.
+
+The students are expected to work on exercises about the material taught during the lectures. The exercises are practical problems using the software systems R and RStudio. Both systems are offered as server installation. 
+
+
+
+## Course Objectives {-}
+The students understand the theoretical background and the practical application of the prediction of breeding values in Swiss cattle breeding, in pigs, sheeps and goats. The students know how to interpret predicted breeding values.
+
+
+

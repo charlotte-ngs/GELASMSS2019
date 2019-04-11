@@ -1,0 +1,43 @@
+# Introduction {#gel-intro}
+```{r mrtminitintro, include=FALSE}
+mrmt$set_this_rmd_file(ps_this_rmd_file = ifelse(rstudioapi::isAvailable(), 
+                                                 rstudioapi::getSourceEditorContext()$path, 
+                                                 rprojroot::thisfile()))
+```
+
+
+## Terminology {#gel-intro-terminology}
+The terms __livestock breeding__ or __breeding__ in general are used ambiguously. Both terms are associated with many different meanings. Most people use the term _livestock breeder_ when they effectively mean _livestock owner_ or _livestock producer_. From a scientific point of view __livestock breeders__ use the tools of __selection__ and __mating__ to obtain offspring animals which are closer to a certain breeding goal compared to the parent generation. In pet breeding, individual breeders are known to use these tools in order to realize their special breeding goals. The special circumstances of pet breeding which is mostly used for cats and dogs are not further described in these course notes. When we talk about __livestock__, we mean farm animals such as cattle, pigs, sheeps or goats.
+
+
+## Background {#gel-intro-background}
+Livestock breeders are also known to follow individual breeding goals. Due to some special circumstances in reproduction biology of livestock which are long generation intervals and low numbers of offspring per mating, have led breeders to recognize the need for gathering their efforts in breeding associations. Initially breeding organisations were responsible for the herdbook which was a central registry of all animals that were owned by members of the breeding organisation. Breeding organisation also helped their members to buy and to sell their animals. 
+
+```{r breedingassociation, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg", fig.pos='H', fig.cap="Schematic Representation Of A Breeding Organisation"}
+#rmddochelper::use_odg_graphic("odg/breedingassociation.odg")
+knitr::include_graphics(path = "odg/breedingassociation.png")
+```
+ 
+In the middle of the $19^{th}$ century, Switzerland was transformed from an agricultural society into an industrial society. With the invention of modern railway systems, costs for transportation was lowered significantly. As a consequence, food production in Switzerland dropped and many nutrients were imported. This development was not recognized until the beginning of the first world war. Closed borders and many resources bound in military services lead to a big crisis of food supplies. As a result of this crisis, the federal government started to introduce important laws to regulate breeding goals in Swiss livestock breeding. The initial versions of these laws were clearly directed towards an increase in performance of livestock animals. The most important federal regulation concerning livestock breeding is the so-called "Tierzuchtverordnung" `r mrmt$add("Bundesrat2012")`. This regulation contains requirements for the recognition of breeding organisation. It also lists the amount of subsides that the breeding organisations are entitled to receive for the different services. In the current version of the regulation, these subsidies are tied to explicitly mentioned performance tests and recordings. An additional requirement is a scientifically recognized procedure to predict breeding values. In 2014 the federal government started a revision process of this legislation. Some of the results of this revision process is summarized in a document entitled "Tierzucht Strategie 2030" `r mrmt$add("Lehmann2018")`. Depending on the final outcome of this revision process, the landscape of breeding organisations is expected to change in the future. 
+
+Besides the federal regulation as a major driving force for livestock breeding in Switzerland, the progress in reproduction biology with the introduction of artificial insemination and the new possibilities of the applications of molecular biology techniques such as the cheap and effective genotyping of large numbers of breeding animals has had an important influence on the progress of livestock populations. Originally artificial insemination was introduced for hygienic reasons to prevent the spread of sexually transmitted diseases. The use of modern technologies led to the disappearance of locally rooted livestock breeds for breeds with higher performances. 
+
+
+## Breeding Versus Production {#gel-intro-breedingvsproduction}
+The distinction between __livestock breeding__ and __production__ is important because both activities may have goals and requirements which can be contradictory. The term _production_ stands for the use of livestock animals to generate products which are marketable and can be sold to the nutrition industry. Therefore we have to emphasize that requirements and goals are entirely determined by the buyers of nutrition products. From the point of view of the producer, the whole production process has to follow the rules given by farm business economics. In short, production processes are only maintained when they are profitable. This means the revenue obtained from selling the products are larger than the costs generated by the production process.
+
+In livestock breeding additional requirements given by the breeding goal and the aim to improve livestock animals of all member farms of a breeding association on a genetic level must be considered. But a livestock breeding farm has the opportunity to generate additional revenues when breeding animals can be sold to other farms. Conflicts between requirements of breeding and production often arise when it comes to the question how valuable older animals are. From the perspective of a producer, old animals are the most valuable. Because they have covered their costs for raising them with their live-long generation of revenues. For a livestock breeder it is exactly the other way around. For the improvement of a population on the genetic level, the youngest animals are the most valuable. Because the genetic potential of the youngest animals is expected to be the highest.
+
+
+## Summary {#gel-intro-summary}
+In summary of this chapter, it is clear that in the context of these course notes, a livestock breeder is a person who is a member of a breeding organisation. A livestock breeder is together with his or her livestock herd part of the breeding program. The breeding program states a breeding goal and the breeder with his membership subscribes to follow with his or her herd the breeding goal defined in the breeding program. Based on that description of a livestock breeder, it becomes clear that milk producer is not a dairy cattle breeder and a pork producer is not a pig breeder. 
+
+In this course, the application of predicted breeding values in the context of a breeding program is introduced. The aim of the breeding program is to improve the livestock animals with respect to the breeding goal.
+ 
+
+
+
+
+
+
+

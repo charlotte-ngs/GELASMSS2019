@@ -13,4 +13,4 @@ RnwWeave: Sweave
 LaTeX: XeLaTeX
 
 BuildType: Website
-WebsitePath: cn_asm
+WebsitePath: cn_gel

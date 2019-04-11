@@ -125,7 +125,7 @@ vec_topics_notes[which(Datum == format(as.Date("2019/03/11"), "%d.%m"))] <- past
 vec_topics_notes[which(Datum == format(as.Date("2018/03/18"), "%d.%m"))] <- paste0("[Bayes](", s_cn_asm_url, "asm-bayes.pdf)") 
 vec_topics_notes[which(Datum == format(as.Date("2018/03/25"), "%d.%m"))] <- paste0("[Appendix](", s_cn_asm_url, "asm-appendix.pdf)") 
 
-vec_topics_notes[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")") 
+vec_topics_notes[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- paste0("[Introduction](", s_cn_gel_url, "01-intro.pdf)") 
 vec_topics_notes[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")") 
 vec_topics_notes[which(Datum == format(as.Date("2019/04/15"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")") 
 vec_topics_notes[which(Datum == format(as.Date("2019/04/29"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")") 
@@ -151,8 +151,8 @@ vec_topics_slides[which(Datum == format(as.Date("2019/03/11"), "%d.%m"))] <- pas
 vec_topics_slides[which(Datum == format(as.Date("2018/03/18"), "%d.%m"))] <- paste0("[LASSO](", s_sl_url, "w05/asm-w05-v05-lasso.pdf)") 
 vec_topics_slides[which(Datum == format(as.Date("2018/03/25"), "%d.%m"))] <- paste0("[Bayes](", s_sl_url, "w06/asm-w06-v06-bayes.pdf)") 
 
-vec_topics_slides[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")")
-vec_topics_slides[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")")
+vec_topics_slides[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- paste0("[Introduction](", s_sl_url, "w07/gel-w07-v01-intro.pdf)")
+vec_topics_slides[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- paste0("[Suisag - Zuchtwertschätzung beim Schwein](", s_sl_url, "w08/Zuchtwertschaetzung_Vorlesung_pst_ETH_Zuerich.pdf)")
 vec_topics_slides[which(Datum == format(as.Date("2019/04/15"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")")
 vec_topics_slides[which(Datum == format(as.Date("2019/04/29"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")")
 vec_topics_slides[which(Datum == format(as.Date("2019/05/06"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")")
