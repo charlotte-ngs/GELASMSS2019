@@ -1,0 +1,79 @@
+# Implementation Of A Breeding Program  {#gel-implbp}
+```{r mrtminitimplbp, include=FALSE}
+mrmt$set_this_rmd_file(ps_this_rmd_file = ifelse(rstudioapi::isAvailable(), 
+                                                 rstudioapi::getSourceEditorContext()$path, 
+                                                 rprojroot::thisfile()))
+```
+
+
+## Introduction {#gel-implbp-intro}
+In chapter \@ref(gel-bprog) in general and specifically in Figure \@ref(fig:bprogdiag) the different types of breeding programs and the components of a breeding program are shown and described. This chapter aims at giving an outline of how to implement a specific breeding program for a given population. We assume a beef breeding organisation that approaches us and we have to consult them on how to implement a breeding program. The breeding organisation wants to improve their breeding animals with respect to the economic profitability of the animal production. Together with the breeding organisation, we aggree on a scientifically formulated breeding goal. 
+
+
+## Development Of The Breeding Goal {#gel-implbp-devbg}
+According to `r mrmt$add("Phocas1998")`, three points are to be considered when developing a breeding goal. 
+
+1. description of production system
+2. modelling the profit for a typical herd
+3. derivation of economic values
+
+For reasons of simplicity we are assuming that all herds have the same production system. It is important to note here that in a hierarchical breeding program such as shown in Figure \@ref(fig:hierarchicalbreedingprogram), the herd described in subsection \@ref(gel-implbp-descprodsys) comes from the production sector situated at the bottom of the triangle. The reason for using a herd from the production tier as the basis of the description of the production is that the breeding and possibly the multiplier sections of the breeding program have to adapt their breeding animals to the needs and requirements of the production herds. Looking at the different participants of the breeding program as a client-supplier relationship, the producers are clients of the breeding and the multiplier farms for young production animals. These animals must meet the requirements of the production farms. As a consequence of that the breeding and multiplier farms have to raise young animals that fit the needs of the production farms. This is done by designing the breeding program implemented in the breeding farms according to the needs of the production farms. The implementation of the breeding program must yield tools for the breeding farms to be able to select the best animals as parents. One possibility of such an implementation is shown here for an idealized and simplified situation.
+
+
+### Description Of Production System {#gel-implbp-descprodsys}
+A production system is defined by its required inputs and by the products that are sold. Furthermore housing, feeding regimes and other management components that affect the production costs are important properties of a production system. Figure \@ref(fig:gel-implbp-prodsys) illustrates a production system by showing the most important components affecting the profitability of a typical herd.
+
+```{r gel-implbp-prodsys, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg", fig.cap="Production system illustrated by a typical herd"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/gel-implbp-prodsys.odg")
+knitr::include_graphics(path = "odg/gel-implbp-prodsys.png")
+```
+
+In our example, the assumed herd has $N$ cows. Cows are inseminated using artificial insemination. Once a year the cows are expected to produce a calf. The calves are raised, fattened and sold as slaughter animals. From the $N$ cows each years a proportion of $0.18$ is culled and is replaced with young heifers which are bought from breeding or multiplier farms. Figure \@ref(fig:gel-implbp-demogherd) corresponds to a simplified version of Figure 1 of `r mrmt$add("Phocas1998")`. 
+
+```{r gel-implbp-demogherd, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg", fig.cap="Assumed demography of typical production herd"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/gel-implbp-demogherd.odg")
+knitr::include_graphics(path = "odg/gel-implbp-demogherd.png")
+```
+
+
+## Determine Traits Of Interest {#gel-implbp-dettrint} 
+Inputs shown in Figure \@ref(fig:gel-implbp-prodsys) generate costs ($C$) and Outputs generate revenues ($R$). The difference between revenues and costs corresponds to profit ($P$) which is the key objective of the whole system that we want to improve. The traits of the animals in the production system which have an influence on the profit of the system are grouped together in the set of the __economically important__ traits. The economically important traits are included in the aggregate genotype which is then used as selection criterion for the breeding animals. 
+
+For our example production herd, we are focusing on the carcass performance traits 
+
+* carcass conformation (CC)
+* carcass fatness (CF) and
+* carcass weight (CW).
+
+At this stage of our analysis, we are ignoring all traits replated to reproduction or survival of calves which are also important for the economic profitability of the production herd. For the moment, we focus on the three traits listed above. This means, we construct the aggregate genotype based on the three traits _CC_, _CF_, and _CW_. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
