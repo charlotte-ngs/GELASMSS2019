@@ -7,7 +7,7 @@ mrmt$set_this_rmd_file(ps_this_rmd_file = ifelse(rstudioapi::isAvailable(),
 
 
 ## Introduction {#gel-implbp-intro}
-In chapter \@ref(gel-bprog) in general and specifically in Figure \@ref(fig:bprogdiag) the different types of breeding programs and the components of a breeding program are shown and described. This chapter aims at giving an outline of how to implement a specific breeding program for a given population. We assume a beef breeding organisation that approaches us and we have to consult them on how to implement a breeding program. The breeding organisation wants to improve their breeding animals with respect to the economic profitability of the animal production. Together with the breeding organisation, we aggree on a scientifically formulated breeding goal. 
+In chapter \@ref(gel-bprog) in general and specifically in Figure \@ref(fig:bprogdiag) the different types of breeding programs and the components of a breeding program are shown and described. This chapter aims at giving an outline of how to implement a specific breeding program for a given population. We assume a beef breeding organisation that approaches us and we have to consult them on how to implement a breeding program. The breeding organisation wants to improve their breeding animals with respect to the economic profitability of the animal production. Together with the breeding organisation, we agree on a scientifically formulated breeding goal. 
 
 
 ## Development Of The Breeding Goal {#gel-implbp-devbg}
@@ -36,7 +36,7 @@ knitr::include_graphics(path = "odg/gel-implbp-demogherd.png")
 ```
 
 
-## Determine Traits Of Interest {#gel-implbp-dettrint} 
+## Determine Traits Of Economic Interest {#gel-implbp-dettrint} 
 Inputs shown in Figure \@ref(fig:gel-implbp-prodsys) generate costs ($C$) and Outputs generate revenues ($R$). The difference between revenues and costs corresponds to profit ($P$) which is the key objective of the whole system that we want to improve. The traits of the animals in the production system which have an influence on the profit of the system are grouped together in the set of the __economically important__ traits. The economically important traits are included in the aggregate genotype which is then used as selection criterion for the breeding animals. 
 
 For our example production herd, we are focusing on the carcass performance traits 
@@ -45,7 +45,20 @@ For our example production herd, we are focusing on the carcass performance trai
 * carcass fatness (CF) and
 * carcass weight (CW).
 
-At this stage of our analysis, we are ignoring all traits replated to reproduction or survival of calves which are also important for the economic profitability of the production herd. For the moment, we focus on the three traits listed above. This means, we construct the aggregate genotype based on the three traits _CC_, _CF_, and _CW_. 
+At this stage of our analysis, we are ignoring all traits related to reproduction or survival of calves which are also important for the economic profitability of the production herd. For the moment, we focus on the three traits listed above. This means, we construct the aggregate genotype based on the three traits _CC_, _CF_, and _CW_. The weights of the different traits in the aggregate genotype is the result from the derivation of economic values listed as point 3 of subsection \@ref(gel-implbp-devbg). 
+
+
+## Genetic Evaluation {#gel-implbp-geneval}
+Once we have determined the traits of economic interest as described in subsection \@ref(gel-implbp-dettrint), we can start to have a look at the genetic part of our analysis of the breeding program. This is done in a genetic evaluation which consists of two parts
+
+1. Variance components estimation
+2. Prediction of breeding values.
+
+In a practical analysis both parts are using linear mixed effect models with the traits of interest as response variables ($y$) and other characteristics as predictor variables ($x$). The difference between the two evaluation parts are the results that are of interest. In the first part we are primarily looking for the estimates of the variance components in the model. The second part produces predictions of the breeding values for all breeding animals.
+
+Depending on the number of predictor variables that are available in the dataset that we have available from our breeding organisation, we first have to separate the important predictor variables from the variables that do not have an important effect on the response variable. This separation is done with a preparatory model selection step. In short, we are using all predictor variables available in a fixed linear effects model with the trait of interest as the response variable. Then we are in turn, eliminating the response variable with the smallest impact until a previously chosen model selection criterion is optimized. The remaining set of predictor variables in the optimal model is then used in the linear mixed effects model to estimate variance components and to predict breeding values.
+
+In the chapters that follow, we are having a closer look at how to do the model selection and how to perform the two parts of the genetic evaluation.
 
 
 

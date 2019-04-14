@@ -1,0 +1,35 @@
+---
+title: "Data Generation For Breeding Program Analysis"
+date: "2019-04-14"
+author: "Peter von Rohr"
+output: html_notebook
+---
+
+# Disclaimer
+Exercise 1 in Applied Genetic Evaluation (GEL) does a genetic evaluation of a beef cattle data set. 
+
+
+# Important Factors
+According to the work by Kunz et al (2019) presented at SVT (16.04.2019) important factors for the carcass performance traits are
+
+* sex
+* slaughterhouse
+* classifier
+* age (as linear and quadratic covariable)
+* herd * year (as random interaction)
+
+
+# Factors Used In Simulation
+For our data simulation, we use a simplified set of factors consisting of 
+
+* sex
+* slaughterhouse
+* age as linear covariable
+* herd as fixed effect.
+
+
+# Trait
+For reasons of simplicity we are using carcass weight, because it is a continuous trait.
+
+
+
