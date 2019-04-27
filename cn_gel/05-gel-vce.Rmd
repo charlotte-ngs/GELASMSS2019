@@ -1,0 +1,7 @@
+# Variance Components Estimation {#gel-vce}
+```{r mrtminitvce, include=FALSE}
+mrmt$set_this_rmd_file(ps_this_rmd_file = ifelse(rstudioapi::isAvailable(), 
+                                                 rstudioapi::getSourceEditorContext()$path, 
+                                                 rprojroot::thisfile()))
+```
+

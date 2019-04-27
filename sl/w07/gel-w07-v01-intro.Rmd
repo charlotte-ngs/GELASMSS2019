@@ -227,6 +227,12 @@ knitr::include_graphics(path = "odg/HierarchischeZuchtstruktur.png")
 ```
 
 
+## Monolithic Structure
+
+```{r MonolithicBp, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic("odg/MonolithicBp.odg")
+knitr::include_graphics(path = "odg/MonolithicBp.png")
+```
 
 
 
@@ -235,4 +241,4 @@ knitr::include_graphics(path = "odg/HierarchischeZuchtstruktur.png")
 
 
 
-  
+   

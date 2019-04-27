@@ -1,0 +1,69 @@
+# Model Selection {#gel-modsel}
+```{r mrtminitmodsel, include=FALSE}
+mrmt$set_this_rmd_file(ps_this_rmd_file = ifelse(rstudioapi::isAvailable(), 
+                                                 rstudioapi::getSourceEditorContext()$path, 
+                                                 rprojroot::thisfile()))
+```
+
+The aim of model selection is to find from a set of predictor variables those which are __relevant__ for the response variable. Relevance in this context means that variability of the predictor is associated with variability of the response variable. Furthermore this co-existance of variability of predictors and response has to be quantifiable by a linear function, such as the one given in the model \@ref(eq:gel-modsel-linmodel). 
+
+In a practical data analysis setting, the dataset used as input to the analysis may have many predictor variables. But it is not guaranteed that all of them have an influence on the response variable. Because we want to model the responses with a linear function of the predictor variables, every additional predictor variable introduces an additional coefficient that must be estimated. Every estimated coefficient leads to more variability in the predicted response values of a given model. Hence if a model should be used to predict new responses based on observed predictor values, the increased variability decreases the predictive power. 
+
+We assume the following linear model
+
+\begin{equation}
+y_i = \sum_{j=1}^p \beta_j x_{ij} + \epsilon_i \quad (i = 1, \ldots, n)
+(\#eq:gel-modsel-linmodel)
+\end{equation}
+
+where $\epsilon_1, \ldots, \epsilon_n$ are identically independently distributed (i.i.d) with $E(\epsilon_i) = 0$ and $var(\epsilon_i) = \sigma^2$. The model selection problem can be stated by the following question. 
+
+> "Which of the predictor variables should be used in the linear model?"
+
+As already mentioned, it may be that not all of the $p$ predictor variables included in the full model shown in \@ref(eq:gel-modsel-linmodel) are relevant. Predictors that are not relevant should not be included in a model because every coefficient of a predictor must be estimated and leads to increased variability of the fitted model. In case where this variability is caused by non-relevant predictor variables, the predictive power of the estimated model is lowered. As a consequence, we are often looking for an __optimal__ or the __best__ model given the available input dataset.
+
+
+## Bias-Variance Trade-Off {#gel-modsel-biasvar}
+What was explained above can be formalized a bit more. Suppose, we are looking for optimizing the prediction
+
+\begin{equation}
+\sum_{r=1}^q \hat{\beta}_{j_r}x_{ij_r}
+(\#eq:gel-modsel-optpred)
+\end{equation}
+
+which includes $q$ relevant predictor variables with indices taken from the vector $j$ with $j_1, \ldots, j_q \in \{1, \ldots, p \}$. The average mean squared error of the prediction in \@ref(eq:gel-modsel-optpred) can be computed as 
+
+\begin{align}
+MSE  &=  n^{-1} \sum_{i=1}^n E\left[(m(x_i) - \sum_{r=1}^q \hat{\beta}_{j_r}x_{ij_r})^2 \right] \notag \\
+     &=  n^{-1} \sum_{i=1}^n \left(E\left[\sum_{r=1}^q \hat{\beta}_{j_r}x_{ij_r} \right] - m(x_i) \right)^2
+         + n^{-1} \sum_{i=1}^n var(\sum_{r=1}^q \hat{\beta}_{j_r}x_{ij_r})
+(\#eq:gel-modsel-mse)
+\end{align}
+
+where $m(.)$ denotes the linear function in the true model with $p$ predictor variables. The systematic error $n^{-1} \sum_{i=1}^n \left(E\left[\sum_{r=1}^q \hat{\beta}_{j_r}x_{ij_r} \right] - m(x_i) \right)^2$ is called squared bias and this quantity is expected to decrease as the number of predictors $q$ increases. But the variance term increases with the number of predictors $q$. This fact is called the __bias-variance trade-off__ which is present in many applications in statistics. Now finding the best model corresponds to finding the model that optimizes the bias-variance trade-off. This process is also referred to as __regularization__. 
+
+
+## Mallows $C_p$ Statistic {#gel-modsel-mallowcp}
+The mean square error in \@ref(eq:gel-modsel-mse) is unknown because we do not know the magnitude of the bias. But MSE can be estimated. 
+
+Let us denote by $SSE(\mathcal{M})$ the residual sum of squares in the model $\mathcal{M}$. Unfortunately $SSE(\mathcal{M})$ cannot be used to estimate $MSE$ because $SSE(\mathcal{M})$ becomes smaller the more predictors are included in the model $\mathcal{M}$. The number of predictors in the model $\mathcal{M}$ is also often referred to as the size of the model and is written as $|\mathcal{M}|$. 
+
+For any (sub-) model $\mathcal{M}$ which involves some (or all) of the predictor variables, the mean square error ($MSE$) can be estimated by
+
+\begin{equation}
+\widehat{MSE} = n^{-1} SSE(\mathcal{M}) - \hat{\sigma}^2 + 2\hat{\sigma}^2 |\mathcal{M}| / n
+(\#eq:gel-modsel-estmse)
+\end{equation}
+
+where $\hat{\sigma}^2$ is the error variance estimate in the full model and $SSE(\mathcal{M})$ is the residual sum of squares in the submodel $\mathcal{M}$. Hence to find the best model, we could searchfor the sub-model $\mathcal{M}$ that minimizes $\widehat{MSE}$. Because $\hat{\sigma}^2$ and $n$ are constants with respect to submodels $\mathcal{M}$, we can also consider the well-known $C_p$ statistic
+
+\begin{equation}
+C_p(\mathcal{M}) = \frac{SSE(\mathcal{M})}{\hat{\sigma}^2} - n + 2 |\mathcal{M}|
+(\#eq:gel-modsel-mallowcp)
+\end{equation}
+
+and search for the sub-model $\mathcal{M}$ minimizing the $C_p$ statistic. 
+
+
+## Searching For The Best Model With Respect To $C_p$ {#gel-modsel-searchbestmodelcp}
+

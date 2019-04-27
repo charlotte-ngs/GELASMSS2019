@@ -1,0 +1,85 @@
+---
+title: "Implementation Of A Breeding Programs"
+author: "Peter von Rohr"
+date: "15.04.2019"
+output: beamer_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
+```
+
+
+
+## Three Steps
+
+The following steps are needed to implement a breeding program
+
+1. description of production system
+2. modelling profit of a typical herd
+3. derive economic values
+
+
+## Production System
+
+```{r implbp-prodsys, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/implbp-prodsys.odg")
+knitr::include_graphics(path = "odg/implbp-prodsys.png")
+```
+ 
+
+## Why Production System
+
+* Assume a hierarchical structure of the breeding program
+* Alternatively: mixed farms in monolithic structure
+* Breeding (and possibly multiplier) farms are selling their progeny to production farms
+* Progeny must meet needs of production farms
+* Breeders must select parents such that optimal progeny produced for production farms
+
+
+## Example Of Typical Production Farm
+
+```{r example-prodfarm, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/example-prodfarm.odg")
+knitr::include_graphics(path = "odg/example-prodfarm.png")
+```
+
+
+## Traits Of Interest
+
+* Profit ($P$) of production farm determined by revenues ($R$) and costs ($C$)
+
+$$P = R - C$$
+
+* Traits of economic interest influnece $P$
+* Restrict ourselves to output 
+    + age corrected carcass weight (CW)
+    + carcass confirmation (CC)
+    + carcass fat (CF)
+* Above traits will be included in aggregate genotype ($H$)
+
+$$H = a^T \cdot u$$
+
+
+## Economic Evaluation
+
+$\rightarrow$ postponed to later
+
+
+## Genetic Evaluation
+
+* In most cases, two steps plus preparation
+* Given: dataset on breeding animals containing traits of interest as response variables and predictor variables
+* Preparation: do model selection to eliminate unimportant predictor variables
+* Steps:
+    1. variance components estimation
+    2. prediction of breeding values
+
+
+
+
+
+
+
+ 

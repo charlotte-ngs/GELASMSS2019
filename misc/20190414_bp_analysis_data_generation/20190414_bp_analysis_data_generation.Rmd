@@ -5,6 +5,10 @@ author: "Peter von Rohr"
 output: html_notebook
 ---
 
+```{r}
+set.seed(6576)
+```
+
 # Disclaimer
 Exercise 1 in Applied Genetic Evaluation (GEL) does a genetic evaluation of a beef cattle data set. 
 
@@ -32,4 +36,161 @@ For our data simulation, we use a simplified set of factors consisting of
 For reasons of simplicity we are using carcass weight, because it is a continuous trait.
 
 
+# Pedigree
+We use `XSim` to generate a pedigree. The output pedigree is stored under `data_w09.ped`. It is read into a `tibble` with 
+
+```{r}
+s_ped_file <- "data_w09.ped"
+tbl_ped <- readr::read_delim(file = s_ped_file, delim = " ", col_names = FALSE)
+### keep only first three columns
+tbl_ped <- tbl_ped[,1:3]
+tbl_ped
+```
+
+
+# Data Components
+## Sex
+Add the sex to the pedigree and use it for data
+
+```{r}
+require(dplyr)
+tbl_data <- tibble(Id = as.numeric(tbl_ped[[1]]))
+tbl_data <- bind_cols(tbl_data, tibble(sex = rep(2, nrow(tbl_data))))
+# set the sex of all fathers to 1
+# find ids of fathers
+vec_father_ids <- setdiff(as.numeric(unique(tbl_ped$X2)), 0)
+tbl_data$sex[vec_father_ids] <- 1
+table(tbl_data$sex)
+```
+
+## Slaughterhouses
+We randomly assign three slaughterhouses
+
+```{r}
+n_nr_slh <- 3
+vec_slh <- floor(n_nr_slh * runif(nrow(tbl_data))) + 1
+table(vec_slh)
+tbl_data <- bind_cols(tbl_data, tibble(slh = vec_slh))
+```
+
+## Herds
+Randomly assign five herds
+
+```{r}
+n_nr_hrd <- 5
+vec_hrd <- floor(n_nr_hrd * runif(nrow(tbl_data))) + 1
+table(vec_hrd)
+tbl_data <- bind_cols(tbl_data, tibble(hrd = vec_hrd))
+```
+
+## Age
+Normal distribution for the age
+
+```{r}
+n_age_mean <- 400
+n_age_sd <- 5.7
+vec_age <- rnorm(n = nrow(tbl_data), mean = n_age_mean, sd = n_age_sd)
+tbl_data <- bind_cols(tbl_data, tibble(age = round(vec_age, digits = 0)))
+```
+
+
+# Effects
+
+## sex
+The effect of sex is encoded in a vector of length two
+
+```{r}
+vec_sex_eff <- c(50, -24)
+```
+
+The effects of all the animals are just the contribution added
+
+```{r}
+# design matrix
+mat_sex <- matrix(0, nrow = nrow(tbl_data), ncol = 2)
+# males
+mat_sex[which(tbl_data$sex == 1),1] <- 1
+# females
+mat_sex[which(tbl_data$sex == 2),2] <- 1
+mat_sex_eff <- crossprod(t(mat_sex), vec_sex_eff)
+```
+
+## slaughterhouse
+```{r}
+vec_slh_eff <- c(-7, 15, -3)
+mat_slh <- matrix(0, nrow = nrow(tbl_data), ncol = length(vec_slh_eff))
+for (slh_idx in seq_along(vec_slh_eff)){
+  mat_slh[which(tbl_data$slh == slh_idx), slh_idx] <- 1
+}
+mat_slh_eff <- crossprod(t(mat_slh), vec_slh_eff)
+```
+
+
+## herd
+
+```{r}
+vec_hrd_eff <- c(-23, 65, -14, 36, -3)
+mat_hrd <- matrix(0, nrow = nrow(tbl_data), ncol = length(vec_hrd_eff))
+for (hrd_idx in seq_along(vec_hrd_eff)){
+  mat_hrd[which(tbl_data$hrd == hrd_idx), hrd_idx] <- 1
+}
+mat_hrd_eff <- crossprod(t(mat_hrd), vec_hrd_eff)
+```
+
+
+## age as linear covariable
+```{r}
+n_age_reg <- 0.632
+vec_age_eff <- (tbl_data$age - mean(tbl_data$age)) * n_age_reg
+```
+
+
+## Random error
+Errors are sampled as random normal deviate with a fixed standard deviation
+
+```{r}
+n_sd_error <- 7.43
+vec_rand_error <- rnorm(n = nrow(tbl_data), mean = 0, sd = n_sd_error)
+```
+
+# Compose the data set
+Summing up all the effects leads to
+
+```{r}
+n_inter <- 250
+mat_y <- n_inter + mat_sex_eff + mat_slh_eff + mat_hrd_eff + vec_age_eff + vec_rand_error
+```
+
+Statistics about observations
+
+```{r}
+mean(mat_y)
+```
+
+```{r}
+sd(mat_y)
+```
+
+Adding the observations to the data 
+
+```{r}
+tbl_data <- bind_cols(tbl_data, tibble(cw=round(mat_y[,1], digits = 0)))
+tbl_data
+```
+
+# Adding two random components
+
+```{r}
+vec_day <- floor(30*runif(nrow(tbl_data))) + 1
+vec_hum <- rnorm(nrow(tbl_data))
+tbl_data <- bind_cols(tbl_data, tibble(day=vec_day, hum = round(vec_hum, digits = 1)))
+                      
+```
+
+# Output to csv
+
+```{r}
+s_data_file <- "data_bp_w09.csv"
+readr::write_csv2(tbl_data, path = s_data_file)
+```
 
