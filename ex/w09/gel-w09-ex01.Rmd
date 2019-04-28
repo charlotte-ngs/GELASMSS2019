@@ -31,7 +31,9 @@ Use a fixed linear effects model and determine which of the predictor variables 
 
 The data is available from `data_bp_w09.csv`. 
 
+
 ### Hint
 * Use the function `lm` in R to fit the fixed linear effects model
-
+* Use Mallow $C_p$ statistic and the adjusted coefficient of determination $R_{adj}^2$ as model selection criteria
+* Use the backward model selection approach
 

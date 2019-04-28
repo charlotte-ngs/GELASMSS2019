@@ -128,7 +128,7 @@ vec_topics_notes[which(Datum == format(as.Date("2018/03/25"), "%d.%m"))] <- past
 vec_topics_notes[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- paste0("[Introduction](", s_cn_gel_url, "01-intro.pdf)") 
 vec_topics_notes[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- paste0("[Breeding Programs](", s_cn_gel_url, "02-bprog.pdf)") 
 vec_topics_notes[which(Datum == format(as.Date("2019/04/15"), "%d.%m"))] <- paste0("[Implementation of Breeding Programs](", s_cn_gel_url, "03-implbp.pdf)") 
-vec_topics_notes[which(Datum == format(as.Date("2019/04/29"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")") 
+vec_topics_notes[which(Datum == format(as.Date("2019/04/29"), "%d.%m"))] <- paste0("[Model Selection](", s_cn_gel_url, "04-modsel.pdf)") 
 vec_topics_notes[which(Datum == format(as.Date("2019/05/06"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")") 
 vec_topics_notes[which(Datum == format(as.Date("2019/05/13"), "%d.%m"))] <- paste0("[](", s_cn_gel_url, "", ")") 
 

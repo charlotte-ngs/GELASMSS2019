@@ -1,0 +1,26 @@
+---
+title: "Model Selection"
+author: "Peter von Rohr"
+date: "29.04.2019"
+output: beamer_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
+```
+
+
+
+## Why
+
+* Many predictor variables are available
+* Are all of them `relevant`?
+* What is the meaning of `relevant` in this context?
+
+
+## Relevance of Predictors
+
+
+
+## When

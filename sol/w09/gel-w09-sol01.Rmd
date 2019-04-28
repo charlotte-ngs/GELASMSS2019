@@ -31,8 +31,47 @@ Use a fixed linear effects model and determine which of the predictor variables 
 
 The data is available from `data_bp_w09.csv`. 
 
+
 ### Hint
 * Use the function `lm` in R to fit the fixed linear effects model
+* Use Mallow $C_p$ statistic and the adjusted coefficient of determination $R_{adj}^2$ as model selection criteria
+* Use the backward model selection approach
 
 
 ### Solution
+As preparatory step we have to first read the data from the file
+
+```{r}
+s_data_file <- "https://charlotte-ngs.github.io/GELASMSS2019/ex/w09/data_bp_w09.csv"
+tbl_modsel <- readr::read_csv2(s_data_file)
+```
+
+Before we can do any model fits, we have to convert all fixed effects into `factors`. Fixed effects will be
+
+* `sex`
+* `slh`
+* `hrd`
+* `day`
+
+These must be converted into factors. All other predictors are fit as covariables and can stay as numeric types.
+
+```{r}
+tbl_modsel$sex <- as.factor(tbl_modsel$sex)
+tbl_modsel$slh <- as.factor(tbl_modsel$slh)
+tbl_modsel$hrd <- as.factor(tbl_modsel$hrd)
+tbl_modsel$day <- as.factor(tbl_modsel$day)
+```
+
+
+The backward model selection approach starts with the full model. 
+
+```{r}
+lm_full <- lm(cw ~ sex + slh + hrd + age + day + hum, data = tbl_modsel)
+summary(lm_full)
+```
+
+```{r}
+lm_relevant <- lm(cw ~ sex + slh + hrd + age, data = tbl_modsel)
+summary(lm_relevant)
+```
+
