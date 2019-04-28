@@ -5,7 +5,7 @@ mrmt$set_this_rmd_file(ps_this_rmd_file = ifelse(rstudioapi::isAvailable(),
                                                  rprojroot::thisfile()))
 ```
 
-The aim of model selection is to find from a set of predictor variables those which are __relevant__ for the response variable. Relevance in this context means that variability of the predictor is associated with variability of the response variable. Furthermore this co-existance of variability of predictors and response has to be quantifiable by a linear function, such as the one given in the model \@ref(eq:gel-modsel-linmodel). 
+The aim of model selection is to find from a set of predictor variables those which are __relevant__ for the response variable. Relevance in this context means that variability of the predictor is associated with variability of the response variable. Furthermore this co-existence of variability of predictors and response has to be quantifiable by a linear function, such as the one given in the model \@ref(eq:gel-modsel-linmodel). 
 
 In a practical data analysis setting, the dataset used as input to the analysis may have many predictor variables. But it is not guaranteed that all of them have an influence on the response variable. Because we want to model the responses with a linear function of the predictor variables, every additional predictor variable introduces an additional coefficient that must be estimated. Every estimated coefficient leads to more variability in the predicted response values of a given model. Hence if a model should be used to predict new responses based on observed predictor values, the increased variability decreases the predictive power. 
 
@@ -55,7 +55,7 @@ For any (sub-) model $\mathcal{M}$ which involves some (or all) of the predictor
 (\#eq:gel-modsel-estmse)
 \end{equation}
 
-where $\hat{\sigma}^2$ is the error variance estimate in the full model and $SSE(\mathcal{M})$ is the residual sum of squares in the submodel $\mathcal{M}$. Hence to find the best model, we could searchfor the sub-model $\mathcal{M}$ that minimizes $\widehat{MSE}$. Because $\hat{\sigma}^2$ and $n$ are constants with respect to submodels $\mathcal{M}$, we can also consider the well-known $C_p$ statistic
+where $\hat{\sigma}^2$ is the error variance estimate in the full model and $SSE(\mathcal{M})$ is the residual sum of squares in the sub-model $\mathcal{M}$. Hence to find the best model, we could search for the sub-model $\mathcal{M}$ that minimizes $\widehat{MSE}$. Because $\hat{\sigma}^2$ and $n$ are constants with respect to sub-models $\mathcal{M}$, we can also consider the well-known $C_p$ statistic
 
 \begin{equation}
 C_p(\mathcal{M}) = \frac{SSE(\mathcal{M})}{\hat{\sigma}^2} - n + 2 |\mathcal{M}|
@@ -66,4 +66,54 @@ and search for the sub-model $\mathcal{M}$ minimizing the $C_p$ statistic.
 
 
 ## Searching For The Best Model With Respect To $C_p$ {#gel-modsel-searchbestmodelcp}
+If the full model has $p$ predictor variables, there are $2^p-1$ sub-models (every predictor can be considered in a sub-model or not. The empty sub-model without any predictors is excluded here). 
+
+```{r maxnrpred, echo=FALSE, results='hide'}
+max_nr_pred <- 16
+```
+
+Therefore, an exhaustive search for the sub-model $\mathcal{M}$ minimizing $C_p$ is only feasible if $p$ is less than $`r max_nr_pred`$ which results in $2^{`r max_nr_pred`} - 1 = `r 2^max_nr_pred - 1`$ sub-models to be tested. If $p$ is much larger, we can proceed with one of the two following stepwise algorithms. 
+
+
+### Forward Selection {#gel-modsel-forward}
+1. Start with the smallest model $\mathcal{M}_0$ with only a general mean as the current model
+2. Include the predictor variable to the current model which reduces the residual sum of squares the most.
+3. Continue with step 2 until all predictor variables have been chosen or until a large number of predictor variables have been selected. This produces a sequence of sub-models $\mathcal{M}_0 \subseteq \mathcal{M}_1 \subseteq \mathcal{M}_2 \subseteq \ldots$
+4. Choose the model in the sequence $\mathcal{M}_0 \subseteq \mathcal{M}_1 \subseteq \mathcal{M}_2 \subseteq \ldots$ with the smallest $C_p$ value.
+
+
+### Backward Selection {#gel-modsel-backward}
+1. Start with the full model $\mathcal{M}_0$ as the current model. The full model is the model including all $p$ predictor variables
+2. Exclude the predictor variable from the current model which increases the residual sum of squares the least.
+3. Continue with step 2 until all predictor values have been deleted (or a large number of variables have been deleted). This produces a sequence of sub-models $\mathcal{M}_0 \supseteq \mathcal{M}_1 \supseteq \mathcal{M}_2 \supseteq \ldots$.
+4. Choose the model in the sequence $\mathcal{M}_0 \supseteq \mathcal{M}_1 \supseteq \mathcal{M}_2 \supseteq \ldots$ which has the smallest $C_p$ value.
+
+
+### Considerations {#gel-modsel-considerations}
+Backward selection (\@ref(gel-modsel-backward)) typically leads to better results than forward selection, but it is computationally more expensive. But in the case where $p \geq n$, the full model cannot be fitted and backward selection is not possible. Forward selection might then be a possibility, but alternative estimation procedures such as LASSO might be a better solution. 
+
+
+## Alternative Model Selection Criteria {#gel-modsel-alternative}
+Other popular criteria to estimate the predictive potential of an estimated model are Akaike'w information criterion (AIC) and the Bayesian information criterion (BIC). Both of them are based on the likelihood and require therefore assumptions about the distribution of the data. 
+
+The goodness of the fit of the linear model for explaining the data is quantified by the coefficient of determination which is typically abbreviated by $R^2$ where 
+
+\begin{equation}
+R^2 = \frac{||\hat{y} - \bar{y}||^2}{||y - \bar{y}||^2}
+(\#eq:gel-modsel-coeffdeter)
+\end{equation}
+
+where $||\hat{y} - \bar{y}||^2$ are the sum of squares explained by the model and $||y - \bar{y}||^2$ stands for the total sum of squares around the global mean $\bar{y}$. The coefficient of determination $R^2$ is always increasing the more predictor variables are included in the model. This behavior can be corrected as proposed in `r mrmt$add("Yin2001")`. This correction includes the number of predictor variables an hence reduces the favoring of the full model. The result of the correction is the adjusted $R^2$ which is computed as
+
+\begin{equation}
+R_{adj}^2 = 1 - (1 - R^2) \frac{n-1}{n-p-1}
+(\#eq:gel-modsel-adjr2)
+\end{equation}
+
+where $R^2$ is the unadjusted coefficient of determination given by \@ref(eq:gel-modsel-coeffdeter), $n$ stands for the number of observations and $p$ is the number of predictor variables. The formula in \@ref(eq:gel-modsel-adjr2) holds for sub-models that include an intercept term. For sub-models without intercept, the $-1$ in both numerator and the denominator of \@ref(eq:gel-modsel-adjr2) can be dropped.
+
+The adjusted coefficient of determination ($R_{adj}^2$) allows to assess the goodness of fit of a model. That assessment considers the number of predictor variables included in the model.
+
+
+
 
