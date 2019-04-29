@@ -1,0 +1,54 @@
+---
+title: "Compute Mallow $C_p$"
+output: html_notebook
+---
+
+# Disclaimer
+Show the how to compute the Mallow $C_p$ statistic using the BW on BC regression data.
+
+
+# Example Data
+
+```{r}
+set.seed(432)
+suppressPackageStartupMessages( require(dplyr) )
+tbl_reg <- tibble::tibble(`Breast Circumference` = c(176, 177, 178, 179, 179, 180, 181, 182,183, 184),
+                          `Body Weight` = c(471, 463, 481, 470, 496, 491, 518, 511, 510, 541))
+n_nr_ani <- nrow(tbl_reg)
+tbl_reg <- bind_cols(tibble::tibble(Animal = 1:n_nr_ani),
+                     tbl_reg)
+vec_randpred <- runif(n_nr_ani, 
+                      min = min(tbl_reg$`Breast Circumference`), 
+                      max = max(tbl_reg$`Breast Circumference`))
+tbl_reg_aug <- bind_cols(tbl_reg, tibble(RandPred = round(vec_randpred, digits = 0)))
+tbl_reg_aug
+```
+
+
+# Computation of $C_p$
+The Mallow $C_p$ statistic is computed as 
+
+$$C_p(\mathcal{M}) = \frac{SSE(\mathcal{M})}{\hat{\sigma}^2} - n + 2 |\mathcal{M}|$$
+
+where $\hat{\sigma}^2$ is the estimate of the error variance under the full model. Hence we need the fit of the full model first.
+
+```{r}
+lm_full <- lm(`Body Weight` ~ `Breast Circumference` + RandPred, data = tbl_reg_aug)
+vec_res_full <- residuals(lm_full)
+n_sse_full <- crossprod(vec_res_full)
+n_sigma_hat2 <- n_sse_full / (n_nr_ani-1)
+n_cardm_full <- length(coefficients(lm_full))
+(n_cp_full <- n_sse_full / n_sigma_hat2 - n_nr_ani + 2 * n_cardm_full)
+
+```
+
+For the reduced model
+
+```{r}
+lm_red <- lm(`Body Weight` ~ `Breast Circumference`, data = tbl_reg_aug)
+vec_res_red <- residuals(lm_red)
+n_sse_red <- crossprod(vec_res_red)
+n_cardm_red <- length(coefficients(lm_red))
+(n_cp_red <- n_sse_red / n_sigma_hat2 - n_nr_ani + 2 * n_cardm_red)
+```
+

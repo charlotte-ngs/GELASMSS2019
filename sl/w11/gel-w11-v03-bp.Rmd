@@ -110,7 +110,7 @@ $\rightarrow$ estimate MSE
 
 
 ## Mallows $C_p$ statistic
-* For a given model $\mathcal{M}$, $SSE(\mathcal{M})$ stands for the resiudal sum of squares.
+* For a given model $\mathcal{M}$, $SSE(\mathcal{M})$ stands for the residual sum of squares.
 * MSE can be estimated as
 
 $$\widehat{MSE} = n^{-1} SSE(\mathcal{M}) - \hat{\sigma}^2 + 2 \hat{\sigma}^2 |\mathcal{M}|/n$$
@@ -121,4 +121,43 @@ $$C_p(\mathcal{M}) = \frac{SSE(\mathcal{M})}{\hat{\sigma}^2} - n + 2 |\mathcal{M
 
 
 ## Searching The Best Model
+```{r}
+n_nr_pred <- 16
+```
 
+* Exhaustive search over all sub-models might be too expensive
+* For $p$ predictors there are $2^p - 1$ sub-models
+* With $p=`r n_nr_pred`$, we get $`r 2^n_nr_pred - 1`$ sub-models
+
+$\rightarrow$ step-wise approaches
+
+## Forward Selection
+1. Start with smallest sub-model $\mathcal{M}_0$ as current model
+2. Include predictor that reduces SSE the most to current model
+3. Repeat step 2 until all predictors are chosen
+
+$\rightarrow$ results in sequence $\mathcal{M}_0 \subseteq \mathcal{M}_1 \subseteq \mathcal{M}_2 \subseteq \ldots$ of sub-models
+
+4. Out of sequence of sub-models choose the one with minimal $C_p$
+
+
+## Backward Selection
+1. Start with full model $\mathcal{M}_0$ as the current model
+2. Exclude predictor variable that increases SSE the least from current model
+3. Repeat step 2 until all predictors are excluded (except for intercept)
+
+$\rightarrow$ results in sequence $\mathcal{M}_0 \supseteq \mathcal{M}_1 \supseteq \mathcal{M}_2 \supseteq \ldots$ of sub-models
+
+4. Out of sequence choose the one with minimal $C_p$
+
+
+## Considerations
+* Whenever possible, choose __backward__ selection, because it leads to better results
+* If $p \geq n$, only forward is possible, but then consider LASSO
+
+
+## Alternative Selection Criteria
+* AIC or BIC, requires distributional assumptions. 
+* AIC is implemented in `MASS::stepAIC()` 
+* Adjusted $R^2$ is a measure of goodness of fit, but sometimes is not conclusive when comparing two models
+* Try in exercise

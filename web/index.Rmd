@@ -61,8 +61,9 @@ The students know the theoretical and practical application of breeding value es
 - Date: Montag 8-10
 - Room: [LFW C11](http://www.mapsearch.ethz.ch/map/map.do?gebaeudeMap=LFW&lang=en)
 
+<!--
 ### Excursion 
-More information on the excursion will be available from here. <!--[here](`r paste0(sBaseUrl, "misc/gel_exkursion/gel_exkursion.html") `)-->
+More information on the excursion will be available from here. [here](`r paste0(sBaseUrl, "misc/gel_exkursion/gel_exkursion.html") `)-->
 
 
 ### Exercise Platform
@@ -96,7 +97,7 @@ vec_topics_schedule[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- "
 vec_topics_schedule[which(Datum == format(as.Date("2019/04/15"), "%d.%m"))] <- "Model Selection"
 vec_topics_schedule[which(Datum == format(as.Date("2019/04/29"), "%d.%m"))] <- "Genetic Groups"
 vec_topics_schedule[which(Datum == format(as.Date("2019/05/06"), "%d.%m"))] <- "Longitudinal Data"
-vec_topics_schedule[which(Datum == format(as.Date("2019/05/13"), "%d.%m"))] <- "Excursion to Braunvieh Schweiz and Qualitas in Zug"
+vec_topics_schedule[which(Datum == format(as.Date("2019/05/13"), "%d.%m"))] <- "Braunvieh Schweiz and Qualitas AG"
 vec_topics_schedule[which(Datum == format(as.Date("2019/05/20"), "%d.%m"))] <- "Questions and Test Exams"
 vec_topics_schedule[which(Datum == format(as.Date("2019/05/27"), "%d.%m"))] <- "Final Exams"
 
@@ -154,7 +155,7 @@ vec_topics_slides[which(Datum == format(as.Date("2018/03/25"), "%d.%m"))] <- pas
 vec_topics_slides[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- paste0("[Introduction](", s_sl_url, "w07/gel-w07-v01-intro.pdf)")
 vec_topics_slides[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- paste0("[Suisag - Zuchtwertschätzung beim Schwein](", s_sl_url, "w08/Zuchtwertschaetzung_Vorlesung_pst_ETH_Zuerich.pdf)")
 vec_topics_slides[which(Datum == format(as.Date("2019/04/15"), "%d.%m"))] <- paste0("[Implementation of Breeding Program](", s_sl_url, "w09/gel-w09-v02-bp.pdf)")
-vec_topics_slides[which(Datum == format(as.Date("2019/04/29"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")")
+vec_topics_slides[which(Datum == format(as.Date("2019/04/29"), "%d.%m"))] <- paste0("[Model Selection](", s_sl_url, "w11/gel-w11-v03-bp.pdf)")
 vec_topics_slides[which(Datum == format(as.Date("2019/05/06"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")")
 vec_topics_slides[which(Datum == format(as.Date("2019/05/13"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")")
   
