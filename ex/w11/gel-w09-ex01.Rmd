@@ -1,0 +1,39 @@
+---
+title: Applied Genetic Evaluation - Exercise 1
+author: Peter von Rohr
+date: "2019-04-15"
+output:
+  bookdown::pdf_document2:
+    toc: false
+    number_sections: false
+    keep_tex: false
+header-includes:
+ \usepackage{longtable}
+ \usepackage{float}
+---
+
+```{r setup, include=FALSE}
+# knitr::opts_chunk$set(echo = FALSE, results = 'asis', fig.pos = 'H')
+knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
+```
+
+## Problem 1: Model Selection
+We assume that we have a dataset for the response variable `carcass weight` (CW) and for some predictor variables
+
+* sex (`sex`)
+* slaughterhouse (`slh`)
+* herd (`hrd`)
+* age at slaughter (`age`)
+* day of month when animal was slaughtered (`day`) and
+* humidity (`hum`)
+
+Use a fixed linear effects model and determine which of the predictor variables are important for the response. 
+
+The data is available from `data_bp_w09.csv`. 
+
+
+### Hint
+* Use the function `lm` in R to fit the fixed linear effects model
+* Use Mallow $C_p$ statistic and the adjusted coefficient of determination $R_{adj}^2$ as model selection criteria
+* Use the backward model selection approach
+
