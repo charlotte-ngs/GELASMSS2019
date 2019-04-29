@@ -244,22 +244,118 @@ $(document).ready(function () {
 </div>
 <div id="example-regression-dataset" class="section level1">
 <h1>Example Regression Dataset</h1>
-<p>This is an <a href="http://rmarkdown.rstudio.com">R Markdown</a> Notebook. When you execute code within the notebook, the results appear beneath the code.</p>
-<p>Try executing this chunk by clicking the <em>Run</em> button within the chunk or by placing your cursor inside it and pressing <em>Cmd+Shift+Enter</em>.</p>
+<p>The data set contains two variables <code>Breast Circumference</code> (BC) and <code>Body Weight</code> (BW) where the latter is the response.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdChjYXJzKVxuYGBgIn0= -->
-<pre class="r"><code>plot(cars)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3VwcHJlc3NQYWNrYWdlU3RhcnR1cE1lc3NhZ2VzKCByZXF1aXJlKGRwbHlyKSApXG50YmxfcmVnIDwtIHRpYmJsZTo6dGliYmxlKGBCcmVhc3QgQ2lyY3VtZmVyZW5jZWAgPSBjKDE3NiwgMTc3LCAxNzgsIDE3OSwgMTc5LCAxODAsIDE4MSwgMTgyLDE4MywgMTg0KSxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgYEJvZHkgV2VpZ2h0YCA9IGMoNDcxLCA0NjMsIDQ4MSwgNDcwLCA0OTYsIDQ5MSwgNTE4LCA1MTEsIDUxMCwgNTQxKSlcbm5fbnJfYW5pIDwtIG5yb3codGJsX3JlZylcbnRibF9yZWcgPC0gYmluZF9jb2xzKHRpYmJsZTo6dGliYmxlKEFuaW1hbCA9IDE6bl9ucl9hbmkpLFxuICAgICAgICAgICAgICAgICAgICAgdGJsX3JlZylcbmtuaXRyOjprYWJsZSh0YmxfcmVnKVxuYGBgIn0= -->
+<pre class="r"><code>suppressPackageStartupMessages( require(dplyr) )
+tbl_reg &lt;- tibble::tibble(`Breast Circumference` = c(176, 177, 178, 179, 179, 180, 181, 182,183, 184),
+                          `Body Weight` = c(471, 463, 481, 470, 496, 491, 518, 511, 510, 541))
+n_nr_ani &lt;- nrow(tbl_reg)
+tbl_reg &lt;- bind_cols(tibble::tibble(Animal = 1:n_nr_ani),
+                     tbl_reg)
+knitr::kable(tbl_reg)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Add a new chunk by clicking the <em>Insert Chunk</em> button on the toolbar or by pressing <em>Cmd+Option+I</em>.</p>
-<p>When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the <em>Preview</em> button or press <em>Cmd+Shift+K</em> to preview the HTML file).</p>
-<p>The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike <em>Knit</em>, <em>Preview</em> does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.</p>
+</div>
+<div id="relevance-of-predictors" class="section level1">
+<h1>Relevance of Predictors</h1>
+<p>Create a random predictor which would have no relevance.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudmVjX3JhbmRwcmVkIDwtIHJ1bmlmKG5fbnJfYW5pLCBcbiAgICAgICAgICAgICAgICAgICAgICBtaW4gPSBtaW4odGJsX3JlZyRgQnJlYXN0IENpcmN1bWZlcmVuY2VgKSwgXG4gICAgICAgICAgICAgICAgICAgICAgbWF4ID0gbWF4KHRibF9yZWckYEJyZWFzdCBDaXJjdW1mZXJlbmNlYCkpXG50YmxfcmVnX2F1ZyA8LSBiaW5kX2NvbHModGJsX3JlZywgdGliYmxlKFJhbmRQcmVkID0gcm91bmQodmVjX3JhbmRwcmVkLCBkaWdpdHMgPSAwKSkpXG50YmxfcmVnX2F1Z1xuYGBgIn0= -->
+<pre class="r"><code>vec_randpred &lt;- runif(n_nr_ani, 
+                      min = min(tbl_reg$`Breast Circumference`), 
+                      max = max(tbl_reg$`Breast Circumference`))
+tbl_reg_aug &lt;- bind_cols(tbl_reg, tibble(RandPred = round(vec_randpred, digits = 0)))
+tbl_reg_aug</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>What does the plot look like</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBwbG90KHRibF9yZWdfYXVnJFJhbmRQcmVkLCB0YmxfcmVnX2F1ZyRgQm9keSBXZWlnaHRgKVxucmVxdWlyZShnZ3Bsb3QyKVxucXBsb3QodGJsX3JlZ19hdWckUmFuZFByZWQsIHRibF9yZWdfYXVnJGBCb2R5IFdlaWdodGApXG5gYGAifQ== -->
+<pre class="r"><code># plot(tbl_reg_aug$RandPred, tbl_reg_aug$`Body Weight`)
+require(ggplot2)
+qplot(tbl_reg_aug$RandPred, tbl_reg_aug$`Body Weight`)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>As opposed to</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdCh0YmxfcmVnX2F1ZyRgQnJlYXN0IENpcmN1bWZlcmVuY2VgLCB0YmxfcmVnX2F1ZyRgQm9keSBXZWlnaHRgKVxuYGBgIn0= -->
+<pre class="r"><code>plot(tbl_reg_aug$`Breast Circumference`, tbl_reg_aug$`Body Weight`)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="prediction" class="section level1">
+<h1>Prediction</h1>
+<p>Leave one out cross validation</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShjYXJldClcbmRhdGEgPC0gdGliYmxlOjp0aWJibGUoeCA9IHJub3JtKDEwMDAsIDMsIDIpLCB5ID0gMip4ICsgcm5vcm0oMTAwMCkpXG50cmFpbih5IH4geCwgbWV0aG9kID0gXCJsbVwiLCBkYXRhID0gZGF0YSwgdHJDb250cm9sID0gdHJhaW5Db250cm9sKG1ldGhvZCA9IFwiTE9PQ1ZcIikpXG5gYGAifQ== -->
+<pre class="r"><code>library(caret)
+data &lt;- tibble::tibble(x = rnorm(1000, 3, 2), y = 2*x + rnorm(1000))
+train(y ~ x, method = &quot;lm&quot;, data = data, trControl = trainControl(method = &quot;LOOCV&quot;))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudHJhaW4oYEJvZHkgV2VpZ2h0YCB+IGBCcmVhc3QgQ2lyY3VtZmVyZW5jZWAgKyBSYW5kUHJlZCwgbWV0aG9kID0gXCJsbVwiLCBkYXRhID0gdGJsX3JlZ19hdWcsIHRyQ29udHJvbCA9IHRyYWluQ29udHJvbChtZXRob2QgPSBcIkxPT0NWXCIpKVxuXG5gYGAifQ== -->
+<pre class="r"><code>train(`Body Weight` ~ `Breast Circumference` + RandPred, method = &quot;lm&quot;, data = tbl_reg_aug, trControl = trainControl(method = &quot;LOOCV&quot;))
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiTGluZWFyIFJlZ3Jlc3Npb24gXG5cbjEwIHNhbXBsZXNcbiAyIHByZWRpY3RvclxuXG5ObyBwcmUtcHJvY2Vzc2luZ1xuUmVzYW1wbGluZzogTGVhdmUtT25lLU91dCBDcm9zcy1WYWxpZGF0aW9uIFxuU3VtbWFyeSBvZiBzYW1wbGUgc2l6ZXM6IDksIDksIDksIDksIDksIDksIC4uLiBcblJlc2FtcGxpbmcgcmVzdWx0czpcblxuICBSTVNFICAgICAgUnNxdWFyZWQgICBNQUUgICAgIFxuICAxMi4yMTA1OCAgMC43MzUxMDUxICAxMC4yNTk2NVxuXG5UdW5pbmcgcGFyYW1ldGVyICdpbnRlcmNlcHQnIHdhcyBoZWxkIGNvbnN0YW50IGF0IGEgdmFsdWUgb2YgVFJVRVxuIn0= -->
+<pre><code>Linear Regression 
+
+10 samples
+ 2 predictor
+
+No pre-processing
+Resampling: Leave-One-Out Cross-Validation 
+Summary of sample sizes: 9, 9, 9, 9, 9, 9, ... 
+Resampling results:
+
+  RMSE      Rsquared   MAE     
+  12.21058  0.7351051  10.25965
+
+Tuning parameter 'intercept' was held constant at a value of TRUE</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudHJhaW4oYEJvZHkgV2VpZ2h0YCB+IGBCcmVhc3QgQ2lyY3VtZmVyZW5jZWAsIG1ldGhvZCA9IFwibG1cIiwgZGF0YSA9IHRibF9yZWdfYXVnLCB0ckNvbnRyb2wgPSB0cmFpbkNvbnRyb2wobWV0aG9kID0gXCJMT09DVlwiKSlcblxuYGBgIn0= -->
+<pre class="r"><code>train(`Body Weight` ~ `Breast Circumference`, method = &quot;lm&quot;, data = tbl_reg_aug, trControl = trainControl(method = &quot;LOOCV&quot;))
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiTGluZWFyIFJlZ3Jlc3Npb24gXG5cbjEwIHNhbXBsZXNcbiAxIHByZWRpY3RvclxuXG5ObyBwcmUtcHJvY2Vzc2luZ1xuUmVzYW1wbGluZzogTGVhdmUtT25lLU91dCBDcm9zcy1WYWxpZGF0aW9uIFxuU3VtbWFyeSBvZiBzYW1wbGUgc2l6ZXM6IDksIDksIDksIDksIDksIDksIC4uLiBcblJlc2FtcGxpbmcgcmVzdWx0czpcblxuICBSTVNFICAgICAgUnNxdWFyZWQgICBNQUUgICAgIFxuICAxMi42MjA0NCAgMC43MTkwMTM4ICAxMS4yMzk1NVxuXG5UdW5pbmcgcGFyYW1ldGVyICdpbnRlcmNlcHQnIHdhcyBoZWxkIGNvbnN0YW50IGF0IGEgdmFsdWUgb2YgVFJVRVxuIn0= -->
+<pre><code>Linear Regression 
+
+10 samples
+ 1 predictor
+
+No pre-processing
+Resampling: Leave-One-Out Cross-Validation 
+Summary of sample sizes: 9, 9, 9, 9, 9, 9, ... 
+Resampling results:
+
+  RMSE      Rsquared   MAE     
+  12.62044  0.7190138  11.23955
+
+Tuning parameter 'intercept' was held constant at a value of TRUE</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUmVsZXZhbmNlIG9mIFByZWRpY3RvciBWYXJpYWJsZXMiCm91dHB1dDogaHRtbF9ub3RlYm9vawotLS0KCgojIERpc2NsYWltZXIKCgojIEV4YW1wbGUgUmVncmVzc2lvbiBEYXRhc2V0CgoKVGhpcyBpcyBhbiBbUiBNYXJrZG93bl0oaHR0cDovL3JtYXJrZG93bi5yc3R1ZGlvLmNvbSkgTm90ZWJvb2suIFdoZW4geW91IGV4ZWN1dGUgY29kZSB3aXRoaW4gdGhlIG5vdGVib29rLCB0aGUgcmVzdWx0cyBhcHBlYXIgYmVuZWF0aCB0aGUgY29kZS4gCgpUcnkgZXhlY3V0aW5nIHRoaXMgY2h1bmsgYnkgY2xpY2tpbmcgdGhlICpSdW4qIGJ1dHRvbiB3aXRoaW4gdGhlIGNodW5rIG9yIGJ5IHBsYWNpbmcgeW91ciBjdXJzb3IgaW5zaWRlIGl0IGFuZCBwcmVzc2luZyAqQ21kK1NoaWZ0K0VudGVyKi4gCgpgYGB7cn0KcGxvdChjYXJzKQpgYGAKCkFkZCBhIG5ldyBjaHVuayBieSBjbGlja2luZyB0aGUgKkluc2VydCBDaHVuayogYnV0dG9uIG9uIHRoZSB0b29sYmFyIG9yIGJ5IHByZXNzaW5nICpDbWQrT3B0aW9uK0kqLgoKV2hlbiB5b3Ugc2F2ZSB0aGUgbm90ZWJvb2ssIGFuIEhUTUwgZmlsZSBjb250YWluaW5nIHRoZSBjb2RlIGFuZCBvdXRwdXQgd2lsbCBiZSBzYXZlZCBhbG9uZ3NpZGUgaXQgKGNsaWNrIHRoZSAqUHJldmlldyogYnV0dG9uIG9yIHByZXNzICpDbWQrU2hpZnQrSyogdG8gcHJldmlldyB0aGUgSFRNTCBmaWxlKS4gCgpUaGUgcHJldmlldyBzaG93cyB5b3UgYSByZW5kZXJlZCBIVE1MIGNvcHkgb2YgdGhlIGNvbnRlbnRzIG9mIHRoZSBlZGl0b3IuIENvbnNlcXVlbnRseSwgdW5saWtlICpLbml0KiwgKlByZXZpZXcqIGRvZXMgbm90IHJ1biBhbnkgUiBjb2RlIGNodW5rcy4gSW5zdGVhZCwgdGhlIG91dHB1dCBvZiB0aGUgY2h1bmsgd2hlbiBpdCB3YXMgbGFzdCBydW4gaW4gdGhlIGVkaXRvciBpcyBkaXNwbGF5ZWQuCgo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUmVsZXZhbmNlIG9mIFByZWRpY3RvciBWYXJpYWJsZXMiCm91dHB1dDogaHRtbF9ub3RlYm9vawotLS0KCgojIERpc2NsYWltZXIKCgojIEV4YW1wbGUgUmVncmVzc2lvbiBEYXRhc2V0CgpUaGUgZGF0YSBzZXQgY29udGFpbnMgdHdvIHZhcmlhYmxlcyBgQnJlYXN0IENpcmN1bWZlcmVuY2VgIChCQykgYW5kIGBCb2R5IFdlaWdodGAgKEJXKSB3aGVyZSB0aGUgbGF0dGVyIGlzIHRoZSByZXNwb25zZS4gCgpgYGB7cn0Kc3VwcHJlc3NQYWNrYWdlU3RhcnR1cE1lc3NhZ2VzKCByZXF1aXJlKGRwbHlyKSApCnRibF9yZWcgPC0gdGliYmxlOjp0aWJibGUoYEJyZWFzdCBDaXJjdW1mZXJlbmNlYCA9IGMoMTc2LCAxNzcsIDE3OCwgMTc5LCAxNzksIDE4MCwgMTgxLCAxODIsMTgzLCAxODQpLAogICAgICAgICAgICAgICAgICAgICAgICAgIGBCb2R5IFdlaWdodGAgPSBjKDQ3MSwgNDYzLCA0ODEsIDQ3MCwgNDk2LCA0OTEsIDUxOCwgNTExLCA1MTAsIDU0MSkpCm5fbnJfYW5pIDwtIG5yb3codGJsX3JlZykKdGJsX3JlZyA8LSBiaW5kX2NvbHModGliYmxlOjp0aWJibGUoQW5pbWFsID0gMTpuX25yX2FuaSksCiAgICAgICAgICAgICAgICAgICAgIHRibF9yZWcpCmtuaXRyOjprYWJsZSh0YmxfcmVnKQpgYGAKCgojIFJlbGV2YW5jZSBvZiBQcmVkaWN0b3JzCkNyZWF0ZSBhIHJhbmRvbSBwcmVkaWN0b3Igd2hpY2ggd291bGQgaGF2ZSBubyByZWxldmFuY2UuCgpgYGB7cn0KdmVjX3JhbmRwcmVkIDwtIHJ1bmlmKG5fbnJfYW5pLCAKICAgICAgICAgICAgICAgICAgICAgIG1pbiA9IG1pbih0YmxfcmVnJGBCcmVhc3QgQ2lyY3VtZmVyZW5jZWApLCAKICAgICAgICAgICAgICAgICAgICAgIG1heCA9IG1heCh0YmxfcmVnJGBCcmVhc3QgQ2lyY3VtZmVyZW5jZWApKQp0YmxfcmVnX2F1ZyA8LSBiaW5kX2NvbHModGJsX3JlZywgdGliYmxlKFJhbmRQcmVkID0gcm91bmQodmVjX3JhbmRwcmVkLCBkaWdpdHMgPSAwKSkpCnRibF9yZWdfYXVnCmBgYAoKV2hhdCBkb2VzIHRoZSBwbG90IGxvb2sgbGlrZQoKYGBge3J9CiMgcGxvdCh0YmxfcmVnX2F1ZyRSYW5kUHJlZCwgdGJsX3JlZ19hdWckYEJvZHkgV2VpZ2h0YCkKcmVxdWlyZShnZ3Bsb3QyKQpxcGxvdCh0YmxfcmVnX2F1ZyRSYW5kUHJlZCwgdGJsX3JlZ19hdWckYEJvZHkgV2VpZ2h0YCkKYGBgCgpBcyBvcHBvc2VkIHRvIAoKYGBge3J9CnBsb3QodGJsX3JlZ19hdWckYEJyZWFzdCBDaXJjdW1mZXJlbmNlYCwgdGJsX3JlZ19hdWckYEJvZHkgV2VpZ2h0YCkKYGBgCgoKIyBQcmVkaWN0aW9uCkxlYXZlIG9uZSBvdXQgY3Jvc3MgdmFsaWRhdGlvbgoKYGBge3J9CmxpYnJhcnkoY2FyZXQpCmRhdGEgPC0gdGliYmxlOjp0aWJibGUoeCA9IHJub3JtKDEwMDAsIDMsIDIpLCB5ID0gMip4ICsgcm5vcm0oMTAwMCkpCnRyYWluKHkgfiB4LCBtZXRob2QgPSAibG0iLCBkYXRhID0gZGF0YSwgdHJDb250cm9sID0gdHJhaW5Db250cm9sKG1ldGhvZCA9ICJMT09DViIpKQpgYGAKCmBgYHtyfQp0cmFpbihgQm9keSBXZWlnaHRgIH4gYEJyZWFzdCBDaXJjdW1mZXJlbmNlYCArIFJhbmRQcmVkLCBtZXRob2QgPSAibG0iLCBkYXRhID0gdGJsX3JlZ19hdWcsIHRyQ29udHJvbCA9IHRyYWluQ29udHJvbChtZXRob2QgPSAiTE9PQ1YiKSkKYGBgCgpgYGB7cn0KdHJhaW4oYEJvZHkgV2VpZ2h0YCB+IGBCcmVhc3QgQ2lyY3VtZmVyZW5jZWAsIG1ldGhvZCA9ICJsbSIsIGRhdGEgPSB0YmxfcmVnX2F1ZywgdHJDb250cm9sID0gdHJhaW5Db250cm9sKG1ldGhvZCA9ICJMT09DViIpKQpgYGAKCg==</div>
 
 
 

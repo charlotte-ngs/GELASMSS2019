@@ -9,18 +9,59 @@ output: html_notebook
 
 # Example Regression Dataset
 
-
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
-
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+The data set contains two variables `Breast Circumference` (BC) and `Body Weight` (BW) where the latter is the response. 
 
 ```{r}
-plot(cars)
+suppressPackageStartupMessages( require(dplyr) )
+tbl_reg <- tibble::tibble(`Breast Circumference` = c(176, 177, 178, 179, 179, 180, 181, 182,183, 184),
+                          `Body Weight` = c(471, 463, 481, 470, 496, 491, 518, 511, 510, 541))
+n_nr_ani <- nrow(tbl_reg)
+tbl_reg <- bind_cols(tibble::tibble(Animal = 1:n_nr_ani),
+                     tbl_reg)
+knitr::kable(tbl_reg)
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+# Relevance of Predictors
+Create a random predictor which would have no relevance.
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+```{r}
+vec_randpred <- runif(n_nr_ani, 
+                      min = min(tbl_reg$`Breast Circumference`), 
+                      max = max(tbl_reg$`Breast Circumference`))
+tbl_reg_aug <- bind_cols(tbl_reg, tibble(RandPred = round(vec_randpred, digits = 0)))
+tbl_reg_aug
+```
+
+What does the plot look like
+
+```{r}
+# plot(tbl_reg_aug$RandPred, tbl_reg_aug$`Body Weight`)
+require(ggplot2)
+qplot(tbl_reg_aug$RandPred, tbl_reg_aug$`Body Weight`)
+```
+
+As opposed to 
+
+```{r}
+plot(tbl_reg_aug$`Breast Circumference`, tbl_reg_aug$`Body Weight`)
+```
+
+
+# Prediction
+Leave one out cross validation
+
+```{r}
+library(caret)
+data <- tibble::tibble(x = rnorm(1000, 3, 2), y = 2*x + rnorm(1000))
+train(y ~ x, method = "lm", data = data, trControl = trainControl(method = "LOOCV"))
+```
+
+```{r}
+train(`Body Weight` ~ `Breast Circumference` + RandPred, method = "lm", data = tbl_reg_aug, trControl = trainControl(method = "LOOCV"))
+```
+
+```{r}
+train(`Body Weight` ~ `Breast Circumference`, method = "lm", data = tbl_reg_aug, trControl = trainControl(method = "LOOCV"))
+```
 
