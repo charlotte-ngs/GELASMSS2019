@@ -1,0 +1,370 @@
+---
+title: "Working with formula in R"
+output: html_notebook
+---
+
+# Disclaimer
+Have a better understanding of how to work with formulas in R
+
+
+# Experiments
+From https://www.datacamp.com/community/tutorials/r-formula-tutorial
+
+```{r}
+# Create variables
+i <- y ~ x
+j <- y ~ x + x1
+k <- y ~ x + x1 + x2
+```
+
+Formulas can be joined and combined into a list
+
+```{r}
+# Join all with `c()`
+l <- c(i, j, k)
+
+# Apply `as.formula` to all elements of `f`
+lapply(l, as.formula)
+```
+
+Formuals can be modified using `update()`
+
+```{r}
+(fo_current <- update(y ~ x1 + x2, ~. + x3))
+```
+
+How can we eliminate one term at the time
+
+```{r}
+(te_current <- terms(fo_current))
+(vec_label_current <- labels(te_current))
+# for (t in la_current){
+#   fo_red <- update(fo_current, ~. - t)
+#   print(fo_red)
+# }
+(vec_formula_current <- as.character(fo_current))
+for (lidx in seq_along(vec_label_current)){
+  s_cur_formula_red <- paste0(vec_label_current[-lidx], collapse = " + ")
+  s_cur_formula_red <- paste0(vec_formula_current[2], vec_formula_current[1], s_cur_formula_red, collapse = " ")
+  cat(" * current reduced formula: ", s_cur_formula_red, "\n")
+}
+```
+
+
+# Application to Backwards Model Selection
+
+We are given the following dataset
+
+```{r}
+bOnline <- FALSE
+if (bOnline){
+  s_data_file <- "https://charlotte-ngs.github.io/GELASMSS2019/ex/w09/data_bp_w09.csv"
+} else {
+  s_data_file <- file.path(here::here(), "ex/w09/data_bp_w09.csv")
+}
+(tbl_modsel <- readr::read_csv2(s_data_file))
+```
+
+Convert the fixed effects to factors
+
+```{r}
+tbl_modsel$sex <- as.factor(tbl_modsel$sex)
+tbl_modsel$slh <- as.factor(tbl_modsel$slh)
+tbl_modsel$hrd <- as.factor(tbl_modsel$hrd)
+```
+
+## Step 1: Start With Full Model
+We use the full model with all predictors as the current model
+
+```{r}
+fo_current <- cw ~ sex + slh + hrd + age + day + hum
+lm_current <- lm(fo_current, data = tbl_modsel)
+vec_res_current <- residuals(lm_current)
+n_sigmahat2_current <- crossprod(vec_res_current) / lm_current$df.residual
+n_nrobs_current <- length(vec_res_current)
+summary(lm_current)
+```
+
+## Step 2: Exclusion Of One Predictor
+Exclude predictor that increases the residual sum of squares the least. To find the predictor to be excluded, we exclude each one of them and retain the residual sum of squares. Predictor exclusion is done via the vector of labels of the formula terms. The formulas with one predictor excluded are pasted together as strings and then converted back to formulas. We start by doing this one step at the time and then wrap it with a loop. 
+
+```{r}
+# extract the labels from the terms of the formula, resulting in a character-vector of fixed effect
+(vec_formula_label <- labels(terms(fo_current)))
+(vec_char_formula_current <- as.character(fo_current))
+lidx <- 1
+(s_formula_red <- paste0(vec_char_formula_current[2], vec_char_formula_current[1], paste0(vec_formula_label[-lidx], collapse = " + "), collapse = " "))
+lm_red <- lm(as.formula(s_formula_red), data = tbl_modsel)
+summary(lm_red)
+n_sse_red <- crossprod(residuals(lm_red))
+```
+
+### Converting Forumulas to Strings
+Interestingly enough, the `as.character()` method of a formula returns a character vector of length 3. 
+
+```{r}
+(vec_formula_char <- as.character(fo_current))
+```
+
+We need a little helper function that returns the formula as one string as
+
+```{r}
+paste0(vec_formula_char[c(2,1,3)], collapse = " ")
+```
+
+Our helper function accepts different inputs. 
+
+1. a formula object 
+2. a string specifying the response and a vector with predictors
+
+```{r}
+convert_formula_to_string <- function(pfo_model = NULL, ps_response = NULL, pvec_predictor = NULL){
+  # if a formula is specified in pfo_model, then paste together the components
+  if (!is.null(pfo_model)){
+    vec_formula_char <- as.character(pfo_model)
+    return(paste0(vec_formula_char[c(2,1,3)], collapse = " "))
+  }
+  # if response and predictors are given separately, paste those together
+  #  start with pvec_predictor
+  n_nr_predictor <- length(pvec_predictor) 
+  if (n_nr_predictor > 1){
+    s_pred <- paste0(pvec_predictor, collapse = " + ")
+  } else if (n_nr_predictor == 1) {
+      s_pred <- pvec_predictor[1]
+  } else {
+      s_pred <- "1"
+  }
+  # add response and return result
+  return(paste0(ps_response, " ~ ", s_pred))
+}
+```
+
+Testing the above function
+
+```{r}
+convert_formula_to_string(pfo_model = fo_current)
+```
+```{r}
+vec_fo_current <- as.character(fo_current)
+convert_formula_to_string(ps_response = vec_fo_current[2], pvec_predictor = vec_fo_current[3])
+```
+
+```{r}
+vec_label <- labels(terms(fo_current))
+convert_formula_to_string(ps_response = vec_fo_current[2], pvec_predictor = vec_label)
+```
+
+### Extension To All Predictors
+What was done for one predictor so far is repeated for all predictors. This is done in a loop over all predictors given as strings in `vec_formual_label`.
+
+```{r}
+tbl_backstep_result <- NULL
+for (lidx in seq_along(vec_formula_label)){
+  s_formula_red <- paste0(vec_char_formula_current[2], vec_char_formula_current[1], paste0(vec_formula_label[-lidx], collapse = " + "), collapse = " ")
+  lm_red <- lm(as.formula(s_formula_red), data = tbl_modsel)
+  n_sse_red <- crossprod(residuals(lm_red))
+  n_cardm_red <- length(coefficients(lm_red))
+  n_cp_red <- n_sse_red / n_sigmahat2_current - n_nrobs_current  + 2 * n_cardm_red
+  cat(" * lidx: ", lidx, " formula: ", s_formula_red, " sse: ", n_sse_red, " cp: ", n_cp_red, "\n")
+  if (is.null(tbl_backstep_result) || n_sse_red < tbl_backstep_result$n_sse_min){
+    tbl_backstep_result <- tibble::tibble( s_formula_min = as.vector(s_formula_red), 
+                                           n_sse_min     = as.vector(n_sse_red),
+                                           n_cp_min      = as.vector(n_cp_red) )
+  }
+}
+cat("Predictor with min sse:\n")
+print(tbl_backstep_result)
+```
+
+The result is a reduced model that has one predictor less than the full model. The predictor that was eliminated from the full model is the one that increases the residual sum of squares the least. 
+
+
+### Create A Function
+The above finding of the reduced model is encapsulated into a function which finds the reduced model increasing SSE the least. 
+
+```{r}
+#' Given A Model Formula, Find Model Reduced By One Predictor
+#' 
+#' From the given model formula pfo_model, the predictor that 
+#' increases the residual sum of squares the least is eliminated 
+#' resulting in the reduced model.
+#'
+#' @param pfo_model current model formula
+#' @param ptbl_data tibble containing data
+get_reduced_model <- function(pfo_model, ptbl_data){
+  # convert pfo_model formula into a character vector of three elements
+  # (1) "~", (2) response, (3) righthand-side of formula
+  vec_char_formula_current <- as.character(pfo_model)
+  # find vector of labels corresponding to predictors in pfo_model
+  vec_formula_label <- labels(terms(pfo_model))
+  n_nr_term <- length(vec_formula_label)
+  # model that does not have predictors cannot be reduced anymore
+  if (n_nr_term == 0){
+    stop("[ERROR -- get_reduced_model] Cannot reduce model, because number of terms is: ", n_nr_term, "\n")
+  }
+  # Initialise tibble for reduced model
+  tbl_backstep_result <- NULL
+  # for a model with just one predictor, we construct an intercept model
+  if (n_nr_term == 1){
+    # s_formula_red <- paste0(vec_char_formula_current[2], 
+    #                         vec_char_formula_current[1], 
+    #                         "1", collapse = " ")
+    s_formula_red <- convert_formula_to_string(ps_response = vec_char_formula_current[2], 
+                                               pvec_predictor = c("1"))
+    lm_red <- lm(as.formula(s_formula_red), data = ptbl_data)
+    vec_res <- residuals(lm_red)
+    n_sse_red <- crossprod(vec_res)
+    tbl_backstep_result <- tibble::tibble( s_formula_min = as.vector(s_formula_red), 
+                                             n_sse_min     = as.vector(n_sse_red) )
+  } else {
+    # loop over all predictors and find the one that increases sse the least
+    for (lidx in seq_along(vec_formula_label)){
+      # s_formula_red <- paste0(vec_char_formula_current[2], 
+      #                         vec_char_formula_current[1], 
+      #                         paste0(vec_formula_label[-lidx], collapse = " + "), 
+      #                         collapse = " ")
+      s_formula_red <- convert_formula_to_string(ps_response = vec_char_formula_current[2],
+                                                 pvec_predictor = vec_formula_label[-lidx])
+      lm_red <- lm(as.formula(s_formula_red), data = ptbl_data)
+      vec_res <- residuals(lm_red)
+      n_sse_red <- crossprod(vec_res)
+      if (is.null(tbl_backstep_result) || n_sse_red < tbl_backstep_result$n_sse_min){
+        tbl_backstep_result <- tibble::tibble( s_formula_min = as.vector(s_formula_red), 
+                                               n_sse_min     = as.vector(n_sse_red) )
+      }
+    }
+  }
+  # return result
+  return(tbl_backstep_result)
+}
+```
+
+Testing the above function leads to
+
+```{r}
+get_reduced_model(pfo_model = fo_current, ptbl_data = tbl_modsel)
+get_reduced_model(pfo_model = cw~sex, ptbl_data = tbl_modsel)
+# get_reduced_model(pfo_model = cw~1, ptbl_data = tbl_modsel)
+
+```
+
+The second function is used to compute the $C_p$ value for a given model. 
+
+```{r}
+#' Compute Mallows C_p Statistic for model pfo_model
+compute_cp <- function(pfo_model, pn_sigmahat2_full_model, ptbl_data){
+  # fit the model given by pfo_model to data in ptbl_data
+  lm_model <- lm(pfo_model, data = ptbl_data)
+  # get residuals
+  vec_res <- residuals(lm_model)
+  # get number of observations
+  n_nr_obs <- length(vec_res)
+  # get residual sum of squares
+  n_sse <- crossprod(vec_res)
+  # get number of fixed effects
+  n_cardm <- length(coefficients(lm_model))
+  # compute cp
+  n_cp_result <- n_sse / pn_sigmahat2_full_model - n_nr_obs + 2 * n_cardm
+  # return result
+  return(n_cp_result)
+}
+```
+
+The above function is tested with
+
+```{r}
+compute_cp(pfo_model = fo_full, pn_sigmahat2_full_model = n_sigmahat2_current, ptbl_data = tbl_modsel)
+```
+
+Reducing the full model by one predictor is done with `get_reduced_model()`
+
+```{r}
+(tbl_model_red <- get_reduced_model(pfo_model = fo_full, ptbl_data = tbl_modsel))
+```
+
+The $C_p$ value for the reduced model is then
+
+```{r}
+compute_cp(pfo_model = as.formula(tbl_model_red$s_formula_min), pn_sigmahat2_full_model = n_sigmahat2_current, ptbl_data = tbl_modsel)
+```
+
+
+
+## Step 3: Repeat Step 2 Until All Predictors Are Eliminated
+Starting from the full model, we repeat step 2 until we have the model with only an intercept. This produces a sequence of models. From this sequence, we select the one with the smallest $C_p$ value. 
+
+We construct a function that takes the full model as a formula and from that generates the sequence of models. 
+
+```{r}
+# unroll the function below
+(pfo_full_model <- fo_full)
+ptbl_data <- tbl_modsel
+```
+
+```{r}
+construct_model_sequences <- function(pfo_full_model, ptbl_data){
+  # initialise a tibble that will hold the sequence of models
+  tbl_model_sequence_result <- NULL
+  # start with a fit of the full model and compute estimate of error variance
+  fo_current_model <- pfo_full_model
+  lm_current_model <- lm(fo_current_model, data = ptbl_data)
+  n_sigmahat2_full_model <- crossprod(residuals(lm_current_model)) / lm_current_model$df.residual
+  # extract lables of model terms for full model corresponding 
+  #  to all predictors in a character vector
+  vec_label_current_model <- labels(terms(lm_current_model))
+  n_nr_pred_current_model <- length(vec_label_current_model)
+  # loop until there are any predictors in the model
+  while (n_nr_pred_current_model > 0){
+    # compute C_p for current model and add it to result tibble
+    n_cp_current_model <- compute_cp(pfo_model               = fo_current_model, 
+                                     pn_sigmahat2_full_model = n_sigmahat2_full_model,
+                                     ptbl_data               = ptbl_data)
+    
+    # convert model into a character vector
+    vec_fo_current_model <- as.character(fo_current_model)
+    # put information about current model into a tibble
+    tbl_cur_model <- tibble::tibble(model = as.vector(convert_formula_to_string(ps_response    = vec_fo_current_model[2],
+                                                                      pvec_predictor = vec_label_current_model)),
+                                    cp    = as.vector(n_cp_current_model))
+    # add current model to result structure
+    if (is.null(tbl_model_sequence_result)){
+      tbl_model_sequence_result <- tbl_cur_model
+    } else {
+      tbl_model_sequence_result <- dplyr::bind_rows(tbl_model_sequence_result, tbl_cur_model)
+    }
+    # reduce current model by one predictor
+    tbl_red_model <- get_reduced_model(pfo_model    = fo_current_model,
+                                       ptbl_data    = ptbl_data)
+    # update
+    fo_current_model <- as.formula(tbl_red_model$s_formula_min)
+    lm_current_model <- lm(fo_current_model, data = ptbl_data)
+    vec_label_current_model <- labels(terms(lm_current_model))
+    n_nr_pred_current_model <- length(vec_label_current_model)
+  }
+  # add the intercept model
+  # compute C_p for current model and add it to result tibble
+  n_cp_current_model <- compute_cp(pfo_model               = fo_current_model, 
+                                   pn_sigmahat2_full_model = n_sigmahat2_full_model,
+                                   ptbl_data               = ptbl_data)
+  
+  # convert model into a character vector
+  vec_fo_current_model <- as.character(fo_current_model)
+  # put information about current model into a tibble
+  tbl_cur_model <- tibble::tibble(model = as.vector(convert_formula_to_string(ps_response    = vec_fo_current_model[2],
+                                                                              pvec_predictor = vec_label_current_model)),
+                                  cp    = as.vector(n_cp_current_model))
+  # add current model to result structure
+  if (is.null(tbl_model_sequence_result)){
+    tbl_model_sequence_result <- tbl_cur_model
+  } else {
+    tbl_model_sequence_result <- dplyr::bind_rows(tbl_model_sequence_result, tbl_cur_model)
+  }
+
+  return(tbl_model_sequence_result)  
+}
+
+construct_model_sequences(pfo_full_model = fo_full, ptbl_data = tbl_modsel)
+```
+
+
+

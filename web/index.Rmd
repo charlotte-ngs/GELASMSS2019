@@ -203,7 +203,7 @@ vec_topics_sol[which(Datum == format(as.Date("2018/03/25"), "%d.%m"))] <- paste0
 vec_topics_sol[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- paste0("[Bayes](", s_sol_url, "w07/asm-w07-sol06.pdf)")
 vec_topics_sol[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")")
 vec_topics_sol[which(Datum == format(as.Date("2019/04/15"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")")
-vec_topics_sol[which(Datum == format(as.Date("2019/04/29"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")")
+vec_topics_sol[which(Datum == format(as.Date("2019/04/29"), "%d.%m"))] <- paste0("[Model Selection](", s_sol_url, "w11/gel-w09-sol01.pdf)")
 vec_topics_sol[which(Datum == format(as.Date("2019/05/06"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")")
 vec_topics_sol[which(Datum == format(as.Date("2019/05/13"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")")
 

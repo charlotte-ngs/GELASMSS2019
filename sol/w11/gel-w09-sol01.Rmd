@@ -1,0 +1,321 @@
+---
+title: Applied Genetic Evaluation - Solution 1
+author: Peter von Rohr
+date: "2019-04-15"
+output:
+  bookdown::pdf_document2:
+    toc: false
+    number_sections: false
+    keep_tex: false
+header-includes:
+ \usepackage{longtable}
+ \usepackage{float}
+---
+
+```{r setup, include=FALSE}
+# knitr::opts_chunk$set(echo = FALSE, results = 'asis', fig.pos = 'H')
+knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
+```
+
+## Problem 1: Model Selection
+We assume that we have a dataset for the response variable `carcass weight` (CW) and for some predictor variables
+
+* sex (`sex`)
+* slaughterhouse (`slh`)
+* herd (`hrd`)
+* age at slaughter (`age`)
+* day of month when animal was slaughtered (`day`) and
+* humidity (`hum`)
+
+Use a fixed linear effects model and determine which of the predictor variables are important for the response. 
+
+The data is available from `data_bp_w09.csv`. 
+
+
+### Hint
+* Use the function `lm` in R to fit the fixed linear effects model
+* Use Mallow $C_p$ statistic and the adjusted coefficient of determination $R_{adj}^2$ as model selection criteria
+* Use the backward model selection approach
+
+
+### Solution
+On possibility to solve this problem is searching on Google for a R-package that does model selection. With more than $10^4$ R-packages available on CRAN (Comprehensive R Archive Network), it is very likely that there is a package available that does exactly what we need. 
+
+For our model selection problem, there is a package called `olsrr` which uses different criteria for model selection one of which is Mallows $C_p$ statistic. Then there is the function `MASS::stepAIC()` which does step-wise model selection using the Akaike Information Criterion. As a third possibility, we can come up with our own solution.
+
+As preparatory step we have to first read the data from the file
+
+```{r}
+s_data_file <- "https://charlotte-ngs.github.io/GELASMSS2019/ex/w09/data_bp_w09.csv"
+tbl_modsel <- readr::read_csv2(s_data_file)
+```
+
+Before we can do any model fits, we have to convert all fixed effects into `factors`. Fixed effects will be
+
+* `sex`
+* `slh`
+* `hrd`
+
+These must be converted into factors. All other predictors are fit as covariables and can stay as numeric types.
+
+```{r}
+tbl_modsel$sex <- as.factor(tbl_modsel$sex)
+tbl_modsel$slh <- as.factor(tbl_modsel$slh)
+tbl_modsel$hrd <- as.factor(tbl_modsel$hrd)
+```
+
+
+### Package `olsrr`
+According to https://cran.r-project.org/web/packages/olsrr/vignettes/variable_selection.html with `olsrr` we can select the best model according to 
+
+\scriptsize
+
+```{r}
+lm_full_model <- lm(cw ~ sex + slh + hrd + age + day + hum, data = tbl_modsel)
+olsrr::ols_step_best_subset(lm_full_model)
+```
+
+\normalsize
+
+This shows that based on the $C_p$ criterion model number four would be the best model for our data. 
+
+
+### Function `MASS::stepAIC()`
+The model selection can also be done using `stepAIC()` from the `MASS` package.
+
+```{r}
+MASS::stepAIC(lm_full_model)
+```
+
+The final result of `MASS::stepAIC()` is the same as with `olsrr::ols_step_best_subset()` which gives good confidence that the model 
+
+```
+cw ~ sex + slh + hrd + age
+```
+
+is the best model for our data. Although the computed values for `AIC` are not the same. We would need to analyse the computations done in more detail. 
+
+
+### Backward Selection Using Our Own Functions
+
+__Step 1__: 
+
+The backward model selection approach starts with the full model as the current model. 
+
+```{r fullmodeldef}
+fo_full_model <- cw ~ sex + slh + hrd + age + day + hum
+lm_full_model <- lm(fo_full_model, data = tbl_modsel)
+summary(lm_full_model)
+```
+
+From the full model we have to extract the estimate of the error variance $\hat{\sigma}^2$. 
+
+```{r esterrorvarfullmodel}
+vec_res_full_model <- residuals(lm_full_model)
+n_sse_full_model <- crossprod(vec_res_full_model)
+n_hatsigma2_full_model <- n_sse_full_model / lm_full_model$df.residual
+```
+
+__Step 2__:
+
+In step 2 we eliminate the predictor variable that increases the residual sum of squares the least. This is done using the function `get_reduced_model()`. In this function the model formula is converted into a vector of predictors (`vec_formula_label`). From this vector each predictor is excluded once and from the resulting reduced models the residual sums of squares are computed. As a result the model increasing the residual sum of squares the least is returned.  
+
+
+```{r convert_formula_to_string, echo=FALSE}
+convert_formula_to_string <- function(pfo_model = NULL, 
+                                      ps_response = NULL, 
+                                      pvec_predictor = NULL){
+  # if a formula is specified in pfo_model, then paste together the components
+  if (!is.null(pfo_model)){
+    vec_formula_char <- as.character(pfo_model)
+    return(paste0(vec_formula_char[c(2,1,3)], collapse = " "))
+  }
+  # if response and predictors are given separately, paste those together
+  #  start with pvec_predictor
+  n_nr_predictor <- length(pvec_predictor) 
+  if (n_nr_predictor > 1){
+    s_pred <- paste0(pvec_predictor, collapse = " + ")
+  } else if (n_nr_predictor == 1) {
+      s_pred <- pvec_predictor[1]
+  } else {
+      s_pred <- "1"
+  }
+  # add response and return result
+  return(paste0(ps_response, " ~ ", s_pred))
+}
+```
+
+
+```{r getreducedmodelfuncdef}
+#' Given A Model Formula, Find Model Reduced By One Predictor
+#' 
+#' From the given model formula pfo_model, the predictor that 
+#' increases the residual sum of squares the least is eliminated 
+#' resulting in the reduced model.
+#'
+#' @param pfo_model current model formula
+#' @param ptbl_data tibble containing data
+get_reduced_model <- function(pfo_model, ptbl_data){
+  # convert pfo_model formula into a character vector of three elements
+  # (1) "~", (2) response, (3) righthand-side of formula
+  vec_char_formula_current <- as.character(pfo_model)
+  # find vector of labels corresponding to predictors in pfo_model
+  vec_formula_label <- labels(terms(pfo_model))
+  n_nr_term <- length(vec_formula_label)
+  # model that does not have predictors cannot be reduced anymore
+  if (n_nr_term == 0){
+    stop("[ERROR -- get_reduced_model] Cannot reduce model, because number of terms is: ", 
+         n_nr_term, "\n")
+  }
+  # Initialise tibble for reduced model
+  tbl_backstep_result <- NULL
+  # for a model with just one predictor, we construct an intercept model
+  if (n_nr_term == 1){
+    s_formula_red <- convert_formula_to_string(ps_response = vec_char_formula_current[2], 
+                                               pvec_predictor = c("1"))
+    lm_red <- lm(as.formula(s_formula_red), data = ptbl_data)
+    vec_res <- residuals(lm_red)
+    n_sse_red <- crossprod(vec_res)
+    tbl_backstep_result <- tibble::tibble( s_formula_min = as.vector(s_formula_red), 
+                                             n_sse_min     = as.vector(n_sse_red) )
+  } else {
+    # loop over all predictors and find the one that increases sse the least
+    for (lidx in seq_along(vec_formula_label)){
+      s_formula_red <- convert_formula_to_string(ps_response = vec_char_formula_current[2],
+                                                 pvec_predictor = vec_formula_label[-lidx])
+      lm_red <- lm(as.formula(s_formula_red), data = ptbl_data)
+      vec_res <- residuals(lm_red)
+      n_sse_red <- crossprod(vec_res)
+      if (is.null(tbl_backstep_result) || n_sse_red < tbl_backstep_result$n_sse_min){
+        tbl_backstep_result <- tibble::tibble( s_formula_min = as.vector(s_formula_red), 
+                                               n_sse_min     = as.vector(n_sse_red) )
+      }
+    }
+  }
+  # return result
+  return(tbl_backstep_result)
+}
+```
+
+The function `get_reduced_model()` can be used to eliminate the one predictor that increases the residual sum of squares the least compared to the current model. 
+
+```{r}
+get_reduced_model(pfo_model = fo_full_model, ptbl_data = tbl_modsel)
+```
+
+The result of calling `get_reduced_model()` with the full model and the dataset, gives a tibble with one row and two columns. The first column contains the formula of the reduced model and the second model contains the residual sum of squares for the reduced model.
+
+Inside of the function `get_reduced_model()`, the helper function `convert_formula_to_string()` is used to convert a formula into a string. This helper function is shown below. 
+
+```{r convert_formula_to_string, echo=TRUE}
+```
+
+
+__Step 3__:
+
+The step 2 is repeated until all predictors are eliminated. The result of this is a sequence of models. This sequence is produced by the function `construct_model_sequences()`.
+
+```{r computecpfundef, echo=FALSE}
+#' Compute Mallows C_p Statistic for model pfo_model
+compute_cp <- function(pfo_model, pn_sigmahat2_full_model, ptbl_data){
+  # fit the model given by pfo_model to data in ptbl_data
+  lm_model <- lm(pfo_model, data = ptbl_data)
+  # get residuals
+  vec_res <- residuals(lm_model)
+  # get number of observations
+  n_nr_obs <- length(vec_res)
+  # get residual sum of squares
+  n_sse <- crossprod(vec_res)
+  # get number of fixed effects
+  n_cardm <- length(coefficients(lm_model))
+  # compute cp
+  n_cp_result <- n_sse / pn_sigmahat2_full_model - n_nr_obs + 2 * n_cardm
+  # return result
+  return(n_cp_result)
+}
+```
+
+```{r constructmodelsequencefundef}
+construct_model_sequences <- function(pfo_full_model, ptbl_data){
+  # initialise a tibble that will hold the sequence of models
+  tbl_model_sequence_result <- NULL
+  # start with a fit of the full model and compute estimate of error variance
+  fo_current_model <- pfo_full_model
+  lm_current_model <- lm(fo_current_model, data = ptbl_data)
+  n_sigmahat2_full_model <- crossprod(residuals(lm_current_model)) / lm_current_model$df.residual
+  # extract lables of model terms for full model corresponding 
+  #  to all predictors in a character vector
+  vec_label_current_model <- labels(terms(lm_current_model))
+  n_nr_pred_current_model <- length(vec_label_current_model)
+  # loop until there are any predictors in the model
+  while (n_nr_pred_current_model > 0){
+    # compute C_p for current model and add it to result tibble
+    n_cp_current_model <- compute_cp(pfo_model               = fo_current_model, 
+                                     pn_sigmahat2_full_model = n_sigmahat2_full_model,
+                                     ptbl_data               = ptbl_data)
+    
+    # convert model into a character vector
+    vec_fo_current_model <- as.character(fo_current_model)
+    # put information about current model into a tibble
+    s_cur_fo <- convert_formula_to_string(ps_response    = vec_fo_current_model[2],
+                                          pvec_predictor = vec_label_current_model)
+    tbl_cur_model <- tibble::tibble(model = as.vector(s_cur_fo),
+                                    cp    = as.vector(n_cp_current_model))
+    # add current model to result structure
+    if (is.null(tbl_model_sequence_result)){
+      tbl_model_sequence_result <- tbl_cur_model
+    } else {
+      tbl_model_sequence_result <- dplyr::bind_rows(tbl_model_sequence_result, tbl_cur_model)
+    }
+    # reduce current model by one predictor
+    tbl_red_model <- get_reduced_model(pfo_model    = fo_current_model,
+                                       ptbl_data    = ptbl_data)
+    # update
+    fo_current_model <- as.formula(tbl_red_model$s_formula_min)
+    lm_current_model <- lm(fo_current_model, data = ptbl_data)
+    vec_label_current_model <- labels(terms(lm_current_model))
+    n_nr_pred_current_model <- length(vec_label_current_model)
+  }
+  # add the intercept model
+  # compute C_p for current model and add it to result tibble
+  n_cp_current_model <- compute_cp(pfo_model               = fo_current_model, 
+                                   pn_sigmahat2_full_model = n_sigmahat2_full_model,
+                                   ptbl_data               = ptbl_data)
+  
+  # convert model into a character vector
+  vec_fo_current_model <- as.character(fo_current_model)
+  # put information about current model into a tibble
+  s_cur_fo <- convert_formula_to_string(ps_response    = vec_fo_current_model[2],
+                                        pvec_predictor = vec_label_current_model)
+  tbl_cur_model <- tibble::tibble(model = as.vector(s_cur_fo),
+                                  cp    = as.vector(n_cp_current_model))
+  # add current model to result structure
+  if (is.null(tbl_model_sequence_result)){
+    tbl_model_sequence_result <- tbl_cur_model
+  } else {
+    tbl_model_sequence_result <- dplyr::bind_rows(tbl_model_sequence_result, tbl_cur_model)
+  }
+
+  return(tbl_model_sequence_result)  
+}
+```
+
+The model sequence is constructed with the following call. 
+
+```{r}
+(tbl_model_seq <- construct_model_sequences(pfo_full_model = fo_full_model, 
+                                            ptbl_data = tbl_modsel))
+```
+
+
+The helper function to compute the Mallow $C_p$ statistic used in `construct_model_sequences()` is shown below.
+
+```{r computecpfundef, echo=TRUE}
+```
+
+
+### Final Remark
+Also with the third solution, the same model is found to be the best model when looking at the minimal $C_p$ value. Because this data is generated, we know the truth and indeed the predictors `day` and `hum` are just random numbers and were not used in the generation of the values of the response variable.
+
+
+
