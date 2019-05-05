@@ -17,7 +17,110 @@ header-includes:
 knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
 ```
 
-## Problem 1: Variance Components Estimation
+## Problem 1: Analysis of Variance
+Estimate the variance component for the sire effect using an analysis of variance. The data is available from `https://charlotte-ngs.github.io/GELASMSS2019/ex/w12/data_sire_w12.csv`. Because the data contains just female animals, the fixed effect of the sex can no longer be estimated. 
+
+
+### Hint
+* Use the functions `aov()` to do the analysis of variance and the function `summary()` on the ANOVA result to get the relevant parts of the variance components.
+
+
+### Solution
+The data is read using 
+
+```{r}
+s_data_sire <- "https://charlotte-ngs.github.io/GELASMSS2019/ex/w12/data_sire_w12.csv"
+tbl_sire_aov <- readr::read_csv2(file = s_data_sire)
+tbl_sire_aov$slh <- as.factor(tbl_sire_aov$slh)
+tbl_sire_aov$hrd <- as.factor(tbl_sire_aov$hrd)
+tbl_sire_aov$sire <- as.factor(tbl_sire_aov$sire)
+# anova
+aov_sire <- aov(cw ~ slh + hrd + age + sire, data = tbl_sire_aov)
+(summary_aov_sire <- summary(aov_sire))
+```
+
+From the Mean Sq of the residuals and of the sires, the estimates of the variance components can be computed. 
+
+The estimate $\hat{\sigma}_e^2$ corresponds to the mean sum of squares for the residuals. Hence 
+
+```{r, echo=FALSE}
+n_hatsigmae2 <- summary_aov_sire[[1]]$`Mean Sq`[5]
+```
+
+$$\hat{\sigma}_e^2 = `r round(n_hatsigmae2, 0)`$$
+
+The  estimate of the sire variance $\hat{\sigma}_s^2$ is computed as 
+
+$$\hat{\sigma}_s^2 = \frac{Mean\ Sq(sire) -  \hat{\sigma}_e^2}{k}$$
+
+where $k = \frac{1}{r-1} \left[ N - \frac{\sum_{i=1}^{r}n_i^2}{N} \right]$ with $r$ is the number of sires, $N$ the total number of observations and $n_i$ the number of progeny for sire $i$. To compute the value $k$, we need the progeny counts for each sire. 
+
+```{r, echo=FALSE, message=FALSE}
+library(dplyr)
+tbl_sire_aov %>%
+    group_by(sire) %>%
+    summarise(prog_count = n()) -> tbl_prog_count
+n_nr_sire <- nrow(tbl_prog_count)
+n_nr_obs <- nrow(tbl_sire_aov)
+n_sum_ni2 <- sum(tbl_prog_count$prog_count^2)
+n_k <- 1/(n_nr_sire-1) * (n_nr_obs - n_sum_ni2 / n_nr_obs)
+knitr::kable(tbl_prog_count, booktabs = TRUE, longtable = TRUE)
+```
+
+From the above table, we get
+
+$$k = \frac{1}{r-1} \left[ N - \frac{\sum_{i=1}^{r}n_i^2}{N} \right] = 1/(`r n_nr_sire`- 1) \left[`r n_nr_obs` - \frac{`r n_sum_ni2`}{`r n_nr_obs`}  \right] = `r round(n_k, 1)`$$
+
+```{r}
+
+n_msqsire <- summary_aov_sire[[1]]$`Mean Sq`[4]
+n_hatsigmas2 <- (n_msqsire - n_hatsigmae2) / n_k
+```
+
+Putting everything together, we get
+
+$$\hat{\sigma}_s^2 = \frac{`r round(n_msqsire, 0)` -  `r round(n_hatsigmae2, 0)`}{`r round(n_k, 1)`} = `r round(n_hatsigmas2, 1)`$$
+
+From the estimate of the sire variance, we get the estimate of the genetic variance by multiplying it with four. Hence
+
+$$\hat{\sigma}_a^2 = 4 * \hat{\sigma}_s^2 = 4 * `r round(n_hatsigmas2, 1)` = `r round(4*n_hatsigmas2, 1)`$$
+
+
+## Problem 2: Variance Components Estimation Using REML
+Use the same data set as for Problem 1 and a sire model to estimate the same sire variance $\sigma_s^2$. The sire model is the linear mixed effects model that contains sire effects as random component. The model can be specified as 
+
+$$y = Xb + Zs + e$$
+
+where $y$ is the vector of observations, $b$ is the vector of fixed effects which are the same as in Problem 1, $s$ is the vector of random sire effects and $e$ is the vector of random error terms. 
+
+### Hint 
+* Use the package `pedigreemm` to get a REML estimate for the sire variance component $\sigma_s^2$. 
+* We assume that the sires are not related. Hence variance-covariance matrix $var(s)$ of the sire components are $var(s) = I * \sigma_s^2$. 
+
+
+### Solution
+As the first step, we have to specify a pedigree. The sires are unrelated hence the corresponding pedigree corresponds to
+
+```{r}
+ped_sire <- pedigreemm::pedigree(sire = rep(NA, n_nr_sire), 
+                                 dam = rep(NA, n_nr_sire), 
+                                 label = c(1:n_nr_sire))
+```
+
+The specified pedigree is used for the linear mixed effects model
+
+```{r}
+require(pedigreemm)
+lmem_sire <- pedigreemm(cw ~ slh + hrd + age + (1|sire), 
+                        pedigree = list(sire = ped_sire), 
+                        data = tbl_sire_aov)
+summary(lmem_sire)
+```
+
+
+
+
+## Additional Problem: Variance Components Estimation Using an Animal Model
 We are given the dataset with the response variable `carcass weight` (CW) and the predictor variables that resulted from the model selection process from Exercise 1. These consisted of
 
 * sex (`sex`)
@@ -71,18 +174,20 @@ ped <- pedigreemm::pedigree(sire  = tbl_gel_ex2$sire,
 
 Now the model can be specified as for the other functions to fit linear mixed effects model, such as `lmer`. 
 
-```{r}
+```{r eval=FALSE}
+# This takes more than one hour to run.
 require(pedigreemm)
 # according to https://stat.ethz.ch/pipermail/r-sig-mixed-models/2014q1/021609.html
 options(lmerControl=list(check.nobs.vs.nlev="ignore",
      check.nobs.vs.rankZ = "ignore",
      check.nobs.vs.nRE="ignore"))
-# lmem_gel_ex2 <- pedigreemm(cw ~ sex + slh + hrd + age + (1|Id), data = tbl_gel_ex2, pedigree = list(Id = ped))
 s_lmem_file <- "lmem_gel_ex2.rds"
 if (file.exists(s_lmem_file)){
   load(file = s_lmem_file)
 } else {
-  lmem_gel_ex2 <- pedigreemm(cw ~ (1|Id), data = tbl_gel_ex2, pedigree = list(Id = ped))
+  lmem_gel_ex2 <- pedigreemm(cw ~ sex + slh + hrd + age + (1|Id), 
+                             data = tbl_gel_ex2, 
+                             pedigree = list(Id = ped))
   saveRDS(lmem_gel_ex2, file = s_lmem_file)
 }
 summary(lmem_gel_ex2)

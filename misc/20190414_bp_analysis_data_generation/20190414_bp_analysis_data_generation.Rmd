@@ -183,10 +183,6 @@ which(tbl_ped$id == 49)
 tbl_ped[74, ]
 ```
 
-```{r}
-# order the pedigree according to id
-# tbl_ped_ord <- tbl_ped[order(tbl_ped$id), ]
-```
 
 
 ```{r}
@@ -256,5 +252,44 @@ readr::write_csv2(tbl_data, path = s_data_file)
 # relevant effect
 s_data_relevant_eff <- "data_bp_w12.csv"
 readr::write_csv2(tbl_data_relevant_eff, path = s_data_relevant_eff)
+```
+
+
+# Extract Sire Model Data
+
+```{r}
+# (tbl_sire <- tbl_data_relevant_eff[tbl_data_relevant_eff$sire <= 10 & ,])
+library(dplyr)
+tbl_data_relevant_eff %>%
+  filter(!is.na(sire)) %>%
+  filter(sire < 11) %>%
+  select(Id, slh, hrd, age, cw, sire) -> tbl_sire
+```
+
+Write the data to a file
+
+```{r}
+s_data_file_sire <- "data_sire_w12.csv"
+readr::write_csv2(tbl_sire, path = s_data_file_sire)
+```
+
+
+We try to fit an ANOVA using the sire model data
+
+```{r}
+tbl_sire$slh <- as.factor(tbl_sire$slh)
+tbl_sire$hrd <- as.factor(tbl_sire$hrd)
+tbl_sire$sire <- as.factor(tbl_sire$sire)
+aov_sire <- aov(cw ~ slh + hrd + age + sire, data = tbl_sire)
+(sum_aov_sire <- summary(aov_sire))
+```
+
+
+The counts per sire
+
+```{r}
+tbl_sire %>%
+  group_by(sire) %>%
+  summarise(prog_count = n())
 ```
 

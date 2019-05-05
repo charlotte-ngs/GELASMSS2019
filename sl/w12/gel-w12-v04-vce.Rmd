@@ -1,0 +1,15 @@
+---
+title: "Variance Components Estimation"
+author: "Peter von Rohr"
+date: "06.05.2019"
+output: beamer_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
+```
+
+
+
+## 

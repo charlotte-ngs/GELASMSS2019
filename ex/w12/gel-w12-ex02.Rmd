@@ -1,0 +1,68 @@
+---
+title: Applied Genetic Evaluation - Exercise 2
+author: Peter von Rohr
+date: "2019-05-06"
+output:
+  bookdown::pdf_document2:
+    toc: false
+    number_sections: false
+    keep_tex: false
+header-includes:
+ \usepackage{longtable}
+ \usepackage{float}
+---
+
+```{r setup, include=FALSE}
+# knitr::opts_chunk$set(echo = FALSE, results = 'asis', fig.pos = 'H')
+knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
+```
+
+## Problem 1: Analysis of Variance
+Estimate the variance component for the sire effect using an analysis of variance. The data is available from `https://charlotte-ngs.github.io/GELASMSS2019/ex/w12/data_sire_w12.csv`. Because the data contains just female animals, the fixed effect of the sex can no longer be estimated. 
+
+
+### Hint
+* Use the functions `aov()` to do the analysis of variance and the function `summary()` on the ANOVA result to get the relevant parts of the variance components.
+
+
+
+## Problem 2: Variance Components Estimation Using REML
+Use the same data set as for Problem 1 and a sire model to estimate the same sire variance $\sigma_s^2$. The sire model is the linear mixed effects model that contains sire effects as random component. The model can be specified as 
+
+$$y = Xb + Zs + e$$
+
+where $y$ is the vector of observations, $b$ is the vector of fixed effects which are the same as in Problem 1, $s$ is the vector of random sire effects and $e$ is the vector of random error terms. 
+
+### Hint 
+* Use the package `pedigreemm` to get a REML estimate for the sire variance component $\sigma_s^2$. 
+* We assume that the sires are not related. Hence variance-covariance matrix $var(s)$ of the sire components are $var(s) = I * \sigma_s^2$. 
+
+
+
+## Additional Problem: Variance Components Estimation Using an Animal Model
+We are given the dataset with the response variable `carcass weight` (CW) and the predictor variables that resulted from the model selection process from Exercise 1. These consisted of
+
+* sex (`sex`)
+* slaughterhouse (`slh`)
+* herd (`hrd`)
+* age at slaughter (`age`)
+
+The data is available from `https://charlotte-ngs.github.io/GELASMSS2019/ex/w12/data_bp_w12.csv`. 
+
+We use a mixed linear effects model to estimate the variance components for the random effects in the model.
+
+\begin{equation}
+y = Xb + Za + e
+\end{equation}
+
+where $y$ is a vector of observations, $b$ is a vector of fixed effects found to be relevant in Exercise 1, $a$ is a vector of random breeding values and $e$ is a vector of random errors. 
+
+
+### Hint
+* Use the package `pedigreemm` to get an estimate of the variance components
+
+
+### Your Task
+* Estimate the variance components $\sigma_a^2$ and $\sigma_e^2$ for the two random component $a$ and $e$, respectively.
+
+
