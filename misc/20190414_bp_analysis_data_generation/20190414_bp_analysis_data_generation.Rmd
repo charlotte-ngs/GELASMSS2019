@@ -42,8 +42,11 @@ We use `XSim` to generate a pedigree. The output pedigree is stored under `data_
 ```{r}
 s_ped_file <- "data_w09.ped"
 tbl_ped <- readr::read_delim(file = s_ped_file, delim = " ", col_names = FALSE)
-### keep only first three columns
+### keep only first three columns and order according to id
 tbl_ped <- tbl_ped[,1:3]
+names(tbl_ped) <- c("id", "sire", "dam")
+tbl_ped$id <- as.integer(tbl_ped$id)
+tbl_ped <- tbl_ped[order(tbl_ped$id),]
 tbl_ped
 ```
 
@@ -54,7 +57,7 @@ Add the sex to the pedigree and use it for data
 
 ```{r}
 require(dplyr)
-tbl_data <- tibble(Id = as.numeric(tbl_ped[[1]]))
+tbl_data <- tibble(Id = as.integer(tbl_ped[[1]]))
 tbl_data <- bind_cols(tbl_data, tibble(sex = rep(2, nrow(tbl_data))))
 # set the sex of all fathers to 1
 # find ids of fathers
@@ -153,12 +156,68 @@ n_sd_error <- 7.43
 vec_rand_error <- rnorm(n = nrow(tbl_data), mean = 0, sd = n_sd_error)
 ```
 
+
+## Polygenic Component
+In addition to the fixed effects and in addition to the random error, we add a polygenic component. 
+
+```{r}
+# polygenic standard deviation
+n_sd_gen <- 6.8
+# change missing value code in tbl_ped from 0 to NA
+tbl_ped$sire <- as.integer(tbl_ped$sire)
+tbl_ped$sire[tbl_ped$sire == 0L] <- NA
+tbl_ped$dam <- as.integer(tbl_ped$dam)
+tbl_ped$dam[tbl_ped$dam == 0L] <- NA
+tbl_ped$id <- as.integer(tbl_ped$id)
+# plausiblity check for pedigree
+#sum((tbl_ped$id - order(tbl_ped$id))^2)
+head(which(tbl_ped$id != order(tbl_ped$id)))
+head(tbl_ped, 20)
+```
+
+```{r}
+which(tbl_ped$id == 49)
+```
+
+```{r}
+tbl_ped[74, ]
+```
+
+```{r}
+# order the pedigree according to id
+# tbl_ped_ord <- tbl_ped[order(tbl_ped$id), ]
+```
+
+
+```{r}
+# construct the numerator relationship matrix using pedigreemm
+ped <- pedigreemm::pedigree(sire  = tbl_ped$sire, 
+                            dam   = tbl_ped$dam,
+                            label = tbl_ped$id)
+matA <- pedigreemm::getA(ped)
+```
+
+Do a cholesky-decomposition of `matA` to be able to simulate the breeding values.
+
+```{r}
+matR <- chol(matA)
+```
+
+Now generate a vector of random number
+
+```{r}
+vec_rand_polygen <- rnorm(n = nrow(tbl_ped), mean = 0, sd = n_sd_gen)
+vec_bv <- crossprod(matR, vec_rand_polygen)
+mean(vec_bv);sd(vec_bv)
+```
+
+
 # Compose the data set
 Summing up all the effects leads to
 
 ```{r}
-n_inter <- 250
-mat_y <- n_inter + mat_sex_eff + mat_slh_eff + mat_hrd_eff + vec_age_eff + vec_rand_error
+n_inter <- 250 - mean(vec_bv)
+mat_y <- n_inter + mat_sex_eff + mat_slh_eff + mat_hrd_eff + vec_age_eff + vec_rand_error + vec_bv
 ```
 
 Statistics about observations
@@ -175,7 +234,9 @@ Adding the observations to the data
 
 ```{r}
 tbl_data <- bind_cols(tbl_data, tibble(cw=round(mat_y[,1], digits = 0)))
-tbl_data
+tbl_data_relevant_eff <- bind_cols(tbl_data, 
+                                   tibble(sire=tbl_ped$sire),
+                                   tibble(dam=tbl_ped$dam))
 ```
 
 # Adding two random components
@@ -192,5 +253,8 @@ tbl_data <- bind_cols(tbl_data, tibble(day=vec_day, hum = round(vec_hum, digits 
 ```{r}
 s_data_file <- "data_bp_w09.csv"
 readr::write_csv2(tbl_data, path = s_data_file)
+# relevant effect
+s_data_relevant_eff <- "data_bp_w12.csv"
+readr::write_csv2(tbl_data_relevant_eff, path = s_data_relevant_eff)
 ```
 

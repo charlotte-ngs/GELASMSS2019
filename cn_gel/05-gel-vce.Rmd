@@ -5,3 +5,263 @@ mrmt$set_this_rmd_file(ps_this_rmd_file = ifelse(rstudioapi::isAvailable(),
                                                  rprojroot::thisfile()))
 ```
 
+In applied prediction of breeding values using BLUP animal models, variance components for all random effects are required as input. These variance components must be estimated from the data. In more detail, given the assumed linear mixed effect model 
+
+\begin{equation}
+y = Xb + Za + e
+(\#eq:gelvcelmem)
+\end{equation}
+
+where $y$ is a vector of length $N$ of observations, $b$ is a vector of length $p$ of fixed effects, $a$ is a vector of length $q$ of random breeding values and $e$ is a vector of length $N$ of random errors. The matrices $X$ and $Z$ are design matrices linking the corresponding effects to the observations. As part of the model definition, the variances of the random effects are defined as 
+
+\begin{align}
+var(a)  &=  A \sigma_a ^2 \notag \\
+var(e)  &=  I \sigma_e^2
+(\#eq:gelvcevaravare)
+\end{align}
+
+In \@ref(eq:gelvcevaravare) $\sigma_a^2$ and $\sigma_e^2$ are the variance components that must be estimated from the data. The material presented in this chapter is based on `r mrmt$add("Essl1987")` and `r mrmt$add("Searle1992")` and it shows different methods how variance components for different models can be estimated. 
+
+
+## Estimation Of Genetic Components {#gel-vce-estgencomp}
+For each trait that should be considered in an aggregate genotype, the first thing to be analysed is whether the trait has any genetic component. Because only traits with a detectable genetic component can be used for improving a population on the genetic level. The genetic component quantifies the part that is passed from parents to offspring. Hence from a livestock breeding point of view, the ratio between the genetic variability (quantified by $\sigma_a^2$) and the phenotypic variability (measured by $\sigma_p^2$) is important and is termed as __heritability__ ($h^2$). 
+
+\begin{equation}
+h^2 = \frac{\sigma_a^2}{\sigma_p^2}
+(\#eq:gelvceh2)
+\end{equation}
+
+One first method that we want to introduce is based on the very well-known statistical technique called __analysis of variance__ (ANOVA). ANOVA is shown in the next subsection for a simple application of estimating the repeatability. Later this can be generalized to the estimation of genetic components. 
+
+## Estimation Of Repeatability {#gel-vce-estrepeat}
+The term __repeatability__ indicates how similar repeated measurements of the same quantity are. For example, if we measure the same trait on any given animal several times, the measurements are expected to vary. But because the measurements are done on the same animal, the variability is probably smaller compared to measurements from different animals. This phenomenon can be quantified by a ratio of variance components which is called repeatability. 
+
+```{r repmeasurebulldef, echo=FALSE}
+n_nr_bull <- 10
+tbl_repmeasure_bull <- tibble::tibble(Bull = c(1:n_nr_bull),
+                                      M1 = c(135, 129, 135, 127, 126, 128, 127, 129, 126, 132),
+                                      M2 = c(136, 130, 133, 127, 129, 129, 132, 128, 125, 131),
+                                      M3 = c(134, 128, 136, 125, 129, 128, 130 ,125, 127, 134))
+```
+
+The computation of the repeatability is shown using the following example dataset from `r n_nr_bull` randomly selected bulls. From each bull the shoulder height is measured three times. 
+
+```{r repmeasurebulltable, echo=FALSE}
+knitr::kable(tbl_repmeasure_bull,
+             booktabs = TRUE,
+             longtable = TRUE,
+             caption = "Repeated Measurements of Shoulder Height in cm")
+```
+
+
+Now we want to check whether the measurements for the same bull have a smaller variability compared to measurements from different bulls. We first create a plot which might already give us some indications. 
+
+```{r repmeasurebullplot, echo=FALSE, fig.cap="Repeated Measurements of Shoulder Height for Ten Bulls"}
+# according to https://tidyr.tidyverse.org/reference/gather.html
+tbl_rm_bull_ga <- tidyr::gather(tbl_repmeasure_bull, "Measurement", "Height", -Bull)
+tbl_rm_bull_ga$Measurement <- as.factor(tbl_rm_bull_ga$Measurement)
+tbl_rm_bull_ga$Bull <- as.factor(tbl_rm_bull_ga$Bull)
+ggplot2::qplot(Bull, Height, data = tbl_rm_bull_ga, colour = Measurement)
+```
+
+From Figure \@ref(fig:repmeasurebullplot) alone, it is difficult to say whether measurements for the same animal are more similar than measurements from different animals. We use the following model to provide a quantitative answer for the previously posed question. 
+
+\begin{equation}
+y_{ij} = \mu + t_i + \epsilon_{ij}
+(\#eq:gevcerepmodel)
+\end{equation}
+
+\begin{tabular}{lll}
+where  &  &  \\
+       & $y_{ij}$         &  measurement $j$ of animal $i$    \\
+       & $\mu$            &  expected value of $y$            \\
+       & $t_i$            &  deviation of $y_{ij}$ from $\mu$ attributed to animal $i$ \\
+       & $\epsilon_{ij}$  &  measurement error
+\end{tabular}
+
+
+### Estimation 
+Given the definition of $t_i$ and $\epsilon_{ij}$ as random effects, the following relationships hold
+
+* $E(t_i) = 0$
+* $\sigma_t^2 = E(t_i^2)$: variance component of total variance ($\sigma_y^2$) which can be attributed to the $t$-effects
+* $E(\epsilon_{ij}) = 0$
+* $\sigma_{\epsilon}^2 = E(\epsilon_{ij}^2)$: variance component attributed to $\epsilon$-effects
+* $\sigma_y^2 = \sigma_t^2 + \sigma_{\epsilon}^2$
+
+The repeatability $w$ is defined as the following ratio between variance components
+
+\begin{equation}
+w = \frac{\sigma_t^2}{\sigma_t^2 + \sigma_{\epsilon}^2}
+\end{equation}
+
+The variance components $\sigma_t^2$ and $\sigma_{\epsilon}^2$ are estimated using an analysis of variance. The result of such an analysis is shown in the following table. 
+
+```{r gevcerepaov, echo=FALSE}
+lm_bull_height <- lm(Height ~ Bull, data = tbl_rm_bull_ga)
+aov_bull_height <- aov(lm_bull_height)
+(summary_bull_height <- summary(aov_bull_height))
+```
+
+Based on the theory of analysis of variance the expected values of the mean sum of squares can be equated to the following variance components. 
+
+\begin{center}
+\begin{tabular}{l|l}
+Effect  &  $E(Mean Sq)$  \\
+\hline
+Bull    &  $\sigma_{\epsilon}^2 + n * \sigma_t^2$ \\
+Error   &  $\sigma_{\epsilon}^2$ \\
+\hline
+Total   &  $\sigma_{\epsilon}^2 + \frac{N - n}{N - 1} * \sigma_t^2$
+\end{tabular}
+\end{center}
+
+where $n$ is the number of measurement per bull and $N$ is the total number of measurements. 
+
+The numeric values of the compute `Mean Sq` values are now taken as estimates for the respective variance components. Therefore
+
+```{r extractmeansq, echo=FALSE}
+# according to https://stat.ethz.ch/pipermail/r-help/2011-February/267554.html
+vec_mean_sq <- summary_bull_height[[1]]$'Mean Sq'
+vec_df <- summary_bull_height[[1]]$Df
+n_nr_rep <- length(levels(tbl_rm_bull_ga$Measurement))
+n_hatsigmat <- (vec_mean_sq[1] - vec_mean_sq[2]) / n_nr_rep
+n_hat_repeat <- n_hatsigmat / (n_hatsigmat + vec_mean_sq[2])
+```
+
+$$\hat{\sigma}_{\epsilon}^2 = `r vec_mean_sq[2]`$$
+and 
+
+$$\hat{\sigma}_t^2 = \frac{`r round(vec_mean_sq[1], 2)` - `r vec_mean_sq[2]`}{`r n_nr_rep`} = `r round(n_hatsigmat, 2)`$$
+
+The estimated repeatability can now be computed as 
+
+$$\hat{w} = \frac{\hat{\sigma}_t^2}{\hat{\sigma}_t^2 + \hat{\sigma}_{\epsilon}^2} = `r round(n_hat_repeat, 2)`$$
+
+
+## Estimation Of Sire Variance {#gel-vce-sirevariance}
+The technique of estimating variance components using ANOVA can also be applied to a data set where offspring performance records are grouped by their sires using a sire model. From the statistical point of view a sire model is a linear mixed effects model for each observation, the effect of the sire is expressed by a random effect. In matrix vector notation this model can be written as 
+
+\begin{equation}
+y = Xb + Zs + e
+(\#eq:gelvcesiremodel)
+\end{equation}
+
+where $y$ is a vector of length $N$ of observations, $b$ is a vector of length $p$ of fixed effects, $s$ is a vector of length $r$ with random sire effects and $e$ is a vector of length $N$ of random error terms. The matrices $X$ and $Z$ are incidence matrices for $b$ and $s$, linking the respective effects to the observations. An example of such a data set is used in Problem 1 of Exercise 2. 
+
+The variance component $\sigma_s^2$ for the random sire component $s$ is estimated the same way as shown in subsection \@ref(gel-vce-estrepeat) using an ANOVA table. For the sire model the ANOVA table has the following structure
+
+\begin{center}
+\begin{tabular}{l|rrr|r}
+Effect          &  Degrees of Freedom  &  Sum Sq      &  Mean Sq             & $E(Mean\ Sq)$ \\
+\hline
+Sire $(s|b)$    &  $r-1$               &  $SSQ(s|b)$  &  $SSQ(s|b) / (r-1)$  &  $\sigma_e^2 + k * \sigma_s^2$ \\
+Residual $(e)$  &  $N-r$               &  $SSQ(e)$    &  $SSQ(e) / (N-r)$    &  $\sigma_e^2$
+\end{tabular}
+\end{center}
+
+where 
+
+$$SSQ(s|b) = SSQ(sb) - SSQ(b)$$
+
+$$SSQ(sb)  = \sum_{i=1}^r\left[ \left(\sum_{j=1}^{n_i}y_{ij} \right)^2 / n_i \right]$$
+
+$$SSQ(b)   = \left(\sum_{i=1}^r\sum_{j=1}^{n_i}y_{ij}\right)^2 / N$$
+
+$$SSQ(e)   = SSQ(y) - SSQ(sb)$$
+
+$$SSQ(y)   = \sum_{i=1}^r\sum_{j=1}^{n_i}y_{ij}^2$$
+
+$$k = \frac{1}{r-1} \left[ N - \frac{\sum_{i=1}^{r}n_i^2}{N} \right]$$
+
+with $r$ the number of sires and $n_i$ the number of progeny for sire $i$. 
+
+The numeric computation of estimating $\sigma_s^2$ and $\sigma_e^2$ is the topic of Problem 1 of Exercise 2. The dataset that is used in Exercise 2 is a simplified version where only certain genetic relationships occur and where the number of environmental effects are kept at a very low number. To address the higher complexity of real-world datasets obtained in the field, other methods have been developed. Furthermore the ANOVA-based techniques when applied to real data can produce negative estimates for variance components. Because variance components are on a quadratic scale, they cannot be negative and from negative variances, the standard deviations are not defined in the scope of real numbers. Hence negative variance component estimates are outside of the parameter domain.
+
+
+## Development Of Further Methods {#gel-vce-devmethod}
+In this subsection, we focus on methods which are still used today. The currently used methods for variance components estimation are either based on Likelihood approaches or are the result of some Bayesian procedure. 
+
+
+### Maximum Likelihood {#gel-vce-ml} 
+The first maximum likelihood approach to estimate variance components for linear mixed effects models was developed by `r mrmt$add("Hartley1967")`. As the term `maximum likelihood` implies it, the presented method is based on the likelihood $L$ where $L$ is defined as 
+
+\begin{equation}
+L(\theta) = f(y | \theta)
+(\#eq:gelvcelikedef)
+\end{equation}
+
+where $\theta$ is the vector of all unknown parameters to be estimated. For the linear mixed effect model 
+
+$$y = Xb + Zu + e$$
+
+and under the assumption of the data being normally distributed, `r mrmt$add("Hartley1967")` specify $L$ as 
+
+\begin{equation}
+L(\theta) = (2\pi)^{-1/2 n} \sigma^{-n}|H|^{-1/2} * exp\left\{-\frac{1}{2\sigma^2}(y-Xb)^T H (y-Xb) \right\}
+(\#eq:gelvcelikemvn)
+\end{equation}
+
+where $var(y) = H\sigma^2 = Z^TGZ + R$ with $var(u) = I \sigma_u^2$ and $var(e) = R = I\sigma^2$. The maximum likelihoods for $\sigma_u^2$ and $\sigma^2$ are the values that maximize the function likelihood function $L$. It has to be noted that in \@ref(eq:gelvcelikemvn) not only the variance components, bu also the fixed effects $b$ are unknown. These must also be estimated from the data. 
+
+The maximization of $L$ is done by taking the partial derivatives of $\lambda = log L$ with respect to all unknown parameters. Then these partial derivatives are set to $0$ and the resulting solutions are taken as maximum likelihood estimates. 
+
+The problem with the just described maximum likelihood approach is that the unknown fixed effects $b$ have to be estimated at the same time. As a consequence of that the maximum likelihood estimates of the variance components depend on $b$. This is considered as an undesirable property. The solution for this problem was developed by `r mrmt$add("Patterson1971")` and is called __Restricted Maximum Likelihood__ (REML). In REML the observations $y$ are transformed as $Sy$ and $Qy$ with the following properties
+
+(i) The matrix $S$ has rank $n-t$ and the matrix $Q$ has rank $t$ 
+(ii) The result of the two transformations are independent, that means $cov(Sy,Qy) = 0$ which is met when $SHQ^T = 0$
+(iii) The matrix S is chosen such that $E(Sy) = 0$ which means $SX = 0$
+(iv) The matrix $QX$ is of rank $t$, so that every linear function of the elements of $Qy$ estimate a linear function of $b$. 
+
+From (i) and (ii) it follows that the likelihood $L$ of $y$ is the product of the likelihoods of $Sy$ and $Qy$ that means 
+
+$$\lambda = \lambda' + \lambda''$$
+
+Suitable matrices $S$ and $Q$ are given by 
+
+$$S = I - X(X^TX)^{-1}X^T$$
+
+and 
+
+$$Q = X^TH^{-1}.$$
+
+With these transformations, the variance components $\sigma^2$ and $\sigma_u^2$ can be estimated by maximizing $\lambda'$ which is the logarithm of the likelihood of $Sy$ and is independent of any influence of the fixed effects $b$. Based on this property, REML is the de-facto standard for variance components estimation in applied livestock breeding. The R-package `pedigreemm` can be used to get estimates for variance components using either Maximum Likelihood (ML) or REML.
+
+
+## Bayesian Procedures {#gel-vce-bayesian}
+Theoretical foundations for using Bayesian methods in animal breeding were laid by `r mrmt$add("Gianola1986")`. These foundations spanned more than just the topic of variance components. A detailed implementation scheme using Gibbs sampling for datasets and models originating in the area of livestock breeding was first described by `r mrmt$add("Wang1994")`. Parameter estimates were obtained from their respective marginal posterior distribution. These marginal posterior distributions were obtained from applying the Gibbs sampling scheme to the joint posterior distribution. The prior distributions for the variance components are set to be scale-free inverted chi-square distributions. 
+
+Because the availability of widely used and tested software implementing Bayesian procedures is limited, these procedures are not used in practical livestock breeding. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

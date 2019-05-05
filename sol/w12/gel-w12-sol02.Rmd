@@ -1,0 +1,98 @@
+---
+title: Applied Genetic Evaluation - Solution 2
+author: Peter von Rohr
+date: "2019-05-06"
+output:
+  bookdown::pdf_document2:
+    toc: false
+    number_sections: false
+    keep_tex: false
+header-includes:
+ \usepackage{longtable}
+ \usepackage{float}
+---
+
+```{r setup, include=FALSE}
+# knitr::opts_chunk$set(echo = FALSE, results = 'asis', fig.pos = 'H')
+knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
+```
+
+## Problem 1: Variance Components Estimation
+We are given the dataset with the response variable `carcass weight` (CW) and the predictor variables that resulted from the model selection process from Exercise 1. These consisted of
+
+* sex (`sex`)
+* slaughterhouse (`slh`)
+* herd (`hrd`)
+* age at slaughter (`age`)
+
+The data is available from `https://charlotte-ngs.github.io/GELASMSS2019/ex/w12/data_bp_w12.csv`. 
+
+We use a mixed linear effects model to estimate the variance components for the random effects in the model.
+
+\begin{equation}
+y = Xb + Za + e
+\end{equation}
+
+where $y$ is a vector of observations, $b$ is a vector of fixed effects found to be relevant in Exercise 1, $a$ is a vector of random breeding values and $e$ is a vector of random errors. 
+
+
+### Hint
+* Use the package `pedigreemm` to get an estimate of the variance components
+
+
+### Your Task
+* Estimate the variance components $\sigma_a^2$ and $\sigma_e^2$ for the two random component $a$ and $e$, respectively.
+
+
+### Solution
+We first have to read the data
+
+```{r}
+s_data_path_gel_ex2 <- "https://charlotte-ngs.github.io/GELASMSS2019/ex/w12/data_bp_w12.csv"
+tbl_gel_ex2 <- readr::read_csv2(file = s_data_path_gel_ex2)
+colnames(tbl_gel_ex2);dim(tbl_gel_ex2)
+```
+
+The fixed effects are converted into factors
+
+```{r}
+tbl_gel_ex2$sex <- as.factor(tbl_gel_ex2$sex)
+tbl_gel_ex2$slh <- as.factor(tbl_gel_ex2$slh)
+tbl_gel_ex2$hrd <- as.factor(tbl_gel_ex2$hrd)
+```
+
+From the help file of `pedigreemm`, we can see that we first have to define a pedigree. 
+
+```{r}
+ped <- pedigreemm::pedigree(sire  = tbl_gel_ex2$sire, 
+                            dam   = tbl_gel_ex2$dam,
+                            label = tbl_gel_ex2$Id)
+```
+
+Now the model can be specified as for the other functions to fit linear mixed effects model, such as `lmer`. 
+
+```{r}
+require(pedigreemm)
+# according to https://stat.ethz.ch/pipermail/r-sig-mixed-models/2014q1/021609.html
+options(lmerControl=list(check.nobs.vs.nlev="ignore",
+     check.nobs.vs.rankZ = "ignore",
+     check.nobs.vs.nRE="ignore"))
+# lmem_gel_ex2 <- pedigreemm(cw ~ sex + slh + hrd + age + (1|Id), data = tbl_gel_ex2, pedigree = list(Id = ped))
+s_lmem_file <- "lmem_gel_ex2.rds"
+if (file.exists(s_lmem_file)){
+  load(file = s_lmem_file)
+} else {
+  lmem_gel_ex2 <- pedigreemm(cw ~ (1|Id), data = tbl_gel_ex2, pedigree = list(Id = ped))
+  saveRDS(lmem_gel_ex2, file = s_lmem_file)
+}
+summary(lmem_gel_ex2)
+```
+
+
+
+
+
+
+
+
+

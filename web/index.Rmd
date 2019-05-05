@@ -221,6 +221,7 @@ vec_topics_addmat <- vec_topics
 vec_topics_addmat[which(Datum == format(as.Date("2019/02/25"), "%d.%m"))] <- paste0("[Genotype Data Exercise 1](", s_ex_url, "w02/asm_w02_ex01_p02_genodatafile.csv", ")") 
 vec_topics_addmat[which(Datum == format(as.Date("2019/03/18"), "%d.%m"))] <- paste0("[Data Analysis Protocol](", s_misc_url, "20190318_demo_sol4p01/20190318_demo_sol4p01.html)")
 vec_topics_addmat[which(Datum == format(as.Date("2019/04/15"), "%d.%m"))] <- paste0("[Dataset Model Selection](", s_ex_url, "w09/data_bp_w09.csv)")
+vec_topics_addmat[which(Datum == format(as.Date("2019/05/06"), "%d.%m"))] <- paste0("[Dataset Variance Components](", s_ex_url, "/w12/data_bp_w12.csv)")
 
 # dataframe and table with additional material
 df_addmat <- data.frame(Week = Woche, Date = Datum, Topic = vec_topics_addmat, stringsAsFactors = FALSE)
