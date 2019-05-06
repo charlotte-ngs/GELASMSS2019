@@ -198,7 +198,7 @@ $$y = Xb + Zu + e$$
 and under the assumption of the data being normally distributed, `r mrmt$add("Hartley1967")` specify $L$ as 
 
 \begin{equation}
-L(\theta) = (2\pi)^{-1/2 n} \sigma^{-n}|H|^{-1/2} * exp\left\{-\frac{1}{2\sigma^2}(y-Xb)^T H (y-Xb) \right\}
+L(\theta) = (2\pi)^{-1/2 n} \sigma^{-n}|H|^{-1/2} * exp\left\{-\frac{1}{2\sigma^2}(y-Xb)^T H^{-1} (y-Xb) \right\}
 (\#eq:gelvcelikemvn)
 \end{equation}
 

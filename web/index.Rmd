@@ -156,7 +156,7 @@ vec_topics_slides[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- pas
 vec_topics_slides[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- paste0("[Suisag - Zuchtwertschätzung beim Schwein](", s_sl_url, "w08/Zuchtwertschaetzung_Vorlesung_pst_ETH_Zuerich.pdf)")
 vec_topics_slides[which(Datum == format(as.Date("2019/04/15"), "%d.%m"))] <- paste0("[Implementation of Breeding Program](", s_sl_url, "w09/gel-w09-v02-bp.pdf)")
 vec_topics_slides[which(Datum == format(as.Date("2019/04/29"), "%d.%m"))] <- paste0("[Model Selection](", s_sl_url, "w11/gel-w11-v03-bp.pdf)")
-vec_topics_slides[which(Datum == format(as.Date("2019/05/06"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")")
+vec_topics_slides[which(Datum == format(as.Date("2019/05/06"), "%d.%m"))] <- paste0("[Variance Components](", s_sl_url, "w12/gel-w12-v04-vce.pdf)")
 vec_topics_slides[which(Datum == format(as.Date("2019/05/13"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")")
   
 # create data frame and convert it to table
