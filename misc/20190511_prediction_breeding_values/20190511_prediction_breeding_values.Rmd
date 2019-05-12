@@ -1,0 +1,72 @@
+---
+title: "Solution 3: Prediction Of Breeding Values"
+date: "2019-05-11"
+author: "Peter von Rohr"
+output: html_notebook
+---
+
+
+## Disclaimer
+This document contains a collection of experiments for the solution of exercise 3 in GELSS2019.
+
+
+## The Data
+The data are taken from 
+
+```{r}
+s_data_file <- "https://charlotte-ngs.github.io/GELASMSS2019/ex/w12/data_sire_w12.csv"
+tbl_pb_sire <- readr::read_csv2(file = s_data_file)
+tbl_pb_sire
+```
+
+Reformat the fixed effects to factors
+
+```{r}
+tbl_pb_sire$slh <- as.factor(tbl_pb_sire$slh)
+tbl_pb_sire$hrd <- as.factor(tbl_pb_sire$hrd)
+```
+
+Setup the pedigree for this sire model
+
+```{r}
+vec_sire <- unique(tbl_pb$sire)
+vec_sire <- vec_sire[order(vec_sire)]
+n_nr_sire <- length(vec_sire)
+ped_sire <- pedigreemm::pedigree(sire = rep(NA, n_nr_sire), dam = rep(NA, n_nr_sire), label = c(1:n_nr_sire))
+```
+
+Fitting the model
+
+```{r}
+lmem_sire <- pedigreemm::pedigreemm(cw ~ slh + hrd + age + (1|sire), pedigree = list(sire = ped_sire), data = tbl_pb_sire) 
+summary(lmem_sire)
+```
+
+The breeding values corresponding to the sire effects are extracted by
+
+```{r}
+ranef(lmem_sire)
+```
+
+
+```{r}
+pb_sire <- ranef(lmem_sire)
+order(pb_sire$sire$`(Intercept)`, decreasing = TRUE)
+```
+
+Offspring averages
+
+```{r}
+tbl_pb_sire %>% 
+  group_by(sire) %>%
+  summarise(avg = mean(cw)) 
+```
+
+Top and bottom
+
+```{r}
+tbl_pb_sire %>% 
+  group_by(sire) %>%
+  summarise(avg = mean(cw)) %>%
+  filter(sire == 1 | sire == 4)
+```

@@ -157,7 +157,8 @@ vec_topics_slides[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- pas
 vec_topics_slides[which(Datum == format(as.Date("2019/04/15"), "%d.%m"))] <- paste0("[Implementation of Breeding Program](", s_sl_url, "w09/gel-w09-v02-bp.pdf)")
 vec_topics_slides[which(Datum == format(as.Date("2019/04/29"), "%d.%m"))] <- paste0("[Model Selection](", s_sl_url, "w11/gel-w11-v03-bp.pdf)")
 vec_topics_slides[which(Datum == format(as.Date("2019/05/06"), "%d.%m"))] <- paste0("[Variance Components](", s_sl_url, "w12/gel-w12-v04-vce.pdf)")
-vec_topics_slides[which(Datum == format(as.Date("2019/05/13"), "%d.%m"))] <- paste0("[](", s_sl_url, "", ")")
+vec_topics_slides[which(Datum == format(as.Date("2019/05/13"), "%d.%m"))] <- paste0("[Braunvieh Schweiz](", s_sl_url, "w13/Vortrag_Braunvieh_Schweiz_ETH_Studenten_Mai_2019_mod.pdf), ",
+                                                                                    "[Qualitas AG](", s_sl_url, "w13/Vorstellung_Qualitas_20190501.pdf)")
   
 # create data frame and convert it to table
 df_slides <- data.frame(Week = Woche, Date = Datum, Topic = vec_topics_slides, stringsAsFactors = FALSE)
@@ -181,7 +182,7 @@ vec_topics_ex[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- paste0(
 vec_topics_ex[which(Datum == format(as.Date("2019/04/15"), "%d.%m"))] <- paste0("[Model Selection](", s_ex_url, "w09/gel-w09-ex01.pdf)")
 vec_topics_ex[which(Datum == format(as.Date("2019/04/29"), "%d.%m"))] <- paste0("[](", s_ex_url, "", ")")
 vec_topics_ex[which(Datum == format(as.Date("2019/05/06"), "%d.%m"))] <- paste0("[Variance Components Estimation](", s_ex_url, "w12/gel-w12-ex02.pdf)")
-vec_topics_ex[which(Datum == format(as.Date("2019/05/13"), "%d.%m"))] <- paste0("[](", s_ex_url, "", ")")
+vec_topics_ex[which(Datum == format(as.Date("2019/05/13"), "%d.%m"))] <- paste0("[Prediction of Breeding Values](", s_ex_url, "w13/gel-w13-ex03.pdf)")
 
 # create dataframe and table
 df_ex <- data.frame(Week = Woche, Date = Datum, Topic = vec_topics_ex, stringsAsFactors = FALSE)
@@ -204,8 +205,8 @@ vec_topics_sol[which(Datum == format(as.Date("2019/04/01"), "%d.%m"))] <- paste0
 vec_topics_sol[which(Datum == format(as.Date("2019/04/08"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")")
 vec_topics_sol[which(Datum == format(as.Date("2019/04/15"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")")
 vec_topics_sol[which(Datum == format(as.Date("2019/04/29"), "%d.%m"))] <- paste0("[Model Selection](", s_sol_url, "w11/gel-w09-sol01.pdf)")
-# vec_topics_sol[which(Datum == format(as.Date("2019/05/06"), "%d.%m"))] <- paste0("[Variance Components Estimation](", s_sol_url, "w12/gel-w12-sol02.pdf)")
-vec_topics_sol[which(Datum == format(as.Date("2019/05/13"), "%d.%m"))] <- paste0("[](", s_sol_url, "", ")")
+vec_topics_sol[which(Datum == format(as.Date("2019/05/06"), "%d.%m"))] <- paste0("[Variance Components Estimation](", s_sol_url, "w12/gel-w12-sol02.pdf)")
+# vec_topics_sol[which(Datum == format(as.Date("2019/05/13"), "%d.%m"))] <- paste0("[Prediction of Breeding Values](", s_sol_url, "w13/gel-w13-sol03.pdf)")
 
 # create dataframe and table
 df_sol <- data.frame(Week = Woche, Date = Datum, Topic = vec_topics_sol, stringsAsFactors = FALSE)
