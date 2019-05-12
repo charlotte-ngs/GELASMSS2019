@@ -1,0 +1,212 @@
+---
+title: Applied Genetic Evaluation - Solution 3
+author: Peter von Rohr
+date: "2019-05-13"
+output:
+  bookdown::pdf_document2:
+    toc: false
+    number_sections: false
+    keep_tex: false
+header-includes:
+ \usepackage{longtable}
+ \usepackage{float}
+---
+
+```{r setup, include=FALSE}
+# knitr::opts_chunk$set(echo = FALSE, results = 'asis', fig.pos = 'H')
+knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
+```
+
+## Problem 1: Prediction Of Breeding Values Using A Sire Model
+
+Use the data set from Exercise 2 available from 
+
+`https://charlotte-ngs.github.io/GELASMSS2019/ex/w12/data_sire_w12.csv` 
+
+to predict breeding values using a sire model. The sire model is a mixed linear effects model where the sire effects are random effects. This leads to the following model
+
+\begin{equation}
+y = Xb + Zs +e
+(\#eq:gel-ex3-siremodel)
+\end{equation}
+
+\begin{tabular}{lll}
+where  &       &  \\
+       &  $y$  &  vector of length $n$ of observations \\
+       &  $b$  &  vector of length $p$ of fixed effects \\
+       &  $s$  &  vector of length $q$ of random sire effects \\
+       &  $e$  &  vector of length $n$ of random errors
+\end{tabular}
+
+For the random effects, we have to specify the expected values and the variance-covariance matrices. Because the random errors $e$ and the sire effects $s$ are deviations from a common mean and hence their expected values are defined as 
+
+\begin{align}
+E\left[ e \right] = 0 \notag \\
+E\left[ s \right] = 0 \notag \\
+E\left[ y \right] = Xb \notag
+\end{align}
+
+The expected value $E\left[ y \right]$ is computed using the defined expected values for $e$ and $s$ and from the model \@ref(eq:gel-ex3-siremodel). 
+
+The random error terms $e_i$ are uncorrelated and hence the variance-covariance matrix $var(e)$ is given by 
+
+\begin{equation}
+var(e) = I * \sigma_e^2 \notag
+\end{equation}
+
+In the case where the sires are unrelated, the sire effects are also uncorrelated and the variance-covariance matrix $var(s)$ corresponds to 
+
+\begin{equation}
+var(s) = I * \sigma_s^2 \notag
+\end{equation}
+
+The values for $\sigma_e^2$ and $\sigma_s^2$ are taken from the results of the variance components estimation from last weeks exercise. The variance-covariance matrix of the observations $y$ can be computed as 
+
+\begin{equation}
+var(y) = ZZ^T * \sigma_s^2 + I * \sigma_e^2 \notag
+\end{equation}
+
+
+### Hints
+* Use the package `pedigreemm` to predict the breeding values for all the sires.
+* The function `ranef()` can be used to extract realised values of random effects.
+
+
+### Solution
+The solution is the same as in Exercise 2, but we will be interested in a different part of the solutions. We start by reading the data and with re-formatting the fixed effects as factors.
+
+```{r}
+s_data_file <- "https://charlotte-ngs.github.io/GELASMSS2019/ex/w12/data_sire_w12.csv"
+tbl_pb_sire <- readr::read_csv2(file = s_data_file)
+```
+
+Reformat the fixed effects to factors
+
+```{r}
+tbl_pb_sire$slh <- as.factor(tbl_pb_sire$slh)
+tbl_pb_sire$hrd <- as.factor(tbl_pb_sire$hrd)
+```
+
+Setup the pedigree for this sire model
+
+```{r}
+vec_sire <- unique(tbl_pb_sire$sire)
+vec_sire <- vec_sire[order(vec_sire)]
+n_nr_sire <- length(vec_sire)
+ped_sire <- pedigreemm::pedigree(sire = rep(NA, n_nr_sire), 
+                                 dam = rep(NA, n_nr_sire), 
+                                 label = c(1:n_nr_sire))
+```
+
+Fitting the sire-model is done as follows. The summary function can be used to obtain the result for the variance components and for the fixed effects.
+
+```{r}
+require(pedigreemm)
+lmem_sire <- pedigreemm(cw ~ slh + hrd + age + (1|sire), 
+                        pedigree = list(sire = ped_sire), 
+                        data = tbl_pb_sire) 
+summary(lmem_sire)
+```
+
+The realised values of the sire-effects correspond to the predicted breeding values for all sires. They can be obtained by
+
+```{r}
+(pb_sire <- ranef(lmem_sire))
+```
+
+
+## Problem 2: Compare Offspring Of Sires
+For the purpose of livestockbreeding the realised values themselves are not so interesting. But for the selection decision require a ranking of the sires according to their breeding values. Find the ranking of the sires according to their breeding values. 
+
+According to the definition of breeding value, it corresponds to the deviation of the offspring from the population mean. Hence the offspring of the sire with the best breeding value should on average be better than the offspring of the sire with the worst breeding value. Verify the difference between the average phenotypic values of the offsprings of the sires with the best and the worst predicted breeding values.
+
+
+### Solution
+The ranking is obtained by
+
+```{r}
+(vec_ranking_pb_sire <- order(pb_sire$sire$`(Intercept)`, decreasing = TRUE))
+```
+
+The comparison of the average phenotypic values of the offsprings of the sires with the best and the worst predicted breeding values can be verified by
+
+```{r, message=FALSE}
+require(dplyr)
+tbl_pb_sire %>% 
+  group_by(sire) %>%
+  summarise(avg = mean(cw)) 
+```
+
+Comparing the average of the phenotypic values of the sire with the best and the worst predicted breeding value leads to 
+
+```{r}
+tbl_pb_sire %>% 
+  group_by(sire) %>%
+  summarise(avg = mean(cw)) %>%
+  filter(sire == vec_ranking_pb_sire[1] | 
+           sire == vec_ranking_pb_sire[length(vec_ranking_pb_sire)])
+```
+
+
+
+## Additional Problem: Predict Breeding Values Using Animal Model
+As in Exercise 2, we are using the full dataset to predicted breeding values with an animal model. The computations for the solution of this Problem will have a very long runtime. That is why the solution is only sketched and not explicitly computed. 
+
+The data is available from `https://charlotte-ngs.github.io/GELASMSS2019/ex/w12/data_bp_w12.csv`. 
+
+### Solution
+We first have to read the data
+
+```{r}
+s_data_path_gel_ex2 <- "https://charlotte-ngs.github.io/GELASMSS2019/ex/w12/data_bp_w12.csv"
+tbl_gel_ex2 <- readr::read_csv2(file = s_data_path_gel_ex2)
+colnames(tbl_gel_ex2);dim(tbl_gel_ex2)
+```
+
+The fixed effects are converted into factors
+
+```{r}
+tbl_gel_ex2$sex <- as.factor(tbl_gel_ex2$sex)
+tbl_gel_ex2$slh <- as.factor(tbl_gel_ex2$slh)
+tbl_gel_ex2$hrd <- as.factor(tbl_gel_ex2$hrd)
+```
+
+From the help file of `pedigreemm`, we can see that we first have to define a pedigree. 
+
+```{r}
+ped <- pedigreemm::pedigree(sire  = tbl_gel_ex2$sire, 
+                            dam   = tbl_gel_ex2$dam,
+                            label = tbl_gel_ex2$Id)
+```
+
+Now the model can be specified as for the other functions to fit linear mixed effects model, such as `lmer`. 
+
+```{r eval=FALSE}
+# This takes more than one hour to run.
+require(pedigreemm)
+# according to https://stat.ethz.ch/pipermail/r-sig-mixed-models/2014q1/021609.html
+options(lmerControl=list(check.nobs.vs.nlev="ignore",
+     check.nobs.vs.rankZ = "ignore",
+     check.nobs.vs.nRE="ignore"))
+s_lmem_file <- "lmem_gel_ex2.rds"
+if (file.exists(s_lmem_file)){
+  load(file = s_lmem_file)
+} else {
+  lmem_gel_ex2 <- pedigreemm(cw ~ sex + slh + hrd + age + (1|Id), 
+                             data = tbl_gel_ex2, 
+                             pedigree = list(Id = ped))
+  saveRDS(lmem_gel_ex2, file = s_lmem_file)
+}
+summary(lmem_gel_ex2)
+```
+
+The predicted breeding values are obtained by
+
+```{r, eval=FALSE}
+ranef(lmem_gel_ex2)
+```
+
+
+
+
+

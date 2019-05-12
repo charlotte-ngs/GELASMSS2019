@@ -1,0 +1,87 @@
+---
+title: Applied Genetic Evaluation - Exercise 3
+author: Peter von Rohr
+date: "2019-05-13"
+output:
+  bookdown::pdf_document2:
+    toc: false
+    number_sections: false
+    keep_tex: false
+header-includes:
+ \usepackage{longtable}
+ \usepackage{float}
+---
+
+```{r setup, include=FALSE}
+# knitr::opts_chunk$set(echo = FALSE, results = 'asis', fig.pos = 'H')
+knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
+```
+
+## Problem 1: Prediction Of Breeding Values Using A Sire Model
+
+Use the data set from Exercise 2 available from 
+
+`https://charlotte-ngs.github.io/GELASMSS2019/ex/w12/data_sire_w12.csv` 
+
+to predict breeding values using a sire model. The sire model is a mixed linear effects model where the sire effects are random effects. This leads to the following model
+
+\begin{equation}
+y = Xb + Zs +e
+(\#eq:gel-ex3-siremodel)
+\end{equation}
+
+\begin{tabular}{lll}
+where  &       &  \\
+       &  $y$  &  vector of length $n$ of observations \\
+       &  $b$  &  vector of length $p$ of fixed effects \\
+       &  $s$  &  vector of length $q$ of random sire effects \\
+       &  $e$  &  vector of length $n$ of random errors
+\end{tabular}
+
+For the random effects, we have to specify the expected values and the variance-covariance matrices. Because the random errors $e$ and the sire effects $s$ are deviations from a common mean and hence their expected values are defined as 
+
+\begin{align}
+E\left[ e \right] = 0 \notag \\
+E\left[ s \right] = 0 \notag \\
+E\left[ y \right] = Xb \notag
+\end{align}
+
+The expected value $E\left[ y \right]$ is computed using the defined expected values for $e$ and $s$ and from the model \@ref(eq:gel-ex3-siremodel). 
+
+The random error terms $e_i$ are uncorrelated and hence the variance-covariance matrix $var(e)$ is given by 
+
+\begin{equation}
+var(e) = I * \sigma_e^2 \notag
+\end{equation}
+
+In the case where the sires are unrelated, the sire effects are also uncorrelated and the variance-covariance matrix $var(s)$ corresponds to 
+
+\begin{equation}
+var(s) = I * \sigma_s^2 \notag
+\end{equation}
+
+The values for $\sigma_e^2$ and $\sigma_s^2$ are taken from the results of the variance components estimation from last weeks exercise. The variance-covariance matrix of the observations $y$ can be computed as 
+
+\begin{equation}
+var(y) = ZZ^T * \sigma_s^2 + I * \sigma_e^2 \notag
+\end{equation}
+
+
+### Hints
+* Use the package `pedigreemm` to predict the breeding values for all the sires.
+* The function `ranef()` can be used to extract realized values of random effects.
+
+
+
+## Problem 2: Compare Offspring Of Sires
+For the purpose of livestock breeding the realized values themselves are not so interesting. But for the selection decision require a ranking of the sires according to their breeding values. Find the ranking of the sires according to their breeding values. 
+
+According to the definition of breeding value, it corresponds to the deviation of the offspring from the population mean. Hence the offspring of the sire with the best breeding value should on average be better than the offspring of the sire with the worst breeding value. Verify the difference between the average phenotypic values of the offspring of the sires with the best and the worst predicted breeding values.
+
+
+
+## Additional Problem: Predict Breeding Values Using Animal Model
+As in Exercise 2, we are using the full dataset to predicted breeding values with an animal model. The computations for the solution of this Problem will have a very long run-time. That is why the solution is only sketched and not explicitly computed. 
+
+The data is available from `https://charlotte-ngs.github.io/GELASMSS2019/ex/w12/data_bp_w12.csv`. 
+
