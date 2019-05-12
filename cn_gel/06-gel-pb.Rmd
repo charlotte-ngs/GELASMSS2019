@@ -1,0 +1,112 @@
+# Prediction Of Breeding Values {#gel-pb}
+```{r mrtminitpb, include=FALSE}
+mrmt$set_this_rmd_file(ps_this_rmd_file = ifelse(rstudioapi::isAvailable(), 
+                                                 rstudioapi::getSourceEditorContext()$path, 
+                                                 rprojroot::thisfile()))
+```
+
+The abbreviation `BLUP` stands for **B**est **L**inear **U**nbiased **P**rediction. BLUP-based procedures are the de-facto standard methods to predict breeding values. These procedures use linear mixed effects models to simultaneously estimate fixed effects and predict breeding values. Linear models that contain besides the random error other random effects are called linear mixed effects model. The classification into fixed and random effects is not based on a universely accepted definition. For some effects with distinct and a finite number of classes it is easy to classify them as fixed effects. On the other hand breeding values of animals are always modeled as random effects. 
+
+
+
+## The Linear Mixed Effects Model{#gel-pb-lmem}
+In general the linear mixed effects model has the following structure
+
+
+\begin{equation}
+y = Xb + Zu + e
+(\#eq:gel-pb-genlmem)
+\end{equation}
+
+\begin{tabular}{lll}
+where  &       &  \\
+       &  $y$  &  vector of length $n$ with observations  \\
+       &  $b$  &  vector of length $p$ with fixed effects  \\
+       &  $u$  &  vector of length $q$ with random breeding values  \\
+       &  $e$  &  vector of length $n$ with random error terms      \\
+       &  $X$  &  $n\times p$ incidence matrix linking fixed effects to observations  \\
+       &  $Z$  &  $n\times q$ incidence matrix linking random breeding values to observations
+\end{tabular}
+
+With a linear mixed effects model, we also have to specify the expected values and the variance-covariance matrices for the random components in the model. We start with the expected values in vector-notation. 
+
+\begin{equation}
+E \left[\begin{array}{c} y \\ u \\ e \end{array} \right] = \left[\begin{array}{c} Xb \\ 0 \\ 0 \end{array} \right]
+(\#eq:gel-pb-exvallmem)
+\end{equation}
+
+The variance-covariance matrices can be written as
+
+\begin{equation}
+var \left[\begin{array}{c} y \\ u \\ e \end{array} \right] 
+= 
+\left[\begin{array}{rrr} 
+ZGZ^T + R  &  ZG  &  0  \\ 
+GZ^T       &  G   &  0  \\ 
+0          &  0   &  R 
+\end{array} \right]
+(\#eq:gel-pb-varcovlmem)
+\end{equation}
+
+
+
+## Solutions To The Linear Mixed Effects Model{#gel-pb-sollmem}
+In the linear mixed effects model \@ref(eq:gel-pb-genlmem) the vectors $b$ and $u$ are unknown and are of primary interest when using the model in livestock breeding applications. Applying the BLUP properties to the model \@ref(eq:gel-pb-genlmem) leads to the following solutions for $b$ and $u$. 
+
+\begin{equation}
+\hat{u} = GZ^TV^{-1}(y - X\hat{b})
+(\#eq:gel-pb-solhatu)
+\end{equation}
+
+where $V$ stands for the variance covariance matrix $var(y)$ of the phenotypic observations. From \@ref(eq:gel-pb-varcovlmem), we can see that $V$ can be computed as $V=ZGZ^T + R$. The vector $\hat{b}$ stands for the best linear unbiased estimate of the fixed effects $b$ which are given by
+
+\begin{equation}
+\hat{b} = (X^TV^{-1}X)^{-}X^TV^{-1}y
+(\#eq:gel-pb-solhatb)
+\end{equation}
+
+where $(X^TV^{-1}X)^{-}$ stands for a generalized inverse of $(X^TV^{-1}X)$. 
+
+Both solutions in \@ref(eq:gel-pb-solhatu) and \@ref(eq:gel-pb-solhatb) contain the matrix $V^{-1}$ which has the dimensions $n\times n$ where $n$ stands for the number of observations. In practical breeding programs the number of observations is frequently in the order of $10^6$ which makes the computation of $V^{-1}$ practically impossible. CR Henderson and his team found that the solution of the so-called mixed model equations lead to equivalent solutions for $\hat{b}$ and $\hat{u}$. The mixed model equations are given by 
+
+\begin{equation}
+\left[ 
+\begin{array}{lr}
+X^TR^{-1}X  &  X^TR^{-1}Z \\
+Z^TR^{-1}X  &  Z^TR^{-1}Z + G^{-1}
+\end{array}
+\right]
+\left[
+\begin{array}{c}
+\hat{b} \\
+\hat{u}
+\end{array}
+\right]
+=
+\left[
+\begin{array}{c}
+X^TR^{-1}y \\
+Z^TR^{-1}y
+\end{array}
+\right]
+(\#eq:gel-pb-solmme)
+\end{equation}
+
+The application of the linear mixed effects model \@ref(eq:gel-pb-genlmem) in Livestock Breeding have led to two specially named models depending on what was used as random effects. These models are 
+
+1. **sire model**: for each observation the influence of the animals sire was used as random effect. 
+2. **animal model**: the influence of the genetic component of each animal was used as random effect.
+
+
+## Sire Model {#gel-pb-siremodel}
+
+
+
+## Animal Model {#gel-pb-animalmodel}
+
+
+
+
+
+
+
