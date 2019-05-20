@@ -1,0 +1,471 @@
+---
+output:
+  pdf_document:
+    includes:
+      in_header: tex/header.tex
+    fig_caption: false
+output_file: asmfs2018_exam_sol.pdf
+---
+
+<!-- %\usepackage{fancyhdr} -->
+
+\newcommand{\points}[1]
+{\begin{flushright}\textbf{#1}\end{flushright}}
+
+<!-- %\begin{document} -->
+<!-- %\SweaveOpts{concordance=TRUE} -->
+```{r ChunkOptions, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE, results = 'hide')
+#knitr::opts_chunk$set(concordance=TRUE)
+knitr::knit_hooks$set(conv.odg = rmddochelper::odg.graphics.conv.hook)
+```
+
+<!-- <<PointsQ1, echo=FALSE>>= -->
+```{r PointsQ1, echo=FALSE}
+# Assign Points for Q1
+lPointsQ1 <- list(TaskA = 14,
+                  TaskB = 0,
+                  TaskC = 0,
+                  TaskD = 0)
+nPointQ1Total <- sum(unlist(lPointsQ1))
+```
+<!-- @ -->
+<!-- <<PointsQ2, echo=FALSE>>= -->
+```{r PointsQ2, echo=FALSE}
+# Assign Points for Q2
+lPointsQ2 <- list(TaskA = 0,
+                  TaskB = 0,
+                  TaskC = 0,
+                  TaskD = 0)
+nPointQ2Total <- sum(unlist(lPointsQ2))
+```
+<!-- @ -->
+<!-- <<PointsQ3, echo=FALSE>>= -->
+```{r PointsQ3, echo=FALSE}
+# Assign Points for Q3
+lPointsQ3 <- list(TaskA = 0,
+                  TaskB = 0,
+                  TaskC = 0,
+                  TaskD = 0)
+nPointQ3Total <- sum(unlist(lPointsQ3))
+```
+<!-- @ -->
+<!-- <<PointsQ4, echo=FALSE>>= -->
+```{r PointsQ4, echo=FALSE}
+# Assign Points for Q4
+lPointsQ4 <- list(TaskA = 0,
+                  TaskB = 0,
+                  TaskC = 0,
+                  TaskD = 0)
+nPointQ4Total <- sum(unlist(lPointsQ4))
+```
+<!-- @ -->
+<!-- <<PointsTotal, echo=FALSE>>= -->
+```{r PointsTotal, echo=FALSE}
+nPointOverallTotal <- nPointQ1Total + nPointQ2Total + nPointQ3Total + nPointQ4Total
+```
+<!-- @ -->
+
+
+\thispagestyle{empty}
+
+\fcolorbox{white}{white}{
+	\centering \parbox[t]{1.0\linewidth}{
+		\fontsize{12pt}{20pt}\selectfont % 
+		\vspace*{0.5cm} % 
+
+   	\hfill 	Peter von Rohr \\ Institut f\"ur Agrarwissenschaften\\ D-USYS\\ ETH Z\"urich
+
+		\vspace*{0.5cm} 
+	}
+}
+
+\vspace*{2cm}
+
+\fcolorbox{white}{white}{
+	\parbox[t]{1.0\linewidth}{
+		\centering \fontsize{25pt}{40pt}\selectfont %
+		\vspace*{0.2cm}
+		 751-7602-00 V \\
+     L\"osungen zur Pr\"ufung    \\
+     Angewandte Statistische Methoden in den Nutzierwissenschaften\\
+     FS 2018
+
+		\vspace*{0.7cm} % Space between the end of the title and the bottom of the grey box
+	}
+}
+
+
+\vspace*{2cm}
+
+<!-- % Table with Name -->
+\begin{tabular}{p{3cm}p{6cm}}
+Name:     &  \\
+          &  \\
+          &  \\
+Legi-Nr:  & \\
+\end{tabular}
+
+<!-- % Table with Points -->
+
+\vspace{5ex}
+\begin{center}
+\begin{tabular}{|p{3cm}|c|c|}
+\hline
+Aufgabe  &  Maximale Punktzahl  &  Erreichte Punktzahl\\
+\hline
+1        &  `r nPointQ1Total`  & \\
+\hline
+2        &  `r nPointQ2Total`  & \\
+\hline
+3        &  `r nPointQ3Total`  & \\
+\hline
+4        &  `r nPointQ4Total`  & \\
+\hline
+Total    &  `r nPointOverallTotal` & \\
+\hline
+\end{tabular}
+\end{center}
+
+
+\clearpage
+\pagebreak
+
+
+```{r DataSetup, echo=FALSE, results='hide'}
+set.seed(2344)
+n_nr_obs <- 12
+bu_mean <- 143
+bu_sd <- 7.5
+res_mean <- 15.5
+res_sd <- 5.3
+reg_coef <- 5.17
+Brustumfang <-  runif(n_nr_obs, min = bu_mean - 1.5* bu_sd, max = bu_mean + 1.5*bu_sd)
+Gewicht <- reg_coef * Brustumfang + rnorm(n_nr_obs, mean = res_mean, sd = res_sd)
+tbl_bu_ge_data <- tibble::tibble(Tier = 1:n_nr_obs, 
+                                    Brustumfang = round(Brustumfang, digits = 0), 
+                                    Gewicht     = round(Gewicht, digits = 0))
+```
+
+\section*{Aufgabe 1: Lineare Regression}
+
+\begin{enumerate}
+\item[a)] In der Tierzucht wird das Körpergewicht oft anhand einer linearen Regression auf den Brustumfang geschätzt. Zur Schätzung der Regressionsparameter werden die folgenden Daten verwendet. 
+\end{enumerate}
+\points{`r lPointsQ1$TaskA`}
+
+
+```{r DataBuGew, echo=FALSE, results='asis'}
+knitr::kable(tbl_bu_ge_data, align = "c")
+```
+
+Das Resultat der Regression des Gewichts auf den Brustumfang lautet wie folgt
+
+```{r LmBuGew, echo=FALSE, results='markup'}
+lm_bu_ge <- lm(Gewicht ~ Brustumfang, data = tbl_bu_ge_data)
+summary(lm_bu_ge)
+```
+
+### Ihre Aufgabe
+Zeichnen Sie für alle Beobachtungen die erklärende Variable (als $x_i$), die Zielgrösse (als $y_i$), die Residuen (als $r_i$) und die geschätzen Regressionskoeffizienten in den folgenden Plot ein.
+
+```{r TaskDataPlotAbline}
+plot(tbl_bu_ge_data$Brustumfang, tbl_bu_ge_data$Gewicht, xlab = "Brustumfang", ylab = "Gewicht")
+abline(lm_bu_ge, col = "red")
+```
+
+\pagebreak
+\noindent\textbf{L\"osung:}
+
+Die für die Beobachtung 11 gezeigten Grössen $x_{11}$, $y_{11}$ und $r_{11}$ sollen für alle Beobachtungen eingezeichnet werden
+```{r SolSavePlot, fig.align='center', echo=FALSE, results='asis'}
+knitr::include_graphics(path = "png/asmfs2018_exam_sol_task1a.pdf")
+```
+
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[b)] Für die ersten drei Tiere aus dem Datensatz aus Aufgabe 1a) werden SNP-Daten an fünf SNP-Loci erhoben. Mit diesen SNP-Daten wird versucht den genetischen Anteil des Gewichts der drei Tiere zu schätzen. In einer ersten Analyse wurden die SNP-Effekte mit einer Regressionsanalyse geschätzt. Die Resultate sind im nachfolgenden Output gezeigt. Wo liegt das zentrale Problem dieser Analyse? Schlagen Sie ein alternatives Analyseverfahren vor, welches diese Probleme nicht hat.
+
+\textit{For the first three animals of the data set of 1a) SNP-data at five loci were collected. The genetic part of the trait body weight should be estimated based on the SNP-data for the three animals. In a first analysis, the SNP-effects were estimated with a regression analysis. The results are shown in the following output. Where is the central problem of this analysis? Propose an alternative analysis to regression analysis which does not have the observed problem.}
+\end{enumerate}
+
+\points{`r lPointsQ1$TaskB`}
+
+```{r DataSetupTask1b, echo=FALSE, results='markup'}
+n_anz_snp_tiere <- 3
+Gewicht <- tbl_bu_ge_data$Gewicht[1:n_anz_snp_tiere]
+SNP1 <- c(1,1,-1)
+SNP2 <- c(0,1,0)
+SNP3 <- c(1,0,-1)
+SNP4 <- c(1,1,1)
+SNP5 <- c(0,0,-1)
+tbl_snp_ge_data <- dplyr::data_frame(Tier = 1:n_anz_snp_tiere, 
+                                     Gewicht = Gewicht,
+                                     SNP1 = SNP1,
+                                     SNP2 = SNP2,
+                                     SNP3 = SNP3,
+                                     SNP4 = SNP4,
+                                     SNP5 = SNP5)
+# lm analysis
+lm_snp_ge <- lm(Gewicht ~ 0 + SNP1 + SNP2 + SNP3 + SNP4 + SNP5, data = tbl_snp_ge_data)
+summary(lm_snp_ge)
+```
+
+
+### Lösung: 
+* Anzahl Beobachtungen $n$ ist kleiner als die Anzahl Parameter $p$. Somit können die unbekannten Parameter nicht mit Least Squares geschätzt werden. Deshalb die seltsamen Resultate. 
+* Eine Alternative ist LASSO, GBLUP oder ein Bayes'sches Verfahren.
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[c)] Gegeben sind die folgenden beiden Resultate (als `summary()` und `plot()`) zweier Regressionsanalysen (mit `lm()`). Welcher `summary()`-Output gehört zu welchem Plot? 
+\end{enumerate}
+
+\points{`r lPointsQ1$TaskC`}
+
+```{r DataTask1c, echo=FALSE}
+set.seed(4435)
+# constants
+n_nr_obs_task1c <- 10
+res_mean_task1c <- 4.32
+res_sd_task1c <- 1.44
+reg_coeff1_task1c <- 0.564
+reg_coeff2_task1c <- -1.156
+
+# data
+tbl_task1c_o1 <- dplyr::data_frame(x = 1:n_nr_obs_task1c, y = reg_coeff1_task1c * x + rnorm(n_nr_obs_task1c, mean = res_mean_task1c, sd = res_sd_task1c))
+tbl_task1c_o2 <- dplyr::data_frame(x = 1:n_nr_obs_task1c, y = reg_coeff2_task1c * x + rnorm(n_nr_obs_task1c, mean = res_mean_task1c, sd = res_sd_task1c))
+
+# lm
+lm_task1c_o1 <- lm(y ~ x, data = tbl_task1c_o1)
+lm_task1c_o2 <- lm(y ~ x, data = tbl_task1c_o2)
+```
+
+### `summary()`-Output 1:
+```{r SummaryTask1cOutput1, echo=FALSE, results='markup'}
+summary(lm_task1c_o1)
+```
+
+### `summary()`-Output 2:
+```{r SummaryTask1cOutput2, echo=FALSE, results='markup'}
+summary(lm_task1c_o2)
+```
+
+### Plot 1:
+```{r PlotTask1cOutput2, echo=FALSE}
+plot(tbl_task1c_o2$x, tbl_task1c_o2$y, xlab = "x", ylab = "y")
+abline(lm_task1c_o2, col = "red")
+```
+
+
+### Plot 2:
+```{r PlotTask1cOutput1, echo=FALSE}
+plot(tbl_task1c_o1$x, tbl_task1c_o1$y, xlab = "x", ylab = "y")
+abline(lm_task1c_o1, col = "red")
+```
+
+
+### Lösung: 
+Plot 2 gehört zu Output 1 und Plot 1 zu Output 2. Die Regressionskoeffizienten entsprechen den Steigungen der roten Geraden. 
+
+\clearpage
+\pagebreak
+
+\section*{Aufgabe 2: Lineare Regression}
+
+\begin{enumerate}
+\item[a)] Zum Datensatz aus Aufgabe 1b) wird für die drei Tiere zusätzlich zum Gewicht und zu den SNP-Informationen noch das Geschlecht ermittelt. Der Datensatz ist in der nachfolgenden Tabelle dargestellt.
+
+\textit{The dataset given in 1b) is augmented with the sex of the three animals. The data set is given in the following table.}
+\end{enumerate}
+\points{`r lPointsQ2$TaskA`}
+
+```{r DataSetUpTask2a, echo=FALSE, results='asis'}
+n_anz_snp_tiere <- 3
+Gewicht <- tbl_bu_ge_data$Gewicht[1:n_anz_snp_tiere]
+SNP1 <- c(1,1,-1)
+SNP2 <- c(0,1,0)
+SNP3 <- c(1,0,-1)
+SNP4 <- c(1,1,1)
+SNP5 <- c(0,0,-1)
+sex <- c("F", "M","F")
+tbl_sex_snp_ge_data <- dplyr::data_frame(Tier = 1:n_anz_snp_tiere, 
+                                     Gewicht = Gewicht,
+                                     Geschlecht = sex,
+                                     SNP1 = SNP1,
+                                     SNP2 = SNP2,
+                                     SNP3 = SNP3,
+                                     SNP4 = SNP4,
+                                     SNP5 = SNP5)
+knitr::kable(tbl_sex_snp_ge_data)
+```
+
+### Ihre Aufgabe
+Die Daten sollen mit einem Ridge-Regression (RR) BLUP Modell analysiert werden. Stellen Sie das RR-BLUP Modell in Matrix-Vektor-Schreibweise für die gezeigten Daten auf, wobei das Gewicht die Zielgrösse darstellt und das Geschlecht als fixer Effekt behandelt werden soll. Füllen Sie für jeden Vektor und für jede Matrix auch die konkreten Zahlen aus den Daten ab, soweit dies möglich ist.
+
+\textit{The above shown dataset is to be analysed using a Ridge-Regression (RR) model. Setup the RR-BLUP model for the shown data. Use a matrix-vector notation. Body weight is the target variable and sex should be used as fixed effect. Fill the matrices and the vectors with the numbers coming from the data, as it is possible.}
+
+
+
+### Lösung
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[b)] 
+\end{enumerate}
+\points{`r lPointsQ2$TaskB`}
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[c)] 
+\end{enumerate}
+\points{`r lPointsQ2$TaskC`}
+
+
+\clearpage
+\pagebreak
+
+### Lösung: 
+
+
+\clearpage
+\pagebreak
+
+
+\section*{Aufgabe 3: }
+
+\begin{enumerate}
+\item[a)] 
+\end{enumerate}
+\points{`r lPointsQ3$TaskA`}
+
+### Lösung
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[b)] 
+\end{enumerate}
+\points{`r lPointsQ3$TaskB`}
+
+### Lösung
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[c)] 
+\end{enumerate}
+\points{`r lPointsQ3$TaskC`}
+
+### Lösung
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[d)] 
+\end{enumerate}
+\points{`r lPointsQ3$TaskD`}
+
+### Lösung
+
+\clearpage
+\pagebreak
+
+\section*{Aufgabe 4: }
+
+\begin{enumerate}
+\item[a)]
+\end{enumerate}
+\points{`r lPointsQ4$TaskA`}
+
+### Lösung
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[b)] Für das nachfolgend gegebene lineare Regressionsmodell soll die Parameter mit einer Bayes'schen Analyse geschätzt werden. Die Analyse wird anhand des gezeigten R-Codeblocks gemacht. Berechnen Sie die Bayes'schen Schätzwerte für den Achsenabschnitt $\beta_0$ und den Regressionsparameter $\beta_1$ aufgrund des Outputs des gezeigten Programmcodes. 
+
+\textit{Parameters of the following given model are to be estimated using a Bayesian analysis. The analysis is done using the shown R-code below. Compute the Bayesian estimator for the intercept $\beta_0$ and the regression parameter $\beta_1$ based on the output of the R-program.}
+\end{enumerate}
+\points{`r lPointsQ4$TaskB`}
+
+
+```{r DataSetupTask4b}
+### # simulated data according to Rohan's course note from 2013
+set.seed(987)
+n = 20 # number of observations
+k = 1 # number of covariates
+x = matrix(sample(c(0, 1, 2), n * k, replace = T), nrow = n, ncol = k)
+X = cbind(1, x)
+# head(X)
+betaTrue = c(-3.9, 1.76)
+y = X %*% betaTrue + rnorm(n, 0, 1)
+#head(y)
+### # generate dataframe for saving to file
+dfDataRead <- data.frame(y=y, x = X[,2], stringsAsFactors = FALSE)
+```
+
+Das Programm, welches den Gibbs Sampler umsetzt und die Stichproben von $\beta_0$ und $\beta_1$ erzeugt, sieht wie folgt aus. Berechnen Sie aus den gezeigten Stichproben eine Bayes'sch Schätzung für $\beta_0$ und $\beta_1$.
+
+\textit{The program below implements the Gibbs Sampler to generate samples of $\beta_0$ and $\beta_1$. Compute the Bayesian estimates of $\beta_0$ and $\beta_1$ based on the samples shown in the output.}
+
+```{r GibbsSampler, echo=TRUE, results='markup'}
+### # Matrix X as incidence matrix for beta0 and beta1
+X <- cbind(1,dfDataRead$x)
+### # y as vector of observations
+y <- dfDataRead$y
+### # starting values
+beta = c(0, 0) 
+mean_beta <- beta
+# loop for Gibbs sampler
+niter = 10 # number of samples
+for (iter in 1:niter) {
+  # sampling intercept
+  w = y - X[, 2] * beta[2]
+  x = X[, 1]
+  xpxi = 1/(t(x) %*% x)
+  betaHat = t(x) %*% w * xpxi
+  beta[1] = rnorm(1, betaHat, sqrt(xpxi)) # using residual var = 1
+  # sampling slope
+  w = y - X[, 1] * beta[1]
+  x = X[, 2]
+  xpxi = 1/(t(x) %*% x)
+  betaHat = t(x) %*% w * xpxi
+  beta[2] = rnorm(1, betaHat, sqrt(xpxi)) # using residual var = 1
+  # summing up
+  mean_beta <- mean_beta + beta
+  # output current sample
+  cat("iteration: ", iter, " -- beta0: ", beta[1], " -- beta1: ", beta[2], "\n")
+}
+cat("beta0: ", mean_beta[1]/niter, " -- beta 1: ", mean_beta[2]/niter, "\n")
+```
+
+\clearpage
+\pagebreak
+
+### Lösung
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[c)] Berechnen Sie den Standardfehler für die Bayes'schen Schätzungen von $\beta_0$ und $\beta_1$ aus 4b)
+
+\textit{Compute the standard error of the Bayesian estimates for $\beta_0$ and $\beta_1$ of 4b)}
+\end{enumerate}
+\points{`r lPointsQ4$TaskC`}
+
+### Lösung
