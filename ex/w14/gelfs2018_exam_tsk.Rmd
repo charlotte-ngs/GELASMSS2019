@@ -1,0 +1,379 @@
+---
+output:
+  pdf_document:
+    includes:
+      in_header: tex/header.tex
+    fig_caption: false
+output_file: asmfs2018_exam_tsk.pdf
+---
+
+<!-- %\usepackage{fancyhdr} -->
+
+\newcommand{\points}[1]
+{\begin{flushright}\textbf{#1}\end{flushright}}
+
+<!-- %\begin{document} -->
+<!-- %\SweaveOpts{concordance=TRUE} -->
+```{r ChunkOptions, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE, results = 'hide')
+#knitr::opts_chunk$set(concordance=TRUE)
+knitr::knit_hooks$set(conv.odg = rmddochelper::odg.graphics.conv.hook)
+```
+
+<!-- <<PointsQ1, echo=FALSE>>= -->
+```{r PointsQ1, echo=FALSE}
+# Assign Points for Q1
+lPointsQ1 <- list(TaskA = 4,
+                  TaskB = 6,
+                  TaskC = 2,
+                  TaskD = 8)
+nPointQ1Total <- sum(unlist(lPointsQ1))
+```
+<!-- @ -->
+<!-- <<PointsQ2, echo=FALSE>>= -->
+```{r PointsQ2, echo=FALSE}
+# Assign Points for Q2
+lPointsQ2 <- list(TaskA = 2,
+                  TaskB = 2,
+                  TaskC = 6,
+                  TaskD = 0)
+nPointQ2Total <- sum(unlist(lPointsQ2))
+```
+<!-- @ -->
+<!-- <<PointsQ3, echo=FALSE>>= -->
+```{r PointsQ3, echo=FALSE}
+# Assign Points for Q3
+lPointsQ3 <- list(TaskA = 4,
+                  TaskB = 8,
+                  TaskC = 8,
+                  TaskD = 0)
+nPointQ3Total <- sum(unlist(lPointsQ3))
+```
+<!-- @ -->
+<!-- <<PointsQ4, echo=FALSE>>= -->
+```{r PointsQ4, echo=FALSE}
+# Assign Points for Q4
+lPointsQ4 <- list(TaskA = 9,
+                  TaskB = 4,
+                  TaskC = 0,
+                  TaskD = 0)
+nPointQ4Total <- sum(unlist(lPointsQ4))
+```
+```{r PointsQ5, echo=FALSE}
+# Assign Points for Q4
+lPointsQ5 <- list(TaskA = 10,
+                  TaskB = 0,
+                  TaskC = 0,
+                  TaskD = 0)
+nPointQ5Total <- sum(unlist(lPointsQ5))
+```
+<!-- @ -->
+<!-- <<PointsTotal, echo=FALSE>>= -->
+```{r PointsTotal, echo=FALSE}
+nPointOverallTotal <- nPointQ1Total + nPointQ2Total + nPointQ3Total + nPointQ4Total + nPointQ5Total
+```
+<!-- @ -->
+
+
+\thispagestyle{empty}
+
+\fcolorbox{white}{white}{
+	\centering \parbox[t]{1.0\linewidth}{
+		\fontsize{12pt}{20pt}\selectfont % 
+		\vspace*{0.5cm} % 
+
+   	\hfill 	Peter von Rohr \\ Institut für Agrarwissenschaften\\ D-USYS\\ ETH Zürich
+
+		\vspace*{0.5cm} 
+	}
+}
+
+\vspace*{2cm}
+
+\fcolorbox{white}{white}{
+	\parbox[t]{1.0\linewidth}{
+		\centering \fontsize{25pt}{40pt}\selectfont %
+		\vspace*{0.2cm}
+		 751-6212-00L V \\
+     Prüfung    \\
+     Angewandte Zuchtwertschätzung\\
+     FS 2018
+
+		\vspace*{0.7cm} % Space between the end of the title and the bottom of the grey box
+	}
+}
+
+
+\vspace*{1cm}
+
+<!-- % Table with Name -->
+\begin{tabular}{p{3cm}p{6cm}}
+Datum:    &  28. Mai 2018 \\
+          &  \\
+          &  \\          
+Name:     &  \\
+          &  \\
+          &  \\
+Legi-Nr:  & \\
+\end{tabular}
+
+<!-- % Table with Points -->
+
+\vspace{5ex}
+\begin{center}
+\begin{tabular}{|p{3cm}|c|c|}
+\hline
+Aufgabe  &  Maximale Punktzahl  &  Erreichte Punktzahl\\
+\hline
+1        &  `r nPointQ1Total`  & \\
+\hline
+2        &  `r nPointQ2Total`  & \\
+\hline
+3        &  `r nPointQ3Total`  & \\
+\hline
+4        &  `r nPointQ4Total`  & \\
+\hline
+5        &  `r nPointQ5Total` & \\
+\hline
+Total    &  `r nPointOverallTotal` & \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{1cm}
+
+\textit{Questions in English are in italics}
+
+\clearpage
+\pagebreak
+
+\section*{Aufgabe 1: Zuchtprogramm}
+\begin{enumerate}
+\item[a)] Welche verschiedenen Arten von Zuchtprogrammen gibt es und in welchen Gebieten sind diese zu finden?
+
+\textit{What types of breeding programs exist and where (in which regions) can these breeding programs be found?}
+\end{enumerate}
+\points{`r lPointsQ1$TaskA`}
+
+\noindent\textbf{L\"osung:}
+
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[b)] Wie lauten die Bestandteile eines Zuchtprogramms?
+
+\textit{What are the constituent parts of a breeding program?}
+\end{enumerate}
+
+\points{`r lPointsQ1$TaskB`}
+
+### Lösung: 
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[c)] Bei verschiedenen Tierarten sind verschiedene Arten von Zuchtprogrammen zu finden. Welche Arten von Zuchtprogrammen finden wir vor allem bei Rindern und welche vor allem in der Schweinezucht?
+
+\textit{Different species can have different types of breeding programs. What type of breeding program is typical for cattle breeding and what type of breeding program can be found in pig breeding?}
+\end{enumerate}
+
+\points{`r lPointsQ1$TaskC`}
+
+### Lösung: 
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[d)] Welche Grösse wird verwendet um den Erfolg eines Zuchtprogramms zu beurteilen? In der nachfolgenden Tabelle ist die Selektion von Vatertieren bei zwei Zuchtprogrammen beschrieben. Welches der beiden Zuchtprogramme würden sie als erfolgreicher bezeichnen? Begründen Sie Ihre Antwort. 
+
+\textit{What criterion is used to assess the success of a breeding program? The following table describes the selection of sires in two breeding programs. Which breeding program is more successful? Discuss your decision. }
+\end{enumerate}
+
+\points{`r lPointsQ1$TaskD`}
+
+
+\vspace{2cm}
+
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{p{5cm}p{3.5cm}p{3.5cm}}
+\hline
+  &  Zuchtprogram 1 & Zuchtprogramm 2 \\
+\hline
+Selektionsintensität  &  1.8  &  1.8  \\
+\hline
+Genauigkeit der Zuchtwerte  &  0.9  &  0.65  \\
+\hline
+Genetische Standardabweichung  &  250  &  250  \\
+\hline
+Generationeninterval  &  8 Jahre &  2 Jahre \\
+\hline
+\end{tabular}}
+\end{center}
+
+
+### Lösung: 
+
+\clearpage
+\pagebreak
+
+\section*{Aufgabe 2: Zuchtwertschätzung}
+
+\begin{enumerate}
+\item[a)] Wie lauten die beiden Operationen, welche als generelles Prinzip der Zuchtwertschätzung bezeichnet werden?
+
+\textit{What are the two operations which can be termed as a general principle in breeding value estimation?}
+\end{enumerate}
+\points{`r lPointsQ2$TaskA`}
+
+### Lösung
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[b)] In der Praxis werden die geschätzten Zuchtwerte eines Tieres oft mit der phänotypischen Eigenleistung verglichen. Erklären Sie aufgrund der Definition des Zuchtwerts, weshalb dieser Vergleich nicht zutreffend ist.
+
+\textit{Some animal breeders compare the estimated breeding value with its phenotypic own performance. Use the definition of the breeding value to explain why this comparison is not appropriate.}
+\end{enumerate}
+\points{`r lPointsQ2$TaskB`}
+
+\clearpage
+\pagebreak
+
+```{r DataSetupTask2c, echo=FALSE, results='hide'}
+set.seed(4321)
+h2 <- .25
+coeff_btr <- c(144, 120)
+n_nr_offspring <- 4
+n_nr_sire <- 2
+n_nr_animals <- n_nr_offspring + n_nr_sire
+trait_min <- 120
+trait_max <- 150
+tbl_data_task2c <- dplyr::data_frame(Tier = (n_nr_sire + 1):n_nr_animals,
+                                   Vater = c(rep(1,2), rep(2,2)),
+                                   Betrieb = c(rep(1,3), rep(2,1)),
+                                   Merkmalswerte = round(runif(n_nr_offspring, min = trait_min, max = trait_max), digits = 0))
+
+tbl_av_farm <- dplyr::data_frame(Betrieb = c(1,2), `Mittlerer Merkmalswert` = coeff_btr)
+```
+
+\begin{enumerate}
+\item[c)] Schätzen Sie die Zuchtwerte der Väter aufgrund der Nachkommenleistung mit der Regressionsmethode. Die Durchschnitte der Merkmalswerte für die Betriebe und die Daten sind unten angegeben. Die Erblichkeit ($h^2$) beträgt `r h2`. Geben Sie auch die Genauigkeiten der geschätzten Zuchtwerte an. Vergleichen Sie die Reihenfolge der beiden Väter aufgrund der durchschnittlichen phänotypischen Nachkommenleistung mit der Reihenfolge der Väter aufgrund der geschätzten Zuchtwerte.
+
+\textit{Estimate the breeding values of the sires based on the offspring performances using the regression method. The average values of each farm and the data are given below. The heritability ($h^2$) is given as `r h2`. Compute the accuracy of the estimated breeding values. Compare the ranking of the sires base on the average phenotypic offspring performance to the ranking based on the estimated breeding values.}
+\end{enumerate}
+\points{`r lPointsQ2$TaskC`}
+
+```{r DataTableTask2c, echo=FALSE, results='asis'}
+knitr::kable(tbl_data_task2c)
+knitr::kable(tbl_av_farm)
+```
+
+
+### Lösung: 
+
+
+\clearpage
+\pagebreak
+
+
+\section*{Aufgabe 3: Selektionsindex}
+
+\begin{enumerate}
+\item[a)] Woraus besteht der Selektionsindex und nach welchem Prinzip wird der Selektionsindex konstruiert, wenn er für die Schätzung des Zuchtwertes in einem bestimmten Merkmal verwendet wird?
+
+\textit{What are the components of a selection index and what are the principles to construct a selection index, in case it is used to estimate the breeding value of a certain trait?}
+\end{enumerate}
+\points{`r lPointsQ3$TaskA`}
+
+### Lösung
+
+\clearpage
+\pagebreak
+
+```{r DataSetupTask3b, echo=FALSE, results='hide'}
+sigma_x2 <- 100
+n_nr_dam <- 1
+n_nr_candidate <- 1
+n_nr_animals <- n_nr_dam + n_nr_sire + n_nr_offspring + n_nr_candidate
+tbl_data_task3b <- dplyr::data_frame(Tier = (n_nr_dam + n_nr_sire + 1):(n_nr_animals),
+                                   Vater = c(rep(1,2), rep(2,3)),
+                                   Mutter = c(rep(3,5)),
+                                   Merkmalsabweichungen = c(rep(-25,2), rep(30,2), NA))
+```
+
+\begin{enumerate}
+\item[b)] Schätzen Sie den Zuchtwert für einen Probanden (Tier `r n_nr_animals`) mit dem Selektionsindex aufgrund der nachfolgenden Informationen. Wir erweitern den Datensatz aus Aufgabe 2c um einen Probanden und nehmen an, dass die Tiere alle die gleiche Mutter haben. Für die phänotypische Varianz ($\sigma_x^2$) nehmen wir einen Wert von $`r sigma_x2`$ an. Anstelle der phänotypischen Merkmalswerte werden in der nachfolgenden Tabelle die für den Selektionsindex gebrauchten Merkmalsabweichungen ($x$) aufgelistet.
+
+\textit{Estimate the breeding value for a selection candidate (animal `r n_nr_animals`) using the selection index theory. The dataset from 2c is expanded with the selection candidate and we assume that all animals have the same mother. The phenotypic variance ($\sigma_x^2$) is assumed to be $`r sigma_x2`$. Instead of the phenotypic trait values, the following table contains the trait deviations ($x$) which are needed for the selection index.}
+\end{enumerate}
+
+\points{`r lPointsQ3$TaskB`}
+
+```{r DataTable, echo=FALSE, results='asis'}
+knitr::kable(tbl_data_task3b)
+```
+
+
+
+### Lösung
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[c)] Inzwischen hat der Selektionskandidat (Tier `r n_nr_animals`) aus Aufgabe 3b) noch eine Eigenleistung bekommen.  Wiederholen Sie die Zuchtwertschätzung aus Aufgabe 3b) unter der Annahme, dass die Merkmalsabweichung für die Eigenleistung $45$ beträgt
+
+\textit{Animal `r n_nr_animals` from 3b) has now an own performance. Repeat the breeding value estimation from 3b), assuming that the trait deviation for the own performance is $45$.}
+\end{enumerate}
+\points{`r lPointsQ3$TaskC`}
+
+### Lösung
+
+\clearpage
+\pagebreak
+
+
+\section*{Aufgabe 4: Mehrere Merkmale}
+
+\begin{enumerate}
+\item[a)] Nennen Sie die drei Strategien für die Selektion nach mehreren Merkmalen und nennen Sie je einen Vor- und einen Nachteil für jede Strategie.
+
+\textit{List the three strategies that exist to select for multiple traits. List one advantage and one disadvantage for each strategy}
+\end{enumerate}
+\points{`r lPointsQ4$TaskA`}
+
+### Lösung
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[b)] Aktuell erhalten die Zuchtorganisationen beim Milchrind die Rückmeldung von BesamernInnen und ZüchternInnen, dass es sehr wenig Stiere im Angebot gibt mit einem positiven Zuchtwert für Fruchtbarkeit. Mit welchem Phänomen einer Selektionsstrategie bei mehreren Merkmalen könnte diese Beobachtung zusammenhängen? Begründen Sie Ihre Antwort und schlagen Sie eine Verbesserungsmassnahme vor.
+
+\textit{Breeding organisations in dairy cattle get some feedback from breeders and AI-technicians that there are only very few bulls with positive breeding values in reproduction traits. What could be the reason for this observation in connection with selection strategies for multiple traits? Discuss your answer and propose a measure to improve this situation.}
+\end{enumerate}
+\points{`r lPointsQ4$TaskB`}
+
+### Lösung
+
+\clearpage
+\pagebreak
+
+
+\section*{Aufgabe 5: Vatermodell }
+Für den Datensatz aus Aufgabe 2c) sollen Zuchtwerte mit dem Vatermodell geschätzt werden. Stellen Sie für diese Schätzung das Modell auf, wobei der Betrieb als fixer Effekt behandelt werden soll. Formulieren Sie die Mischmodellgleichungen unter Berücksichtigung der Angaben aus dem Datensatz. Wir nehmen an, dass die Väter weder verwandt miteinander noch ingezüchtet sind. Die Erblichkeit beträgt `r h2` und die phänotypische Varianz ist `r sigma_x2`.
+
+\textit{The dataset of 2c is used to estimate breeding values using a sire model. Setup the model with herd (Betrieb) as fixed effect. Formulate the mixed model equations using all information from the dataset. The sires are assumed to be unrelated and not inbred. The heritability is `r h2` and the phenotypic variance is `r sigma_x2`.}
+
+\points{`r lPointsQ5$TaskA`}
+
+
+```{r DataTableTask5, echo=FALSE, results='asis'}
+knitr::kable(tbl_data_task2c)
+```
