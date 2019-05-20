@@ -5,7 +5,7 @@ mrmt$set_this_rmd_file(ps_this_rmd_file = ifelse(rstudioapi::isAvailable(),
                                                  rprojroot::thisfile()))
 ```
 
-The abbreviation `BLUP` stands for **B**est **L**inear **U**nbiased **P**rediction. BLUP-based procedures are the de-facto standard methods to predict breeding values. These procedures use linear mixed effects models to simultaneously estimate fixed effects and predict breeding values. Linear models that contain besides the random error other random effects are called linear mixed effects model. The classification into fixed and random effects is not based on a universely accepted definition. For some effects with distinct and a finite number of classes it is easy to classify them as fixed effects. On the other hand breeding values of animals are always modeled as random effects. 
+The abbreviation `BLUP` stands for **B**est **L**inear **U**nbiased **P**rediction. BLUP-based procedures are the de-facto standard methods to predict breeding values. These procedures use linear mixed effects models to simultaneously estimate fixed effects and predict breeding values. Linear models that contain besides the random error other random effects are called linear mixed effects model. The classification into fixed and random effects is not based on a universally accepted definition. For some effects with distinct and a finite number of classes it is easy to classify them as fixed effects. On the other hand breeding values of animals are always modeled as random effects. 
 
 
 
@@ -99,12 +99,55 @@ The application of the linear mixed effects model \@ref(eq:gel-pb-genlmem) in Li
 
 
 ## Sire Model {#gel-pb-siremodel}
+In the sire model the effect of the sire is taken as a random effect. This leads to the following model
 
+\begin{equation}
+y = Xb + Zs + e
+(\#eq:gel-pb-gensiremodel)
+\end{equation}
+
+where $s$ is a vector of length $q_s$ with all sire effects. All other components are the same as specified for the model \@ref(eq:gel-pb-genlmem). The variance-covariance matrix $var(s)$ of all sire effects corresponds to 
+
+\begin{equation}
+var(s) = A_s * \sigma_s^2
+(\#eq:gel-pb-varcovarsireeffect)
+\end{equation}
+
+where $A_s$ is the numerator relationship matrix only considering relations on the male side of the pedigree. The variance component $\sigma_s^2$ is obtained from the variance components estimation using a sire model and it corresponds to $0.25 \sigma_a^2$ where $\sigma_a^2$ is the genetic additive variance.
+
+The sire model was developed for livestock populations with large half-sib families where a given sire has a large number of offspring. As a result all sires get predicted breeding values. All female animals are not considered in the evaluation and do not get predicted breeding values. 
+
+The usage of sire models for predicting breeding values was mainly at the beginning of the introduction of the BLUP methodology. It was motivated by the lower requirements of computing power. 
 
 
 ## Animal Model {#gel-pb-animalmodel}
+The so-called animal model uses the breeding value of each animal as a random effect. In matrix-vector notation the animal model has the following structure. 
+
+\begin{equation}
+y = Xb + Za + e
+(\#eq:gel-pb-genanimalmodel)
+\end{equation}
+
+where $a$ is a vector of length $q_a$ containing the breeding values of all animals in the pedigree. All other components are the same as specified for the model \@ref(eq:gel-pb-genlmem). The variance-covariance matrix $var(a)$ of the breeding values is defined as
+
+\begin{equation}
+var(a) = A \sigma_a^2
+(\#eq:gel-pb-varcovaranimaleffect)
+\end{equation}
+
+where $A$ is the numerator relationship matrix containing all identity by descent relationships in a pedigree. The matrix $A$ is symmetric. The off-diagonal elements $(A)_{ij}$ in row $i$ and column $j$ contain the probability of animals $i$ and $j$ sharing alleles that are identical by descent. Identity by descent of two alleles means that two alleles can be traced back in the pedigree to a common ancestor. As an example the value of $(A)_{ij}$ between two half-sibs $i$ and $j$ is $1/4$ and between two full-sibs it is $1/2$. The diagonal elements $(A)_{ii}$ of matrix $A$ corresponds to $1+F_i$ where $F_i$ is the inbreeding coefficient of animal $i$. The inbreeding coefficient corresponds to $1/2$ of the relationship coefficient between parents $s$ and $d$ of $i$. 
 
 
+
+## Genomic BLUP {#gel-pb-genomicblup}
+With the rapid increase of animals with genotypic information in the form of SNP-genotypes, this information can be used to predict genomic breeding values. BLUP-based methods can be used to predict genomic breeding values based on genomic information. The genomic BLUP models can have two different forms. 
+
+1. marker-effect models where each SNP-locus is taken as a random effect. 
+2. breeding value based models where genomic breeding values are included as random effects.
+
+As long as the number of genotyped animals is lower than the number of genotypes determined per animal, then model (2) has advantages over model (1) with respect to requirements of computing power. But as the number of genotyped animals increases very rapidly, model (1) might be favorable over model (2). 
+
+At this point it is important to note that whether we use genomic information or not, the goal of the prediction of breeding values remains still the same. We want to get a prediction of the genetic potential of each animal. This prediction must be as accurate as possible. The realized values of the predictions are used to rank the animals. Based on these rankings the selection decisions are taken to determine the parents of the future generations of livestock animals. 
 
 
 

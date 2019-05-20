@@ -1,0 +1,30 @@
+---
+title: "Derivation of Computation of Empirical Variance"
+output: html_notebook
+---
+
+The empirical variance is computed as
+
+$$s^2 = {1 \over n-1}\sum_{i=1}^n (x_i - \mu)^2
+=
+ {1 \over n-1}\sum_{i=1}^n (x_i^2 - 2 \mu x_i + \mu^2)
+=
+ {1 \over n-1}\left[\sum_{i=1}^n x_i^2 - 2\mu \sum_{i=1}^n x_i + n*\mu^2 \right]
+= 
+{1 \over n-1}\left[\sum_{i=1}^n x_i^2 - 2n \mu^2 + n \mu^2 \right]
+= 
+{1 \over n-1}\left[\sum_{i=1}^n x_i^2 - n \mu^2 \right]
+$$
+
+where $\mu$ is a constant corresponding to 
+
+$$\mu = {1 \over n}\sum_{i=1}^n x_i$$
+
+Inserting $\mu$ back
+
+$$
+s^2 = {1 \over n-1}\left[\sum_{i=1}^n x_i^2 - n ({1 \over n}\sum_{i=1}^n x_i)^2 \right]
+=
+{1 \over n-1}\left[\sum_{i=1}^n x_i^2 - {1 \over n}(\sum_{i=1}^n x_i)^2 \right]
+$$
+

@@ -1,0 +1,735 @@
+---
+output:
+  pdf_document:
+    includes:
+      in_header: tex/header.tex
+    fig_caption: false
+output_file: asmfs2018_exam_tsk.pdf
+---
+
+<!-- %\usepackage{fancyhdr} -->
+
+\newcommand{\points}[1]
+{\begin{flushright}\textbf{#1}\end{flushright}}
+
+<!-- %\begin{document} -->
+<!-- %\SweaveOpts{concordance=TRUE} -->
+```{r ChunkOptions, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE, results = 'hide')
+#knitr::opts_chunk$set(concordance=TRUE)
+knitr::knit_hooks$set(conv.odg = rmddochelper::odg.graphics.conv.hook)
+```
+
+<!-- <<PointsQ1, echo=FALSE>>= -->
+```{r PointsQ1, echo=FALSE}
+# Assign Points for Q1
+lPointsQ1 <- list(TaskA = 4,
+                  TaskB = 6,
+                  TaskC = 2,
+                  TaskD = 8)
+nPointQ1Total <- sum(unlist(lPointsQ1))
+```
+<!-- @ -->
+<!-- <<PointsQ2, echo=FALSE>>= -->
+```{r PointsQ2, echo=FALSE}
+# Assign Points for Q2
+lPointsQ2 <- list(TaskA = 2,
+                  TaskB = 2,
+                  TaskC = 6,
+                  TaskD = 0)
+nPointQ2Total <- sum(unlist(lPointsQ2))
+```
+<!-- @ -->
+<!-- <<PointsQ3, echo=FALSE>>= -->
+```{r PointsQ3, echo=FALSE}
+# Assign Points for Q3
+lPointsQ3 <- list(TaskA = 4,
+                  TaskB = 8,
+                  TaskC = 8,
+                  TaskD = 0)
+nPointQ3Total <- sum(unlist(lPointsQ3))
+```
+<!-- @ -->
+<!-- <<PointsQ4, echo=FALSE>>= -->
+```{r PointsQ4, echo=FALSE}
+# Assign Points for Q4
+lPointsQ4 <- list(TaskA = 9,
+                  TaskB = 4,
+                  TaskC = 0,
+                  TaskD = 0)
+nPointQ4Total <- sum(unlist(lPointsQ4))
+```
+```{r PointsQ5, echo=FALSE}
+# Assign Points for Q4
+lPointsQ5 <- list(TaskA = 10,
+                  TaskB = 0,
+                  TaskC = 0,
+                  TaskD = 0)
+nPointQ5Total <- sum(unlist(lPointsQ5))
+```
+<!-- @ -->
+<!-- <<PointsTotal, echo=FALSE>>= -->
+```{r PointsTotal, echo=FALSE}
+nPointOverallTotal <- nPointQ1Total + nPointQ2Total + nPointQ3Total + nPointQ4Total + nPointQ5Total
+```
+<!-- @ -->
+
+
+\thispagestyle{empty}
+
+\fcolorbox{white}{white}{
+	\centering \parbox[t]{1.0\linewidth}{
+		\fontsize{12pt}{20pt}\selectfont % 
+		\vspace*{0.5cm} % 
+
+   	\hfill 	Peter von Rohr \\ Institut für Agrarwissenschaften\\ D-USYS\\ ETH Zürich
+
+		\vspace*{0.5cm} 
+	}
+}
+
+\vspace*{2cm}
+
+\fcolorbox{white}{white}{
+	\parbox[t]{1.0\linewidth}{
+		\centering \fontsize{25pt}{40pt}\selectfont %
+		\vspace*{0.2cm}
+		 751-6212-00L V \\
+     Lösungen zur Prüfung    \\
+     Angewandte Zuchtwertschätzung\\
+     FS 2018
+
+		\vspace*{0.7cm} % Space between the end of the title and the bottom of the grey box
+	}
+}
+
+
+\vspace*{1cm}
+
+<!-- % Table with Name -->
+\begin{tabular}{p{3cm}p{6cm}}
+Datum:    &  28. Mai 2018 \\
+          &  \\
+          &  \\          
+Name:     &  \\
+          &  \\
+          &  \\
+Legi-Nr:  & \\
+\end{tabular}
+
+<!-- % Table with Points -->
+
+\vspace{5ex}
+\begin{center}
+\begin{tabular}{|p{3cm}|c|c|}
+\hline
+Aufgabe  &  Maximale Punktzahl  &  Erreichte Punktzahl\\
+\hline
+1        &  `r nPointQ1Total`  & \\
+\hline
+2        &  `r nPointQ2Total`  & \\
+\hline
+3        &  `r nPointQ3Total`  & \\
+\hline
+4        &  `r nPointQ4Total`  & \\
+\hline
+5        &  `r nPointQ5Total` & \\
+\hline
+Total    &  `r nPointOverallTotal` & \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{1cm}
+
+\textit{Questions in English are in italics}
+
+\clearpage
+\pagebreak
+
+\section*{Aufgabe 1: Zuchtprogramm}
+\begin{enumerate}
+\item[a)] Welche verschiedenen Arten von Zuchtprogrammen gibt es und in welchen Gebieten sind diese zu finden?
+
+\textit{What types of breeding programs exist and where (in which regions) can these breeding programs be found?}
+\end{enumerate}
+\points{`r lPointsQ1$TaskA`}
+
+\noindent\textbf{L\"osung:}
+
+Grundsätzlich sind zwei Arten von Zuchtprogrammen zu unterscheiden
+
+* Zuchtprogramme, welche auf die Erzielung von Zuchtfortschritt ausgerichtet sind
+* Zuchtprogramme, bei welchen der Verkauf von Zuchtprodukten und Dienstleistungen im Zentrum stehen.
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[b)] Wie lauten die Bestandteile eines Zuchtprogramms?
+
+\textit{What are the constituent parts of a breeding program?}
+\end{enumerate}
+
+\points{`r lPointsQ1$TaskB`}
+
+### Lösung: 
+
+1. Zuchtziel
+2. Leistungsprüfungen
+3. Zuchtwertschätzung
+4. Reproduktionstechnologien
+5. Selektion und Anpaarung
+6. Selektionserfolg
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[c)] Bei verschiedenen Tierarten sind verschiedene Arten von Zuchtprogrammen zu finden. Welche Arten von Zuchtprogrammen finden wir vor allem bei Rindern und welche vor allem in der Schweinezucht?
+
+\textit{Different species can have different types of breeding programs. What type of breeding program is typical for cattle breeding and what type of breeding program can be found in pig breeding?}
+\end{enumerate}
+
+\points{`r lPointsQ1$TaskC`}
+
+### Lösung: 
+
+1. monolithische Zuchtprogramme mit breiter Beteiligung von vielen Betrieben 
+2. Zuchtprogramme mit hierarchischer Struktur
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[d)] Welche Grösse wird verwendet um den Erfolg eines Zuchtprogramms zu beurteilen? In der nachfolgenden Tabelle ist die Selektion von Vatertieren bei zwei Zuchtprogrammen beschrieben. Welches der beiden Zuchtprogramme würden sie als erfolgreicher bezeichnen? Begründen Sie Ihre Antwort. 
+
+\textit{What criterion is used to assess the success of a breeding program? The following table describes the selection of sires in two breeding programs. Which breeding program is more successful? Discuss your decision. }
+\end{enumerate}
+
+\points{`r lPointsQ1$TaskD`}
+
+
+\vspace{2cm}
+
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{p{5cm}p{3.5cm}p{3.5cm}}
+\hline
+  &  Zuchtprogram 1 & Zuchtprogramm 2 \\
+\hline
+Selektionsintensität  &  1.8  &  1.8  \\
+\hline
+Genauigkeit der Zuchtwerte  &  0.9  &  0.65  \\
+\hline
+Genetische Standardabweichung  &  250  &  250  \\
+\hline
+Generationeninterval  &  8 Jahre &  2 Jahre \\
+\hline
+\end{tabular}}
+\end{center}
+
+
+### Lösung: 
+
+```{r echo=TRUE, results='markup'}
+(delta_g1 = 1.8 * .9 * 250 / 8)
+(delta_g2 = 1.8 * .65 * 250 / 2)
+```
+
+
+\clearpage
+\pagebreak
+
+\section*{Aufgabe 2: Zuchtwertschätzung}
+
+\begin{enumerate}
+\item[a)] Wie lauten die beiden Operationen, welche als generelles Prinzip der Zuchtwertschätzung bezeichnet werden?
+
+\textit{What are the two operations which can be termed as a general principle in breeding value estimation?}
+\end{enumerate}
+\points{`r lPointsQ2$TaskA`}
+
+### Lösung
+
+In der Zuchtwertschätzung werden beobachtete Leistungen mit zwei Operationen verarbeitet. 
+
+1. Die Leistungen werden __relativiert__, d.h. sie werden mit anderen Leistungen, welche unter ähnlichen Bedingungen erbracht wurden, miteinander verglichen. Rechnerisch passiert das Relativieren durch die Subtraktion eines Vergleichswertes von den Leistungen.
+2. Die Leistungen werden __gewichtet__, da für verschiedene Tiere unterschiedlich viele Informationen zur Verfügung stehen. Intuitiv ist klar, dass wir einem Zuchtwert aufgrund von einer grossen Anzahl von Nachkommen mehr vertrauen, als einem der nur aufgrund von sehr wenigen Nachkommen geschätzt wurde. Mathematisch entspricht die Gewichtung einer Multiplikation mit einem Faktor.
+
+Fassen wir diese beiden Operationen in einer Formel zusammen so erhalten wir
+
+\begin{equation}
+\hat{u} = b * (y - \mu)
+\end{equation}
+
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[b)] In der Praxis werden die geschätzten Zuchtwerte eines Tieres oft mit der phänotypischen Eigenleistung verglichen. Erklären Sie aufgrund der Definition des Zuchtwerts, weshalb dieser Vergleich nicht zutreffend ist.
+
+\textit{Some animal breeders compare the estimated breeding value with its phenotypic own performance. Use the definition of the breeding value to explain why this comparison is not appropriate.}
+\end{enumerate}
+\points{`r lPointsQ2$TaskB`}
+
+### Lösung
+
+Der Zuchtwert eines bestimmten Tieres $i$ ist definiert als die doppelte Abweichung der Leistungen vieler Nachkommen von $i$ vom Populationsmittel. Da sich im Durchschnitt der vielen Nachkommen von Tier $i$ alle umweltbedingten und somit nicht-genetischen Faktoren ausgleichen, misst der Zuchtwert eines Tieres das genetische Potential, welches an die Nachkommen weitergegeben wird.
+
+Das genetische Potential eines Tieres bleibt über sein Leben konstant. Die phänotypischen Leistungen eines Tieres ändern sich im Verlauf seines Lebens einerseits bedingt durch die Entwicklung des Tieres. Andererseits können auch Umweltänderungen zur Veränderung der phänotypischen Leistung des Tieres beitragen. Alle diese Änderungen der phänotypischen Leistungen im Verlauf des Lebens eines Tieres führt zur Abschwächung des Zusammenhangs zum konstanten genetischen Potential.
+
+Der geschätzte Zuchtwert eines Tieres ändert sich im Verlauf seines Lebens aufgrund der laufenden Anpassung der Basis aller Zuchtwerte. Da die Zuchtwerte als Abweichungen definiert sind, sagen die absoluten Zuchtwerte nicht viel aus. Diese sind immer im Bezug auf eine Basis definiert. Sobald die Basis verändert wird, so verändern sich auch die Zuchtwerte.
+
+\clearpage
+\pagebreak
+
+```{r DataSetupTask2c, echo=FALSE, results='hide'}
+set.seed(4321)
+h2 <- .25
+coeff_btr <- c(144, 120)
+n_nr_offspring <- 4
+n_nr_sire <- 2
+n_nr_animals <- n_nr_offspring + n_nr_sire
+trait_min <- 120
+trait_max <- 150
+tbl_data_task2c <- dplyr::data_frame(Tier = (n_nr_sire + 1):n_nr_animals,
+                                   Vater = c(rep(1,2), rep(2,2)),
+                                   Betrieb = c(rep(1,3), rep(2,1)),
+                                   Merkmalswerte = round(runif(n_nr_offspring, min = trait_min, max = trait_max), digits = 0))
+
+tbl_av_farm <- dplyr::data_frame(Betrieb = c(1,2), `Mittlerer Merkmalswert` = coeff_btr)
+```
+
+\begin{enumerate}
+\item[c)] Schätzen Sie die Zuchtwerte der Väter aufgrund der Nachkommenleistung mit der Regressionsmethode. Die Durchschnitte der Merkmalswerte für die Betriebe und die Daten sind unten angegeben. Die Erblichkeit ($h^2$) beträgt `r h2`. Geben Sie auch die Genauigkeiten der geschätzten Zuchtwerte an. Vergleichen Sie die Reihenfolge der beiden Väter aufgrund der durchschnittlichen phänotypischen Nachkommenleistung mit der Reihenfolge der Väter aufgrund der geschätzten Zuchtwerte.
+
+\textit{Estimate the breeding values of the sires based on the offspring performances using the regression method. The average values of each farm and the data are given below. The heritability ($h^2$) is given as `r h2`. Compute the accuracy of the estimated breeding values. Compare the ranking of the sires base on the average phenotypic offspring performance to the ranking based on the estimated breeding values.}
+\end{enumerate}
+\points{`r lPointsQ2$TaskC`}
+
+```{r DataTableTask2c, echo=FALSE, results='asis'}
+knitr::kable(tbl_data_task2c)
+knitr::kable(tbl_av_farm)
+```
+
+
+### Lösung: 
+
+Für Nachkommenleistung gilt
+
+$$b = \frac{2n}{n + k}$$
+
+wobei $k = (4-h^2)/h^2$
+
+Da beide Väter 2 Nachkommen haben ist der Gewichtungsfaktor für beide gleich
+
+```{r, echo=TRUE, results='markup'}
+require(dplyr)
+n_nr_offsp_per_father <- tbl_data_task2c %>% 
+  group_by(Vater) %>% 
+  summarize(n_nr_offsp_per_father = n()) %>% 
+  select(n_nr_offsp_per_father)
+(k = (4-h2)/h2)
+(b <- 2 * n_nr_offsp_per_father / (n_nr_offsp_per_father + k))
+
+```
+
+Die Zuchtwerte der Väter werden berechnet als
+
+```{r, echo=TRUE, results='markup'}
+require(dplyr)
+tbl_cor_trait_values <- tbl_data_task2c %>% 
+  inner_join(tbl_av_farm) %>% 
+  mutate(CorrectedTraitValue = Merkmalswerte - `Mittlerer Merkmalswert`)
+tbl_av_per_sire <- tbl_cor_trait_values %>% 
+  group_by(Vater) %>% 
+  summarise(mean_trait_value = mean(CorrectedTraitValue))
+tbl_bv_sire <- tbl_av_per_sire$mean_trait_value * b
+colnames(tbl_bv_sire) <- "estimated_breeding_values"
+tbl_bv_sire
+```
+
+Die Genauigkeit der Geschätzten Zuchtwerte ergibt sich als
+
+$$r_{TI} = \sqrt{\frac{n}{n+k}} = \sqrt{\frac{b}{2}}$$
+
+```{r}
+rti <- sqrt(b/2)
+colnames(rti) <- 'accuracy_breeding_value'
+rti
+```
+
+\clearpage
+\pagebreak
+
+
+\section*{Aufgabe 3: Selektionsindex}
+
+\begin{enumerate}
+\item[a)] Woraus besteht der Selektionsindex und nach welchem Prinzip wird der Selektionsindex konstruiert, wenn er für die Schätzung des Zuchtwertes in einem bestimmten Merkmal verwendet wird?
+
+\textit{What are the components of a selection index and what are the principles to construct a selection index, in case it is used to estimate the breeding value of a certain trait?}
+\end{enumerate}
+\points{`r lPointsQ3$TaskA`}
+
+### Lösung
+
+Der Selektionsindex zur Schätzung der Zuchtwerte besteht aus 
+
+* Gewichtungsfaktoren $b$ und 
+* Abweichungen der Merkmalswerte vom Vergleichswert
+
+Der Selektionsindex wird nach dem Prinzip konstruiert, dass eine Linearkombination von Informationsquellen zur Schätzung einer unbekannten Grösse verwendet wird. Die Gewichte $b$ in der Linearkombination werden bestimmt, dass die Korrelation zwischen wahrem Zuchtwert $T$ und dem Index $I$ maximiert wird.
+
+\clearpage
+\pagebreak
+
+```{r DataSetupTask3b, echo=FALSE, results='hide'}
+sigma_x2 <- 100
+n_nr_dam <- 1
+n_nr_candidate <- 1
+n_nr_animals <- n_nr_dam + n_nr_sire + n_nr_offspring + n_nr_candidate
+tbl_data_task3b <- dplyr::data_frame(Tier = (n_nr_dam + n_nr_sire + 1):(n_nr_animals),
+                                   Vater = c(rep(1,2), rep(2,3)),
+                                   Mutter = c(rep(3,5)),
+                                   Merkmalsabweichungen = c(rep(-25,2), rep(30,2), NA))
+```
+
+\begin{enumerate}
+\item[b)] Schätzen Sie den Zuchtwert für einen Probanden (Tier `r n_nr_animals`) mit dem Selektionsindex aufgrund der nachfolgenden Informationen. Wir erweitern den Datensatz aus Aufgabe 2c um einen Probanden und nehmen an, dass die Tiere alle die gleiche Mutter haben. Für die phänotypische Varianz ($\sigma_x^2$) nehmen wir einen Wert von $`r sigma_x2`$ an. Anstelle der phänotypischen Merkmalswerte werden in der nachfolgenden Tabelle die für den Selektionsindex gebrauchten Merkmalsabweichungen ($x$) aufgelistet.
+
+\textit{Estimate the breeding value for a selection candidate (animal `r n_nr_animals`) using the selection index theory. The dataset from 2c is expanded with the selection candidate and we assume that all animals have the same mother. The phenotypic variance ($\sigma_x^2$) is assumed to be $`r sigma_x2`$. Instead of the phenotypic trait values, the following table contains the trait deviations ($x$) which are needed for the selection index.}
+\end{enumerate}
+
+\points{`r lPointsQ3$TaskB`}
+
+```{r DataTable, echo=FALSE, results='asis'}
+knitr::kable(tbl_data_task3b)
+```
+
+### Lösung
+```{r FullHalfSib, echo=FALSE, results='hide'}
+h2 <- .25
+n <- 2
+var_vg <- (1+(n-1)*h2/2)/n
+cov_hg <- 0.25*h2
+mat_p <- matrix(c(var_vg, cov_hg, cov_hg, var_vg), ncol = 2, byrow = TRUE)
+mat_g <- matrix(c(0.25*h2, 0.5*h2), ncol = 1)
+vec_vg_hg_b <- rmddochelper::vecGetVecElem(psBaseElement = "b_", pnVecLen = 2)
+```
+
+```{r, echo=FALSE, results='asis'}
+cat("$$\\left[\n")
+cat(paste(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = mat_p, pnDigits = 4), collapse = "\n"), "\n")
+cat("\\right]")
+cat("\\left[\n")
+cat(paste(rmddochelper::sConvertVectorToLaTexArray(pvec_avector = vec_vg_hg_b), collapse = "\n"), "\n")
+cat("\\right]")
+cat(" = \\left[\n")
+cat(paste(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = mat_g, pnDigits = 4), collapse = "\n"), "\n")
+cat("\\right]$$")
+```
+
+Als Lösung für $b$ erhalten wir
+
+```{r, echo=FALSE, results='asis'}
+vec_b_sol <- solve(mat_p, mat_g)
+cat("$$b = \\left[\n")
+cat(paste(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = vec_b_sol, pnDigits = 4), collapse = "\n"), "\n")
+cat("\\right]$$")
+```
+
+Der geschätzte Zuchtwert aufgrund des Selektionsindex entspricht
+
+```{r}
+vec_trait_dev <- matrix(c(30,-25), ncol = 1)
+sel_ind_bw <- crossprod(vec_b_sol, vec_trait_dev)
+```
+
+```{r, echo=FALSE, results='asis'}
+cat("$$I = \\left[\n")
+cat(paste(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = vec_b_sol, pnDigits = 4), collapse = "\n"), "\n")
+cat("\\right]^T")
+cat("\\left[\n")
+cat(paste(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = vec_trait_dev, pnDigits = 0), collapse = "\n"), "\n")
+cat("\\right] = ", sel_ind_bw)
+cat("$$")
+```
+
+
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[c)] Inzwischen hat der Selektionskandidat (Tier `r n_nr_animals`) aus Aufgabe 3b) noch eine Eigenleistung bekommen.  Wiederholen Sie die Zuchtwertschätzung aus Aufgabe 3b) unter der Annahme, dass die Merkmalsabweichung für die Eigenleistung $45$ beträgt
+
+\textit{Animal `r n_nr_animals` from 3b) has now an own performance. Repeat the breeding value estimation from 3b), assuming that the trait deviation for the own performance is $45$.}
+\end{enumerate}
+\points{`r lPointsQ3$TaskC`}
+
+### Lösung
+
+```{r ownperfullsib, echo=FALSE, results='hide'}
+cov_vg <- 0.5*h2
+mat_p <- matrix(c(var_vg, cov_hg, cov_hg, cov_hg, var_vg, cov_vg, cov_hg, cov_vg, 1), ncol = 3, byrow = TRUE)
+mat_g <- matrix(c(0.25*h2, 0.5*h2, h2), ncol = 1)
+vec_vg_hg_b <- rmddochelper::vecGetVecElem(psBaseElement = "b_", pnVecLen = 3)
+```
+
+```{r, echo=FALSE, results='asis'}
+cat("$$\\left[\n")
+cat(paste(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = mat_p, pnDigits = 4), collapse = "\n"), "\n")
+cat("\\right]")
+cat("\\left[\n")
+cat(paste(rmddochelper::sConvertVectorToLaTexArray(pvec_avector = vec_vg_hg_b), collapse = "\n"), "\n")
+cat("\\right]")
+cat(" = \\left[\n")
+cat(paste(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = mat_g, pnDigits = 4), collapse = "\n"), "\n")
+cat("\\right]$$")
+```
+
+Als Lösung für $b$ erhalten wir
+
+```{r, echo=FALSE, results='asis'}
+vec_b_sol <- solve(mat_p, mat_g)
+cat("$$b = \\left[\n")
+cat(paste(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = vec_b_sol, pnDigits = 4), collapse = "\n"), "\n")
+cat("\\right]$$")
+```
+
+Der geschätzte Zuchtwert aufgrund des Selektionsindex entspricht
+
+```{r}
+vec_trait_dev <- matrix(c(30,-25, 45), ncol = 1)
+sel_ind_bw <- crossprod(vec_b_sol, vec_trait_dev)
+```
+
+```{r, echo=FALSE, results='asis'}
+cat("$$I = \\left[\n")
+cat(paste(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = vec_b_sol, pnDigits = 4), collapse = "\n"), "\n")
+cat("\\right]^T")
+cat("\\left[\n")
+cat(paste(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = vec_trait_dev, pnDigits = 0), collapse = "\n"), "\n")
+cat("\\right] = ", sel_ind_bw)
+cat("$$")
+```
+
+\clearpage
+\pagebreak
+
+
+\section*{Aufgabe 4: Mehrere Merkmale}
+
+\begin{enumerate}
+\item[a)] Nennen Sie die drei Strategien für die Selektion nach mehreren Merkmalen und nennen Sie je einen Vor- und einen Nachteil für jede Strategie.
+
+\textit{List the three strategies that exist to select for multiple traits. List one advantage and one disadvantage for each strategy}
+\end{enumerate}
+\points{`r lPointsQ4$TaskA`}
+
+### Lösung
+
+* __Tandemselektion__
+    + einfach umzusetzen
+    + Selektionsindexe werden nur in einem Merkmal erziehlt, ausser korrelierte Selektionserfolge, welche je nach Korrelation sehr viel kleiner sind
+    + unerwünschte korrelierte Selektionserfolge
+    + über alle Merkmale sehr kleiner Fortschritt
+    + Verlust guter Zuchttiere, welche in Merkmale, welche nicht selektiert werden sehr gut sind
+
+* __Selektion nach unabhängigen Selektionsgrenzen__
+    + Selektionserfolge in allen Merkmalen erzielt
+    + wertvolle Zuchttiere gehen verloren, weil Grenzen in jedem Merkmal zu hoch angesetzt werden
+    + genetische Beziehungen werden nicht berücksichtigt
+    + wirtschaftliche Bedeutung der Merkmale nicht berücksichtigt
+
+* __Indexselektion__ (Selektion nach abhängigen Selektionsgrenzen)
+    + genetische Beziehungen berücksichtigt
+    + wirtschaftliche Bedeutungen der Merkmale berücksichtigt
+    
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[b)] Aktuell erhalten die Zuchtorganisationen beim Milchrind die Rückmeldung von BesamernInnen und ZüchternInnen, dass es sehr wenig Stiere im Angebot gibt mit einem positiven Zuchtwert für Fruchtbarkeit. Mit welchem Phänomen einer Selektionsstrategie bei mehreren Merkmalen könnte diese Beobachtung zusammenhängen? Begründen Sie Ihre Antwort und schlagen Sie eine Verbesserungsmassnahme vor.
+
+\textit{Breeding organisations in dairy cattle get some feedback from breeders and AI-technicians that there are only very few bulls with positive breeding values in reproduction traits. What could be the reason for this observation in connection with selection strategies for multiple traits? Discuss your answer and propose a measure to improve this situation.}
+\end{enumerate}
+\points{`r lPointsQ4$TaskB`}
+
+### Lösung
+
+Bei Milchrinder wird sehr oft nach unabhängigen Selektionsgrenzen ausgewählt. Zuerst wird die Milchleistung und eventuell noch die Gehalte als Selektionskriterium verwendet. Da die Fruchtbarkeit negativ korreliert ist zu den Milchleisungsmerkmalen ist es klar, dass nicht sehr viele Zuchttiere mit guten Zuchtwerten in beiden Merkmalsgruppen zu erwarten sind. 
+
+
+\clearpage
+\pagebreak
+
+
+\section*{Aufgabe 5: Vatermodell }
+Für den Datensatz aus Aufgabe 2c) sollen Zuchtwerte mit dem Vatermodell geschätzt werden. Stellen Sie für diese Schätzung das Modell auf, wobei der Betrieb als fixer Effekt behandelt werden soll. Formulieren Sie die Mischmodellgleichungen unter Berücksichtigung der Angaben aus dem Datensatz. Wir nehmen an, dass die Väter weder verwandt miteinander noch ingezüchtet sind. Die Erblichkeit beträgt `r h2` und die phänotypische Varianz ist `r sigma_x2`.
+
+\textit{The dataset of 2c is used to estimate breeding values using a sire model. Setup the model with herd (Betrieb) as fixed effect. Formulate the mixed model equations using all information from the dataset. The sires are assumed to be unrelated and not inbred. The heritability is `r h2` and the phenotypic variance is `r sigma_x2`.}
+
+\points{`r lPointsQ5$TaskA`}
+
+
+```{r DataTableTask5, echo=FALSE, results='asis'}
+knitr::kable(tbl_data_task2c)
+```
+
+
+
+### Lösung
+
+```{r}
+sigma_e2 <- (1-h2) * sigma_x2
+sigma_s2 <- 0.25 * h2 * sigma_x2
+lambda <- sigma_e2 / sigma_s2
+n_nr_obs <- nrow(tbl_data_task2c)
+n_nr_herd <- nlevels(as.factor(tbl_data_task2c$Betrieb))
+n_nr_sire <- nlevels(as.factor(tbl_data_task2c$Vater))
+```
+
+Das Vatermodell
+
+$$y = Xb + Zs + e$$
+
+\begin{tabular}{lll}
+wobei:  &  & \\
+        &  $y$  &  Vektor der Länge $n$ mit Beobachtungen \\
+        &  $b$  &  Vektor der Länge $p$ mit unbekannten fixen Effekten  \\
+        &  $X$  &  $n\times p$ bekannte Inzidenzmatrix, welche die fixen Effekte mit den Beobachtungen verknüpft \\
+        &  $s$  &  Vektor der Länge $q$ mit unbekannten zufälligen Vater-Effekten \\
+        &  $Z$  &  $n \times q$ bekannte Inzidenzmatrix, welche die Vater-Effekte mit den Beobachtungen verknüpft \\
+        &  $e$  &  Vektor der Länge $n$ mit unbekannten zufälligen Fehlern
+\end{tabular}
+
+In unserem Beispiel entsprechen $n = `r n_nr_obs`$, die Anzahl der fixen Effekte $p = `r n_nr_herd`$ und die Anzahl der Väter $q = `r n_nr_sire`$
+
+Die bekannten Komponenten aus dem Modell können aus dem Datensatz übernommen werden als
+
+```{r, echo=FALSE, results='asis'}
+vec_y = tbl_data_task2c$Merkmalswerte
+mat_x = matrix(data = c(1, 0,
+                        1, 0,
+                        1, 0,
+                        0, 1), ncol = n_nr_herd, byrow = TRUE)
+mat_z <- matrix(data = c(1, 0,
+                         1, 0,
+                         0, 1,
+                         0, 1), ncol = n_nr_sire, byrow = TRUE)
+
+cat("$$\n")
+cat("y = \\left[")
+cat(paste0(rmddochelper::sConvertVectorToLaTexArray(pvec_avector = vec_y, pnDigits = 0), collapse = "\n"), "\n")
+cat("\\right], ")
+cat("X = \\left[")
+cat(paste0(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = mat_x, pnDigits = 0), collapse = "\n"), "\n")
+cat("\\right], ")
+cat("Z = \\left[")
+cat(paste0(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = mat_z, pnDigits = 0), collapse = "\n"), "\n")
+cat("\\right]")
+cat("$$\n")
+```
+
+
+
+Die Erwartungswerte und Varianzen der zufälligen Effekte lauten
+
+$$E \left[\begin{array}{c}y \\ s \\ e \end{array} \right] = \left[\begin{array}{c}Xb \\ 0 \\ 0 \end{array} \right]$$
+
+
+$$var\left[\begin{array}{c}y \\ s \\ e \end{array} \right] 
+= 
+\left[\begin{array}{ccc}
+  ZGZ^T + R  &  ZG  &  0  \\
+  GZ^T       &  G     &  0  \\
+  0          &  0     &  R
+\end{array} \right]
+$$
+
+Aufgrund der Annahme der unverwandten Väter und der unkorrelierten Fehler vereinfachen sich $G$ und $R$ zu 
+
+$$G = I * \sigma_s^2$$ 
+
+$$R = I * \sigma_e^2$$
+
+Die Mischmodellgleichungen lauten
+
+$$
+\left[ 
+\begin{array}{lr}
+X^TX  &  X^TZ  \\
+Z^TX  &  Z^TZ + \lambda * I
+\end{array}
+\right]
+\left[ 
+\begin{array}{c}
+\hat{b}  \\
+\hat{s}
+\end{array}
+\right]
+=
+\left[ 
+\begin{array}{c}
+X^Ty  \\
+Z^Ty
+\end{array}
+\right]
+$$
+
+wobei $\lambda = \frac{\sigma_e^2}{\sigma_s^2} = \frac{`r sigma_e2`}{`r sigma_s2`} = `r lambda`$
+
+Somit erhalten wir als Lösung
+
+```{r, echo=FALSE, results='asis'}
+# coefficient matrix
+mat_xtx <- crossprod(mat_x)
+mat_xtz <- crossprod(mat_x, mat_z)
+mat_ztx <- crossprod(mat_z, mat_x)
+mat_ztz <- crossprod(mat_z)
+mat_ztz_lambdaI <- mat_ztz + lambda * diag(1, n_nr_sire)
+mat_coeff <- rbind(cbind(mat_xtx, mat_xtz), cbind(mat_ztx, mat_ztz_lambdaI))
+# right-hand side
+mat_xty <- crossprod(mat_x, vec_y)
+mat_zty <- crossprod(mat_z, vec_y)
+mat_rhs <- rbind(mat_xty, mat_zty)
+# solution
+mat_sol <- solve(mat_coeff, mat_rhs)
+
+vec_unknown <- c("\\hat{b}", "\\hat{s}")
+
+### # output
+cat("$$\n")
+cat("\\left[")
+cat(paste0(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = mat_coeff, pnDigits = 0), collapse = "\n"), "\n")
+cat("\\right]")
+cat("\\left[")
+cat(paste0(rmddochelper::sConvertVectorToLaTexArray(pvec_avector = vec_unknown), collapse = "\n"), "\n")
+cat("\\right] = ")
+cat("\\left[")
+cat(paste0(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = mat_rhs, pnDigits = 0), collapse = "\n"), "\n")
+cat("\\right]")
+cat("$$\n")
+
+cat("$$\n")
+cat("\\left[")
+cat(paste0(rmddochelper::sConvertVectorToLaTexArray(pvec_avector = vec_unknown), collapse = "\n"), "\n")
+cat("\\right] = ")
+cat("\\left[")
+cat(paste0(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = mat_coeff, pnDigits = 0), collapse = "\n"), "\n")
+cat("\\right]^{-1}")
+cat("\\left[")
+cat(paste0(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = mat_rhs, pnDigits = 0), collapse = "\n"), "\n")
+cat("\\right] = ")
+cat("\\left[")
+cat(paste0(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = mat_sol, pnDigits = 2), collapse = "\n"), "\n")
+cat("\\right]")
+
+cat("$$\n")
+```
+
