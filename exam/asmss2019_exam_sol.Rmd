@@ -1,0 +1,631 @@
+---
+output:
+  pdf_document:
+    includes:
+      in_header: tex/header.tex
+    fig_caption: false
+output_file: asmss2019_exam_sol.pdf
+---
+
+<!-- %\usepackage{fancyhdr} -->
+
+\newcommand{\points}[1]
+{\begin{flushright}\textbf{#1}\end{flushright}}
+
+<!-- %\begin{document} -->
+<!-- %\SweaveOpts{concordance=TRUE} -->
+```{r ChunkOptions, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE, results = 'hide')
+#knitr::opts_chunk$set(concordance=TRUE)
+knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
+```
+
+<!-- <<PointsQ1, echo=FALSE>>= -->
+```{r PointsQ1, echo=FALSE}
+# Assign Points for Q1
+lPointsQ1 <- list(TaskA = 0,
+                  TaskB = 0,
+                  TaskC = 0,
+                  TaskD = 0)
+nPointQ1Total <- sum(unlist(lPointsQ1))
+```
+<!-- @ -->
+<!-- <<PointsQ2, echo=FALSE>>= -->
+```{r PointsQ2, echo=FALSE}
+# Assign Points for Q2
+lPointsQ2 <- list(TaskA = 2,
+                  TaskB = 3,
+                  TaskC = 10,
+                  TaskD = 0)
+nPointQ2Total <- sum(unlist(lPointsQ2))
+```
+<!-- @ -->
+<!-- <<PointsQ3, echo=FALSE>>= -->
+```{r PointsQ3, echo=FALSE}
+# Assign Points for Q3
+lPointsQ3 <- list(TaskA = 1,
+                  TaskB = 14,
+                  TaskC = 4,
+                  TaskD = 6)
+nPointQ3Total <- sum(unlist(lPointsQ3))
+```
+<!-- @ -->
+<!-- <<PointsQ4, echo=FALSE>>= -->
+```{r PointsQ4, echo=FALSE}
+# Assign Points for Q4
+lPointsQ4 <- list(TaskA = 2,
+                  TaskB = 8,
+                  TaskC = 8,
+                  TaskD = 0)
+nPointQ4Total <- sum(unlist(lPointsQ4))
+```
+<!-- @ -->
+<!-- <<PointsTotal, echo=FALSE>>= -->
+```{r PointsTotal, echo=FALSE}
+nPointOverallTotal <- nPointQ1Total + nPointQ2Total + nPointQ3Total + nPointQ4Total
+```
+<!-- @ -->
+
+
+\thispagestyle{empty}
+
+\fcolorbox{white}{white}{
+	\centering \parbox[t]{1.0\linewidth}{
+		\fontsize{12pt}{20pt}\selectfont % 
+		\vspace*{0.5cm} % 
+
+   	\hfill 	Peter von Rohr \\ Institute of Agricultural Sciences\\ D-USYS\\ ETH Zurich
+
+		\vspace*{0.5cm} 
+	}
+}
+
+\vspace*{2cm}
+
+\fcolorbox{white}{white}{
+	\parbox[t]{1.0\linewidth}{
+		\centering \fontsize{25pt}{40pt}\selectfont %
+		\vspace*{0.2cm}
+		 751-7602-00 V \\
+     Solutions for Exam    \\
+     Applied Statistical Methods \\
+     in Animal Sciences \\
+     SS 2019
+
+		\vspace*{0.7cm} % Space between the end of the title and the bottom of the grey box
+	}
+}
+
+
+\vspace*{1cm}
+
+<!-- % Table with Name -->
+\begin{tabular}{p{3cm}p{6cm}}
+Date:     &  27th May 2019 \\
+          &  \\
+          &  \\
+Name:     &  \\
+          &  \\
+          &  \\
+Legi-Nr:  & \\
+\end{tabular}
+
+<!-- % Table with Points -->
+
+\vspace{5ex}
+\begin{center}
+\begin{tabular}{|p{3cm}|c|c|}
+\hline
+Problem  &  Maximum Number of Points  &  Number of Points Reached\\
+\hline
+1        &  `r nPointQ1Total`  & \\
+\hline
+2        &  `r nPointQ2Total`  & \\
+\hline
+3        &  `r nPointQ3Total`  & \\
+\hline
+4        &  `r nPointQ4Total`  & \\
+\hline
+Total    &  `r nPointOverallTotal` & \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{0.5cm}
+
+\textit{Questions in German are in italics}
+
+\clearpage
+\pagebreak
+
+
+## Problem 1: 
+
+\begin{enumerate}
+\item[a)] 
+\textit{}
+\end{enumerate}
+\points{`r lPointsQ1$TaskA`}
+
+
+### Solution
+
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[b)] 
+\textit{}
+\end{enumerate}
+\points{`r lPointsQ1$TaskB`}
+
+
+### Solution 
+
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[c)] 
+\textit{}
+\end{enumerate}
+\points{`r lPointsQ1$TaskC`}
+
+
+
+### Solution 
+
+
+\clearpage
+\pagebreak
+
+## Problem 2: Single Gene Trait
+
+```{r DataGenP02, echo=FALSE, message=FALSE, warning=FALSE}
+### # fix the number of animals
+n_nr_animal <- 1000
+### # fix number of snp columns
+n_nr_snp <- 1
+### # residual standard deviation
+n_res_sd <- 2.13
+### # vector of genotype value coefficients
+vec_geno_value_coeff <- c(-1,0.25,1)
+### # sample genotypes of unlinked SNP randomly
+set.seed(9876)
+### # fix allele frequency of positive allele
+n_prob_snpb <- .35
+### # genotypic values 
+vec_geno_val <- c(17.7)
+mat_geno_snp <- matrix(c(sample(vec_geno_value_coeff, n_nr_animal, prob = c((1-n_prob_snpb)^2, 2*(1-n_prob_snpb)*n_prob_snpb, n_prob_snpb^2), replace = TRUE)),
+                       nrow = n_nr_snp)
+mat_obs_y <- crossprod(mat_geno_snp, vec_geno_val) + rnorm(n = n_nr_animal, mean = 0, sd = n_res_sd)
+
+# Now we generate a table with SNP genotypes and observations
+
+geno_code_map <- tibble::tibble(code = vec_geno_value_coeff,
+                            `GeneB` = c("B2B2", "B1B2", "B1B1"))
+geno_code <- tibble::tibble(`CodeB` = mat_geno_snp[1,])
+
+require(dplyr)
+geno_code %>% 
+  inner_join(geno_code_map, by = c("CodeB" = "code")) %>%
+  select(`CodeB`, `GeneB`) -> geno_snp_b
+
+tbl_obs <- tibble::tibble(Observation = mat_obs_y[,1])
+
+geno_snp_b %>% bind_cols(tbl_obs) -> tbl_all_data
+```
+
+
+We assume that a given trait is determined by just one genetic locus called $B$ with two alleles $B1$ and $B2$. The frequency of the $B1$ allele is `r n_prob_snpb`. The following figure shows a plot of the observed values of the trait against the three genotypes $B1B1$, $B1B2$ and $B2B2$. 
+
+\textit{Ein Merkmal wird von einem Genort namens $B$ mit zwei Allelen $B1$ und $B2$ bestimmt. Die Frequenz des $B1$-Allels entspricht `r n_prob_snpb`. Das folgende Diagramm zeigt die beobachteten Werte des Merkmals gegen die drei Genotypen $B1B1$, $B1B2$ und $B2B2$ geplottet.}
+
+\vspace{5ex}
+
+```{r FigureP02, echo=FALSE, message=FALSE, warning=FALSE}
+require(ggplot2)
+ggplot(data = tbl_all_data, aes(x = `GeneB`, y = Observation)) + 
+  geom_point(color = 'blue')
+```
+
+\vspace{5ex}
+
+When fitting a linear model with the observed values as response and the genotypes as the predictor, the following is the result of the `summary()` function. 
+
+\textit{Ein lineares Model der beobachteten Werte als Zielgrösse und die Genotypen als unabhängige Variablen führt zum folgenden Ergebnis.}
+
+\clearpage
+\pagebreak
+
+```{r LmP02, echo=FALSE, results='markup'}
+tbl_all_data$GeneB <- as.factor(tbl_all_data$GeneB)
+lm_all_data <- lm(Observation ~ 0 + GeneB, data = tbl_all_data)
+summary(lm_all_data)
+```
+
+\vspace{5ex}
+
+\begin{enumerate}
+\item[a)] What are the values for $a$ and $d$ in the mono-genic model. 
+
+\textit{Bestimmen Sie die Werte $a$ und $d$ aus dem Ein-Gen Modell.}
+\end{enumerate}
+\points{`r lPointsQ2$TaskA`}
+
+
+### Solution
+
+```{r SolP02a, echo=FALSE, results='hide'}
+coef_all_data <- coefficients(lm_all_data)
+n_shift <- mean(c(coef_all_data[["GeneBB1B1"]], coef_all_data[["GeneBB2B2"]]))
+n_value_a <- coef_all_data[["GeneBB1B1"]] - n_shift
+n_value_d <- coef_all_data[["GeneBB1B2"]] - n_shift
+### # rounding
+n_rounded_value_a <- round(n_value_a, 2)
+n_rounded_value_d <- round(n_value_d, 2)
+```
+
+$$a = `r n_rounded_value_a`$$
+$$d = `r n_rounded_value_d`$$
+
+
+\clearpage
+\pagebreak
+
+
+\begin{enumerate}
+\item[b)] Compute the genotypic values for the three genotypes $B1B1$, $B1B2$ and $B2B2$.
+
+\textit{Berechnen Sie die genotypischen Werte der drei Genotypen $B1B1$, $B1B2$ and $B2B2$.}
+\end{enumerate}
+\points{`r lPointsQ2$TaskB`}
+
+
+### Solution
+```{r SolP02b, echo=FALSE, results='hide'}
+n_geno_val_B1B1 <- coef_all_data[["GeneBB1B1"]] - n_shift
+n_geno_val_B1B2 <- coef_all_data[["GeneBB1B2"]] - n_shift
+n_geno_val_B2B2 <- coef_all_data[["GeneBB2B2"]] - n_shift
+### # rounding
+n_geno_val_rounded_B1B1 <- round(n_geno_val_B1B1, 2)
+n_geno_val_rounded_B1B2 <- round(n_geno_val_B1B2, 2)
+n_geno_val_rounded_B2B2 <- round(n_geno_val_B2B2, 2)
+```
+
+\begin{center}
+\begin{tabular}{|p{4cm}|p{4cm}|}
+\hline
+          &  \\
+Genotype  &  Genotypic Value \\
+          &  \\
+\hline
+          &  \\
+B1B1      &  `r n_geno_val_rounded_B1B1` \\
+          &  \\
+B1B2      &  `r n_geno_val_rounded_B1B2` \\
+          &  \\
+B2B2      &  `r n_geno_val_rounded_B2B2` \\
+          &  \\
+\hline
+\end{tabular}
+\end{center}
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[c)] Compute the population mean $\mu$ and the breeding values $BV_{11}$, $BV_{12}$ and $BV_{22}$ for the three genotypes $B1B1$, $B1B2$ and $B2B2$. (Use $a = 10$ and $d = 0$, if you could not solve Problem 2a). 
+
+\textit{Berechnen Sie das Populationsmittel $\mu$ und die Zuchtwerte $BV_{11}$, $BV_{12}$ and $BV_{22}$ für die drei Genotypen $B1B1$, $B1B2$ and $B2B2$. (Verwenden Sie $a = 10$ und $d = 0$, falls Sie Aufgabe 2a nicht lösen konnten.)}
+\end{enumerate}
+\points{`r lPointsQ2$TaskC`}
+
+
+### Solution 
+```{r SolP02c, echo=FALSE, results='hide'}
+n_mu <- (n_prob_snpb - (1-n_prob_snpb)) * n_value_a + 2 * n_prob_snpb * (1-n_prob_snpb) * n_value_d
+n_rounded_mu <- round(n_mu, 2)
+n_alpha <- n_value_a + ((1-n_prob_snpb) - n_prob_snpb) * n_value_d
+n_rounded_alpha <- round(n_alpha, 2)
+n_bv11 <- 2 * (1-n_prob_snpb) * n_alpha
+n_bv12 <- ((1-n_prob_snpb) - n_prob_snpb) * n_alpha
+n_bv22 <- -2 * n_prob_snpb * n_alpha
+```
+
+The population mean
+
+$$\mu = (p-q) * a + 2pqd = (`r n_prob_snpb` - `r 1-n_prob_snpb`) * `r n_rounded_value_a` + 2 * `r n_prob_snpb` * `r 1-n_prob_snpb` * `r n_rounded_value_d` = `r n_rounded_mu`$$
+
+The substitution effect $\alpha$ corresponds to 
+
+$$\alpha = a + (q-p)*d = `r n_rounded_value_a` + (`r 1-n_prob_snpb` - `r n_prob_snpb`) * `r n_rounded_value_d` = `r n_rounded_alpha`$$
+
+$$BV_{11} = 2q\alpha = 2 * `r 1-n_prob_snpb` * `r n_rounded_alpha` = `r round(n_bv11, 2)`$$
+$$BV_{12} = (q-p)\alpha = (`r 1-n_prob_snpb` - `r n_prob_snpb`) * `r n_rounded_alpha` = `r round(n_bv12, 2)`$$
+$$BV_{22} = -2p\alpha = -2 * `r n_prob_snpb` * `r n_rounded_alpha` = `r round(n_bv22, 2)`$$
+
+\clearpage
+\pagebreak
+
+
+## Problem 3: Fixed Linear Effects Model
+```{r DataSetupP03, echo=FALSE, results='hide', message=FALSE}
+set.seed(1298)
+n_nr_animal <- 12
+n_mean_bw <- 503
+n_sd_bw <- 6.32
+n_min_bw <- n_mean_bw - 3 * n_sd_bw
+n_max_bw <- n_mean_bw + 3 * n_sd_bw
+vec_bw <- round(runif(n_nr_animal, min = n_min_bw, max = n_max_bw), digits = 0)
+n_reg_coef_sw_bw <- 0.572
+n_sd_sw <- 4.21
+n_intercept <- -25.32
+vec_sw <- round(n_intercept + n_reg_coef_sw_bw * vec_bw + rnorm(n_nr_animal, mean = 0, sd = n_sd_sw), digits = 0)
+tbl_sw_bw <- tibble::tibble( Animal = c(1:n_nr_animal),
+                             BodyWeight = vec_bw,
+                             SlaughterWeight = vec_sw )
+```
+
+The following table contains body weight and slaughter weight for `r n_nr_animal` animals. Before the farmer sells the animal to the slaughter house, it is weighed on the farm. The slaughter weight is determined by the slaughter house. The following regression of slaughter weight on body weight gives the association between the two traits.
+
+\textit{Die folgende Tabelle enthält Lebendgewicht (`BodyWeight`) und Schlachtgewicht (`SlaughterWeight`) für `r n_nr_animal` Tiere. Vor der Schlachtung wird das Tier auf dem Betrieb noch gewogen. Das Schlachtgewicht wird im Schlachthof bestimmt. Die folgende Regression des Schlachtgewichts auf das Körpergewicht zeigt den Zusammenhang zwischen den beiden Merkmalen.}
+
+```{r DataTableP03, echo=FALSE, results='asis'}
+knitr::kable(tbl_sw_bw)
+```
+
+The result of the linear regression model are as follows.
+
+\textit{Das Resultat der linearen Regression lauten wie folgt.}
+
+
+```{r LmResultP03, echo=FALSE, results='markup'}
+lm_sw_bw <- lm(SlaughterWeight ~ BodyWeight, data = tbl_sw_bw)
+summary(lm_sw_bw)
+```
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[a)] How much does the slaughter weight change, if the body weight of the animal is changed by $+1$ kg? 
+
+\textit{Wie stark verändert sich das Schlachtgewicht, wenn das Körpergewicht eines Tieres um $+1$ kg zunimmt?}
+\end{enumerate}
+\points{`r lPointsQ3$TaskA`}
+
+
+
+### Solution
+```{r SolP03a, echo=FALSE}
+cf_sw_bw <- coefficients(lm_sw_bw)
+```
+The change in slaughter weight is given by the regression coefficient which corresponds to: `r round(cf_sw_bw[["BodyWeight"]], 3)`
+
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[b)] Compute the residual standard deviation from the fitted values of the model. With which quantity of the R-output above can the result of your computation be verified?
+
+\textit{Berechnen Sie die Standardabweichung der Residuen aufgrund der gefitteten Werte aus dem Modell. Mit welcher Grösse aus dem R-output in der Aufgabenstellung können Sie Ihre Berechnung verifizieren?}
+\end{enumerate}
+\points{`r lPointsQ3$TaskB`}
+
+
+### Solution
+The standard deviation of the resiudals is computed from the residuals $r_i$ computed as $r_i = y_i - \hat{y}_i$. For this, we extend the table of the input data with the fitted values and the resiudals.
+
+```{r SolP03b, results='asis', message=FALSE}
+vec_fitted_sw_bw <- fitted(lm_sw_bw)
+vec_res_sw_bw <- residuals(lm_sw_bw)
+n_s2 <- sum(vec_res_sw_bw^2) / lm_sw_bw$df.residual
+n_s <- sqrt(n_s2)
+require(dplyr)
+tbl_sw_bw_ext <- bind_cols(tbl_sw_bw, 
+                           tibble::tibble(FittedValues = round(vec_fitted_sw_bw, 1)),
+                           tibble::tibble(Residuals = round(vec_res_sw_bw, 3)))
+knitr::kable(tbl_sw_bw_ext,
+             booktabs = TRUE,
+             longtable = TRUE)
+```
+
+The residual standard deviation corresponds to 
+
+$$s_r^2 = \frac{1}{n-p}\sum_{i=1}^n r_i^2 
+        = \frac{1}{`r lm_sw_bw$df.residual`}\sum_{i=1}^{`r n_nr_animal`} `r vec_res_sw_bw[1]`^2 + \ldots +  `r vec_res_sw_bw[n_nr_animal]`^2 
+        = `r round(n_s2, 2)`
+$$
+
+The square root of $s_r^2$ corresponds to the value given in the R-output named residual standard error. With that we get
+
+$$s_r = \sqrt{`r round(n_s2, 2)`} = `r round(n_s, 2)`$$
+
+
+
+\clearpage
+\pagebreak
+
+```{r SetupP03c}
+n_opt_bw <- 500
+```
+
+\begin{enumerate}
+\item[c)] The farmer wants to sell his animals whenever an animal is more than $`r n_opt_bw`$ kg. What is the expected slaughter weight that he can expect from an animal with a body weight of $`r n_opt_bw`$ kg?
+
+\textit{Der Bauer möchte seine Tiere bei $`r n_opt_bw`$ kg schlachten lassen. Welches Schlachtgewicht kann er bei einem Tier mit $`r n_opt_bw`$ kg Lebendgewicht erwarten?}
+\end{enumerate}
+\points{`r lPointsQ3$TaskC`}
+
+
+### Solution
+
+The expected slaughter weight $\widehat{sw}$ of an animal with body weight $bw = `r n_opt_bw`$ kg is computed as
+
+```{r SolP03c, echo=FALSE}
+n_hat_sw <- cf_sw_bw[[1]] + cf_sw_bw[[2]] * n_opt_bw
+```
+
+
+$$\widehat{sw} = \hat{b}_0 + \hat{b}_{bw} * bw = `r round(cf_sw_bw[[1]], 2)` + `r round(cf_sw_bw[[2]], 2)` * `r n_opt_bw` = `r round(n_hat_sw, 1)`$$
+
+\clearpage
+\pagebreak
+
+```{r SetupP03d, echo=FALSE}
+n_bw_fc <- 180
+```
+
+\begin{enumerate}
+\item[d)] The farmer would like to use the same regression to predict the slaughter weight for his fattening calf with a body weight of $`r 180`$ kg. What do you think about the predicted slaughter weight for the fattening calf? Give one reason for your answer. Compute the predicted slaughter weight for the calf based on the regression given above.
+
+\textit{Der Bauer möchte die Regression auch für ein Mastkalb mit einem Körpergewicht von $`r 180`$ kg verwenden um das Schlachtgewicht zu schätzen. Ist das Ihrer Meinung nach eine gute Idee. Begründen Sie Ihre Antwort. Wie gross ist das geschätzte Schlachtgewicht für das Mastkalb?}
+\end{enumerate}
+\points{`r lPointsQ3$TaskD`}
+
+
+### Solution
+```{r SolP03d, echo=FALSE}
+n_hat_sw_calf <- cf_sw_bw[[1]] + cf_sw_bw[[2]] * n_bw_fc
+```
+It is not a good idea, because this prediction is based on a body weight outside of the range of the body weights in the dataset. Hence this is extrapolation which is considered to be negative. The predicted slaughter weight would be
+
+$$\widehat{sw}_{calf} = \hat{b}_0 + \hat{b}_{bw} * bw_{calf} = `r round(cf_sw_bw[[1]], 2)` + `r round(cf_sw_bw[[2]], 2)` * `r n_bw_fc` = `r round(n_hat_sw_calf, 1)`$$
+
+\clearpage
+\pagebreak
+
+
+## Problem 4: Bayes
+```{r SetupP03Bayes, eval=FALSE, echo=FALSE}
+n_res_var <- 18.1
+n_nr_records <- nrow(tbl_sw_bw)
+X <- matrix(c(rep(1, n_nr_records), tbl_sw_bw$BodyWeight), ncol = 2)
+y <- tbl_sw_bw$SlaughterWeight
+beta <- c(0,0)
+meanBeta <- c(0,0)
+meanBetaSQ <- c(0,0)
+set.seed(9182)
+n_iter <- 10^5
+for (iter in 1:n_iter){
+  w <- y - X[,2] * beta[2]
+  x <- X[,1]
+  xtxi <- 1/crossprod(x)
+  betaHat <- crossprod(x, w) * xtxi
+  beta[1] <- rnorm(1, betaHat, sqrt(xtxi * n_res_var))
+  w <- y - X[,1] * beta[1]
+  x <- X[,2]
+  xtxi <- 1/crossprod(x)
+  betaHat <- crossprod(x, w) * xtxi
+  beta[2] <- rnorm(1, betaHat, sqrt(xtxi * n_res_var))
+  meanBeta <- meanBeta + beta 
+  meanBetaSQ <- meanBetaSQ + beta^2 
+  if ((iter%%20000) == 0){
+    cat(sprintf("Iteration: %d ", iter)) 
+    cat(sprintf("Intercept: %6.3f ", meanBeta[1]/iter)) 
+    cat(sprintf("Slope: %6.3f ", meanBeta[2]/iter))
+    cat(sprintf("SSQIntercept: %12.2f ", meanBetaSQ[1]))
+    cat(sprintf("SSQSlope: %8.2f ", meanBetaSQ[2]), "\n")
+  }
+}
+```
+
+```{r SetupP04LeastSquares, eval=FALSE, echo=FALSE}
+lm_sw_bw <- lm(SlaughterWeight ~ BodyWeight, data = tbl_sw_bw)
+summary(lm_sw_bw)
+```
+
+
+We use the same dataset body weight and slaughter weight as in Problem 3. 
+
+\textit{Wir verwenden den gleichen Datensatz zu Lebendgewicht und Schlachtgewicht, wie in Aufgabe 3.}
+
+```{r DataTableP04, echo=FALSE, results='asis'}
+knitr::kable(tbl_sw_bw,
+             booktabs = TRUE,
+             longtable = TRUE)
+```
+
+A fixed linear model is fit to the data using the two codeblocks 1 and 2 shown below. 
+
+```{r codeblockp04, echo=FALSE, results='asis', hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/codeblockp04.odg")
+knitr::include_graphics(path = "odg/codeblockp04.png")
+```
+
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[a)] Which of the two codeblocks shows a Bayesian approach and which one does the model fit using Least Squares?
+
+\textit{Welcher der Codeblocks zeigt einen Bayes'schen Ansatz und welcher verwendet Least Squares zur Anpassung des fixen linearen Modells?}
+\end{enumerate}
+\points{`r lPointsQ4$TaskA`}
+
+### Solution
+
+Codeblock 1 uses Least Squares and Codeblock 2 uses a Bayesian approach.
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[b)] What are the estimate for the intercept and the regression coefficient for both approaches? 
+
+\textit{Wie gross sind die Schätzwerte für Achsenabschnitt und Regressionskoeffizient bei beiden Methoden?}
+\end{enumerate}
+\points{`r lPointsQ4$TaskB`}
+
+
+### Solution
+
+\begin{center}
+\begin{tabular}{|p{4cm}|p{4cm}|p{4cm}|}
+\hline
+           &   & \\
+Parameter  &  Least Squares  &  Bayesian \\
+          &   & \\
+\hline
+          &   & \\
+Intercept               &  $`r round(cf_sw_bw[[1]], 4)`$  &  $-21.925$\\
+          &   & \\
+Regression Coefficient  & $`r round(cf_sw_bw[[2]], 4)`$   & $0.565$ \\
+          &   & \\
+\hline
+\end{tabular}
+\end{center}
+
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[c)] What are the standard errors of intercept and slope under the two approaches?
+
+\textit{Wie gross sind die Schätzfehler des Achsenabschnitts und des Regressionskoeffizienten unter beiden Methoden?}
+\end{enumerate}
+\points{`r lPointsQ4$TaskC`}
+
+### Solution 
+
+\begin{center}
+\begin{tabular}{|p{4cm}|p{4cm}|p{4cm}|}
+\hline
+           &   & \\
+Parameter  &  Least Squares  &  Bayesian \\
+          &   & \\
+\hline
+          &   & \\
+Intercept               &    &  \\
+          &   & \\
+Regression Coefficient  &    &  \\
+          &   & \\
+\hline
+\end{tabular}
+\end{center}

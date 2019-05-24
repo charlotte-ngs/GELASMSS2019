@@ -1,0 +1,320 @@
+---
+output:
+  pdf_document:
+    includes:
+      in_header: tex/header.tex
+    fig_caption: false
+output_file: asmfs2018_exam_tsk.pdf
+---
+
+<!-- %\usepackage{fancyhdr} -->
+
+\newcommand{\points}[1]
+{\begin{flushright}\textbf{#1}\end{flushright}}
+
+<!-- %\begin{document} -->
+<!-- %\SweaveOpts{concordance=TRUE} -->
+```{r ChunkOptions, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE, results = 'hide')
+#knitr::opts_chunk$set(concordance=TRUE)
+knitr::knit_hooks$set(conv.odg = rmddochelper::odg.graphics.conv.hook)
+```
+
+<!-- <<PointsQ1, echo=FALSE>>= -->
+```{r PointsQ1, echo=FALSE}
+# Assign Points for Q1
+lPointsQ1 <- list(TaskA = 0,
+                  TaskB = 0,
+                  TaskC = 0,
+                  TaskD = 0)
+nPointQ1Total <- sum(unlist(lPointsQ1))
+```
+<!-- @ -->
+<!-- <<PointsQ2, echo=FALSE>>= -->
+```{r PointsQ2, echo=FALSE}
+# Assign Points for Q2
+lPointsQ2 <- list(TaskA = 0,
+                  TaskB = 0,
+                  TaskC = 0,
+                  TaskD = 0)
+nPointQ2Total <- sum(unlist(lPointsQ2))
+```
+<!-- @ -->
+<!-- <<PointsQ3, echo=FALSE>>= -->
+```{r PointsQ3, echo=FALSE}
+# Assign Points for Q3
+lPointsQ3 <- list(TaskA = 0,
+                  TaskB = 0,
+                  TaskC = 0,
+                  TaskD = 0)
+nPointQ3Total <- sum(unlist(lPointsQ3))
+```
+<!-- @ -->
+<!-- <<PointsQ4, echo=FALSE>>= -->
+```{r PointsQ4, echo=FALSE}
+# Assign Points for Q4
+lPointsQ4 <- list(TaskA = 0,
+                  TaskB = 0,
+                  TaskC = 0,
+                  TaskD = 0)
+nPointQ4Total <- sum(unlist(lPointsQ4))
+```
+```{r PointsQ5, echo=FALSE}
+# Assign Points for Q4
+lPointsQ5 <- list(TaskA = 0,
+                  TaskB = 0,
+                  TaskC = 0,
+                  TaskD = 0)
+nPointQ5Total <- sum(unlist(lPointsQ5))
+```
+<!-- @ -->
+<!-- <<PointsTotal, echo=FALSE>>= -->
+```{r PointsTotal, echo=FALSE}
+nPointOverallTotal <- nPointQ1Total + nPointQ2Total + nPointQ3Total + nPointQ4Total + nPointQ5Total
+```
+<!-- @ -->
+
+
+\thispagestyle{empty}
+
+\fcolorbox{white}{white}{
+	\centering \parbox[t]{1.0\linewidth}{
+		\fontsize{12pt}{20pt}\selectfont % 
+		\vspace*{0.5cm} % 
+
+   	\hfill 	Peter von Rohr \\ Institute of Agricultural Sciences\\ D-USYS\\ ETH Zurich
+
+		\vspace*{0.5cm} 
+	}
+}
+
+\vspace*{2cm}
+
+\fcolorbox{white}{white}{
+	\parbox[t]{1.0\linewidth}{
+		\centering \fontsize{25pt}{40pt}\selectfont %
+		\vspace*{0.2cm}
+		 751-6212-00L V \\
+     Solutions to Exam    \\
+     Applied Genetic Evaluation\\
+     SS 2019
+
+		\vspace*{0.7cm} % Space between the end of the title and the bottom of the grey box
+	}
+}
+
+
+\vspace*{1cm}
+
+<!-- % Table with Name -->
+\begin{tabular}{p{3cm}p{6cm}}
+Date:     &  27th May 2019 \\
+          &  \\
+          &  \\          
+Name:     &  \\
+          &  \\
+          &  \\
+Legi-Nr:  & \\
+\end{tabular}
+
+<!-- % Table with Points -->
+
+\vspace{5ex}
+\begin{center}
+\begin{tabular}{|p{3cm}|c|c|}
+\hline
+Problem  &  Maximum Number of Points  &  Number of Points Reached\\
+\hline
+1        &  `r nPointQ1Total`  & \\
+\hline
+2        &  `r nPointQ2Total`  & \\
+\hline
+3        &  `r nPointQ3Total`  & \\
+\hline
+4        &  `r nPointQ4Total`  & \\
+\hline
+5        &  `r nPointQ5Total` & \\
+\hline
+Total    &  `r nPointOverallTotal` & \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{1cm}
+
+\textit{Questions in German are in italics}
+
+\clearpage
+\pagebreak
+
+## Problem 1: 
+\begin{enumerate}
+\item[a)] 
+
+\textit{}
+\end{enumerate}
+\points{`r lPointsQ1$TaskA`}
+
+### Solution
+
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[b)] 
+
+\textit{}
+\end{enumerate}
+
+\points{`r lPointsQ1$TaskB`}
+
+### Solution 
+
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[c)] 
+
+\textit{}
+\end{enumerate}
+
+\points{`r lPointsQ1$TaskC`}
+
+### Solution 
+
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[d)] 
+
+\textit{}
+\end{enumerate}
+
+\points{`r lPointsQ1$TaskD`}
+
+
+
+### Solution 
+
+
+\clearpage
+\pagebreak
+
+## Problem 2: 
+
+\begin{enumerate}
+\item[a)] 
+
+\textit{}
+\end{enumerate}
+\points{`r lPointsQ2$TaskA`}
+
+### Solution
+
+
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[b)] 
+
+\textit{}
+\end{enumerate}
+\points{`r lPointsQ2$TaskB`}
+
+### Solution
+
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[c)] 
+
+\textit{}
+\end{enumerate}
+\points{`r lPointsQ2$TaskC`}
+
+
+
+### Solution 
+
+
+\clearpage
+\pagebreak
+
+
+## Problem 3: 
+
+\begin{enumerate}
+\item[a)] 
+
+\textit{}
+\end{enumerate}
+\points{`r lPointsQ3$TaskA`}
+
+### Solution
+
+
+\clearpage
+\pagebreak
+
+
+\begin{enumerate}
+\item[b)]
+
+\textit{}
+\end{enumerate}
+
+\points{`r lPointsQ3$TaskB`}
+
+
+### Solution
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[c)] 
+
+\textit{}
+\end{enumerate}
+\points{`r lPointsQ3$TaskC`}
+
+### Solution
+
+\clearpage
+\pagebreak
+
+
+## Problem 4: 
+
+\begin{enumerate}
+\item[a)]
+
+\textit{}
+\end{enumerate}
+\points{`r lPointsQ4$TaskA`}
+
+### Solution
+
+
+\clearpage
+\pagebreak
+
+\begin{enumerate}
+\item[b)] 
+
+\textit{}
+\end{enumerate}
+\points{`r lPointsQ4$TaskB`}
+
+### Solution
+
+

@@ -1,0 +1,93 @@
+---
+title: "Exam Problem 2: Single Locus Model"
+output: html_notebook
+---
+
+
+## Data 
+The following data is used for Problem 2
+
+```{r}
+### # fix the number of animals
+n_nr_animal <- 1000
+### # fix number of snp columns
+n_nr_snp <- 1
+### # residual standard deviation
+n_res_sd <- 2.13
+### # vector of genotype value coefficients
+vec_geno_value_coeff <- c(-1,0.25,1)
+### # sample genotypes of unlinked SNP randomly
+set.seed(9876)
+### # fix allele frequency of positive allele
+n_prob_snps <- .35
+### # genotypic values 
+vec_geno_val <- c(17.7)
+mat_geno_snp <- matrix(c(sample(vec_geno_value_coeff, n_nr_animal, replace = TRUE),
+                         sample(vec_geno_value_coeff, n_nr_animal, prob = c((1-n_prob_snps)^2, 2*(1-n_prob_snps)*n_prob_snps, n_prob_snps^2), replace = TRUE)),
+                       nrow = n_nr_snp)
+mat_obs_y <- crossprod(mat_geno_snp, vec_geno_val) + rnorm(n = n_nr_animal, mean = 0, sd = n_res_sd)
+```
+
+Now we generate a table with SNP genotypes and observations
+
+```{r}
+geno_code_map <- tibble::tibble(code = vec_geno_value_coeff,
+                            `GeneB` = c("B2B2", "B1B2", "B1B1"))
+geno_code <- tibble::tibble(`CodeB` = mat_geno_snp[1,])
+
+require(dplyr)
+geno_code %>% 
+  inner_join(geno_code_map, by = c("CodeB" = "code")) %>%
+  select(`CodeB`, `GeneB`) -> geno_snp_b
+
+tbl_obs <- tibble::tibble(Observation = mat_obs_y[,1])
+
+geno_snp_b %>% bind_cols(tbl_obs) -> tbl_all_data
+tbl_all_data
+```
+
+## Plots
+Trying to plot the observation data as a function of the genotypes leads to 
+
+```{r}
+require(ggplot2)
+ggplot(data = tbl_all_data, aes(x = `GeneB`, y = Observation)) + 
+  geom_point(color = 'blue')
+```
+
+The linear model
+
+```{r}
+tbl_all_data$GeneB <- as.factor(tbl_all_data$GeneB)
+lm_all_data <- lm(Observation ~ 0 + GeneB, data = tbl_all_data)
+summary(lm_all_data)
+```
+
+Compute the values for $a$ and $d$
+
+```{r}
+coef_all_data <- coefficients(lm_all_data)
+str(coef_all_data)
+```
+
+```{r}
+n_shift <- mean(c(coef_all_data[["GeneBB1B1"]], coef_all_data[["GeneBB2B2"]]))
+n_shift
+```
+
+The values of $a$ and $d$ are
+
+```{r}
+(n_value_a <- coef_all_data[["GeneBB1B1"]] - n_shift)
+(n_value_d <- coef_all_data[["GeneBB1B2"]] - n_shift)
+```
+
+The genotypic values are
+
+```{r}
+(n_geno_val_B1B1 <- coef_all_data[["GeneBB1B1"]] - n_shift)
+(n_geno_val_B1B2 <- coef_all_data[["GeneBB1B2"]] - n_shift)
+(n_geno_val_B2B2 <- coef_all_data[["GeneBB2B2"]] - n_shift)
+```
+
+
