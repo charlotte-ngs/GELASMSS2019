@@ -261,7 +261,7 @@ In the coefficient matrix, we have to replace $A^{-1}$ by $G^{-1}$. Everything e
 ```{r}
 matztzlginv <- crossprod(matZ) + lambda * matGrmInv
 matlhsgblup <- rbind(cbind(matxtx,matxtz),cbind(t(matxtz), matztzlginv))
-matSolgblup <- solve(matlhs, matrhs)
+matSolgblup <- solve(matlhsgblup, matrhs)
 ```
 
 The results are presented the same way as in Problem 1.

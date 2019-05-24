@@ -4,7 +4,7 @@ output:
     includes:
       in_header: tex/header.tex
     fig_caption: false
-output_file: asmss2019_exam_sol.pdf
+output_file: asmss2019_exam_tsk.pdf
 ---
 
 <!-- %\usepackage{fancyhdr} -->
@@ -87,7 +87,7 @@ nPointOverallTotal <- nPointQ1Total + nPointQ2Total + nPointQ3Total + nPointQ4To
 		\centering \fontsize{25pt}{40pt}\selectfont %
 		\vspace*{0.2cm}
 		 751-7602-00 V \\
-     Solutions for Exam    \\
+     Exam    \\
      Applied Statistical Methods \\
      in Animal Sciences \\
      SS 2019
@@ -175,53 +175,6 @@ knitr::kable(tbl_agd,
 
 ### Solution
 
-$$y = Xb + Zg + e$$
-
-\begin{tabular}{lll}
-  where  &  &  \\
-         &  $y$  &  vector of length $n$ with observations  \\
-         &  $b$  &  general mean as the only fixed effect \\
-         &  $X$  &  incidence matrix linking elements in $b$ to observations \\
-         &  $g$  &  vector of length $t$ with random genomic breeding values \\
-         &  $Z$  &  incidence matrix linking elements in $g$ to observations \\
-         &  $e$  &  vector of length $n$ of random error terms
-\end{tabular}
-
-Inserting the data into the model
-
-```{r ModelInfoP01a, echo=FALSE, results='asis'}
-vec_y_agd <- tbl_agd$ADG
-vec_b_agd <- c("\\mu")
-mat_X_agd <- matrix(c(rep(1,n_nr_animal_agd)), ncol = 1)
-vec_g_agd <- rmddochelper::vecGetVecElem(psBaseElement = "g", pnVecLen = n_nr_animal_agd, psResult = "latex") 
-mat_Z_agd <- diag(1,n_nr_animal_agd)
-vec_e_agd <- rmddochelper::vecGetVecElem(psBaseElement = "e", pnVecLen = n_nr_animal_agd, psResult = "latex") 
-cat("$$\n")
-cat("y = \\left[\n")
-cat(paste0(rmddochelper::sConvertVectorToLaTexArray(pvec_avector = vec_y_agd, pnDigits = 0), collapse = "\n"), "\n")
-cat("\\right], \n")
-cat("b = \\left[\n")
-cat(paste0(rmddochelper::sConvertVectorToLaTexArray(pvec_avector = vec_b_agd), collapse = "\n"), "\n")
-cat("\\right], \n")
-cat("X = \\left[\n")
-cat(paste0(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = mat_X_agd, pnDigits = 0), collapse = "\n"), "\n")
-cat("\\right], \n")
-cat("g = \\left[\n")
-cat(paste0(rmddochelper::sConvertVectorToLaTexArray(pvec_avector = vec_g_agd), collapse = "\n"), "\n")
-cat("\\right], \n")
-cat("Z = \\left[\n")
-cat(paste0(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = mat_Z_agd, pnDigits = 0), collapse = "\n"), "\n")
-cat("\\right], \n")
-cat("e = \\left[\n")
-cat(paste0(rmddochelper::sConvertVectorToLaTexArray(pvec_avector = vec_e_agd), collapse = "\n"), "\n")
-cat("\\right]\n")
-cat("$$\n")
-```
-
-The expected values of the random components are: $E\left[g\right] = 0$, $E\left[e\right] = 0$ and $E\left[y \right] = Xb = 1_n\mu$
-
-The variances are $var(g) = G * \sigma_g^2$ where $G$ is the genomic relationship matrix, $var(e) = R = I * \sigma_e^2$ and $var(y) = ZGZ^T + R$. 
-
 \clearpage
 \pagebreak
 
@@ -235,58 +188,6 @@ The variances are $var(g) = G * \sigma_g^2$ where $G$ is the genomic relationshi
 
 
 ### Solution 
-```{r SolP01b, echo=FALSE, results='hide', message=FALSE}
-require(dplyr)
-tbl_snp_agd <- tbl_agd %>% select(SNP1:SNP4)
-mat_W_agd <- as.matrix(tbl_snp_agd)
-```
-
-The genomic relationship matrix is computed based on the incidence matrix $W$ in a marker effect model. 
-
-```{r MatWP01b, echo=FALSE, results='asis'}
-cat("$$\n")
-cat("W = \\left[\n")
-cat(paste0(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = mat_W_agd, pnDigits = 0), collapse = "\n"), "\n")
-cat("\\right], \n")
-cat("$$\n")
-```
-
-The following function is used to compute the genomic relationship matrix $G$
-
-```{r ComputeGRMP01b, echo=TRUE, results='markup'}
-#' Compute genomic relationship matrix based on data matrix
-computeMatGrm <- function(pmatData, pnfreq = NULL) {
-  matData <- pmatData
-  # check the coding, if matData is -1, 0, 1 coded, then add 1 to get to 0, 1, 2 coding
-  if (min(matData) < 0) matData <- matData + 1
-  # Allele frequencies, column vector of P and sum of frequency products
-  if (is.null(pnfreq)){
-    freq <- apply(matData, 2, mean) / 2
-  } else {
-    freq <- rep(pnfreq, ncol(matData))
-  }
-  P <- 2 * (freq - 0.5)
-  sumpq <- sum(freq*(1-freq))
-  # Changing the coding from (0,1,2) to (-1,0,1) and subtract matrix P
-  Z <- matData - 1 - matrix(P, nrow = nrow(matData), 
-                             ncol = ncol(matData), 
-                             byrow = TRUE)
-  # Z%*%Zt is replaced by tcrossprod(Z)
-  return(tcrossprod(Z)/(2*sumpq))
-}
-mat_G_agd <- computeMatGrm(pmatData = mat_W_agd)
-```
-
-
-From that the genomic relationship matrix is
-
-```{r ShowGRMP01b, echo=FALSE, results='asis'}
-cat("$$\n")
-cat("G = \\left[\n")
-cat(paste0(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = mat_G_agd, pnDigits = 3), collapse = "\n"), "\n")
-cat("\\right], \n")
-cat("$$\n")
-```
 
 
 \clearpage
@@ -302,9 +203,6 @@ cat("$$\n")
 
 
 ### Solution 
-With traditional BLUP animal model breeding values, animals 4 and 5 get the same predicted breeding values. The correspond to the mean of the predicted breeding values of parents 1 and 2. Hence it is not possible to determine which of 4 and 5 is better based on traditional BLUP animal model breeding values. Because animal 3 has an own-performance record, its predicted breeding value will be different.
-
-With genomic information the breeding values of 3, 4 and 5 will be different, because of the genomic information. 
 
 \clearpage
 \pagebreak
@@ -386,19 +284,6 @@ summary(lm_all_data)
 
 ### Solution
 
-```{r SolP02a, echo=FALSE, results='hide'}
-coef_all_data <- coefficients(lm_all_data)
-n_shift <- mean(c(coef_all_data[["GeneBB1B1"]], coef_all_data[["GeneBB2B2"]]))
-n_value_a <- coef_all_data[["GeneBB1B1"]] - n_shift
-n_value_d <- coef_all_data[["GeneBB1B2"]] - n_shift
-### # rounding
-n_rounded_value_a <- round(n_value_a, 2)
-n_rounded_value_d <- round(n_value_d, 2)
-```
-
-$$a = `r n_rounded_value_a`$$
-$$d = `r n_rounded_value_d`$$
-
 
 \clearpage
 \pagebreak
@@ -413,15 +298,6 @@ $$d = `r n_rounded_value_d`$$
 
 
 ### Solution
-```{r SolP02b, echo=FALSE, results='hide'}
-n_geno_val_B1B1 <- coef_all_data[["GeneBB1B1"]] - n_shift
-n_geno_val_B1B2 <- coef_all_data[["GeneBB1B2"]] - n_shift
-n_geno_val_B2B2 <- coef_all_data[["GeneBB2B2"]] - n_shift
-### # rounding
-n_geno_val_rounded_B1B1 <- round(n_geno_val_B1B1, 2)
-n_geno_val_rounded_B1B2 <- round(n_geno_val_B1B2, 2)
-n_geno_val_rounded_B2B2 <- round(n_geno_val_B2B2, 2)
-```
 
 \begin{center}
 \begin{tabular}{|p{4cm}|p{4cm}|}
@@ -431,11 +307,11 @@ Genotype  &  Genotypic Value \\
           &  \\
 \hline
           &  \\
-B1B1      &  `r n_geno_val_rounded_B1B1` \\
+B1B1      &   \\
           &  \\
-B1B2      &  `r n_geno_val_rounded_B1B2` \\
+B1B2      &   \\
           &  \\
-B2B2      &  `r n_geno_val_rounded_B2B2` \\
+B2B2      &   \\
           &  \\
 \hline
 \end{tabular}
@@ -453,27 +329,7 @@ B2B2      &  `r n_geno_val_rounded_B2B2` \\
 
 
 ### Solution 
-```{r SolP02c, echo=FALSE, results='hide'}
-n_mu <- (n_prob_snpb - (1-n_prob_snpb)) * n_value_a + 2 * n_prob_snpb * (1-n_prob_snpb) * n_value_d
-n_rounded_mu <- round(n_mu, 2)
-n_alpha <- n_value_a + ((1-n_prob_snpb) - n_prob_snpb) * n_value_d
-n_rounded_alpha <- round(n_alpha, 2)
-n_bv11 <- 2 * (1-n_prob_snpb) * n_alpha
-n_bv12 <- ((1-n_prob_snpb) - n_prob_snpb) * n_alpha
-n_bv22 <- -2 * n_prob_snpb * n_alpha
-```
 
-The population mean
-
-$$\mu = (p-q) * a + 2pqd = (`r n_prob_snpb` - `r 1-n_prob_snpb`) * `r n_rounded_value_a` + 2 * `r n_prob_snpb` * `r 1-n_prob_snpb` * `r n_rounded_value_d` = `r n_rounded_mu`$$
-
-The substitution effect $\alpha$ corresponds to 
-
-$$\alpha = a + (q-p)*d = `r n_rounded_value_a` + (`r 1-n_prob_snpb` - `r n_prob_snpb`) * `r n_rounded_value_d` = `r n_rounded_alpha`$$
-
-$$BV_{11} = 2q\alpha = 2 * `r 1-n_prob_snpb` * `r n_rounded_alpha` = `r round(n_bv11, 2)`$$
-$$BV_{12} = (q-p)\alpha = (`r 1-n_prob_snpb` - `r n_prob_snpb`) * `r n_rounded_alpha` = `r round(n_bv12, 2)`$$
-$$BV_{22} = -2p\alpha = -2 * `r n_prob_snpb` * `r n_rounded_alpha` = `r round(n_bv22, 2)`$$
 
 \clearpage
 \pagebreak
@@ -528,10 +384,6 @@ summary(lm_sw_bw)
 
 
 ### Solution
-```{r SolP03a, echo=FALSE}
-cf_sw_bw <- coefficients(lm_sw_bw)
-```
-The change in slaughter weight is given by the regression coefficient which corresponds to: `r round(cf_sw_bw[["BodyWeight"]], 3)`
 
 
 \clearpage
@@ -546,33 +398,6 @@ The change in slaughter weight is given by the regression coefficient which corr
 
 
 ### Solution
-The standard deviation of the residuals is computed from the residuals $r_i$ computed as $r_i = y_i - \hat{y}_i$. For this, we extend the table of the input data with the fitted values and the residuals.
-
-```{r SolP03b, results='asis', message=FALSE}
-vec_fitted_sw_bw <- fitted(lm_sw_bw)
-vec_res_sw_bw <- residuals(lm_sw_bw)
-n_s2 <- sum(vec_res_sw_bw^2) / lm_sw_bw$df.residual
-n_s <- sqrt(n_s2)
-require(dplyr)
-tbl_sw_bw_ext <- bind_cols(tbl_sw_bw, 
-                           tibble::tibble(FittedValues = round(vec_fitted_sw_bw, 1)),
-                           tibble::tibble(Residuals = round(vec_res_sw_bw, 3)))
-knitr::kable(tbl_sw_bw_ext,
-             booktabs = TRUE,
-             longtable = TRUE)
-```
-
-The residual standard deviation corresponds to 
-
-$$s_r^2 = \frac{1}{n-p}\sum_{i=1}^n r_i^2 
-        = \frac{1}{`r lm_sw_bw$df.residual`}\sum_{i=1}^{`r n_nr_animal`} `r vec_res_sw_bw[1]`^2 + \ldots +  `r vec_res_sw_bw[n_nr_animal]`^2 
-        = `r round(n_s2, 2)`
-$$
-
-The square root of $s_r^2$ corresponds to the value given in the R-output named residual standard error. With that we get
-
-$$s_r = \sqrt{`r round(n_s2, 2)`} = `r round(n_s, 2)`$$
-
 
 
 \clearpage
@@ -592,14 +417,6 @@ n_opt_bw <- 500
 
 ### Solution
 
-The expected slaughter weight $\widehat{sw}$ of an animal with body weight $bw = `r n_opt_bw`$ kg is computed as
-
-```{r SolP03c, echo=FALSE}
-n_hat_sw <- cf_sw_bw[[1]] + cf_sw_bw[[2]] * n_opt_bw
-```
-
-
-$$\widehat{sw} = \hat{b}_0 + \hat{b}_{bw} * bw = `r round(cf_sw_bw[[1]], 2)` + `r round(cf_sw_bw[[2]], 2)` * `r n_opt_bw` = `r round(n_hat_sw, 1)`$$
 
 \clearpage
 \pagebreak
@@ -617,12 +434,7 @@ n_bw_fc <- 180
 
 
 ### Solution
-```{r SolP03d, echo=FALSE}
-n_hat_sw_calf <- cf_sw_bw[[1]] + cf_sw_bw[[2]] * n_bw_fc
-```
-It is not a good idea, because this prediction is based on a body weight outside of the range of the body weights in the dataset. Hence this is extrapolation which is considered to be negative. The predicted slaughter weight would be
 
-$$\widehat{sw}_{calf} = \hat{b}_0 + \hat{b}_{bw} * bw_{calf} = `r round(cf_sw_bw[[1]], 2)` + `r round(cf_sw_bw[[2]], 2)` * `r n_bw_fc` = `r round(n_hat_sw_calf, 1)`$$
 
 \clearpage
 \pagebreak
@@ -699,7 +511,6 @@ knitr::include_graphics(path = "odg/codeblockp04.png")
 
 ### Solution
 
-Codeblock 1 uses Least Squares and Codeblock 2 uses a Bayesian approach.
 
 \clearpage
 \pagebreak
@@ -722,9 +533,9 @@ Parameter  &  Least Squares  &  Bayesian \\
           &   & \\
 \hline
           &   & \\
-Intercept               &  $`r round(cf_sw_bw[[1]], 4)`$  &  $`r round(meanBeta[1] / n_iter, 3)`$\\
+Intercept               &    &  \\
           &   & \\
-Regression Coefficient  & $`r round(cf_sw_bw[[2]], 4)`$   & $`r round(meanBeta[2] / n_iter, 3)`$ \\
+Regression Coefficient  &    &  \\
           &   & \\
 \hline
 \end{tabular}
@@ -743,13 +554,6 @@ Regression Coefficient  & $`r round(cf_sw_bw[[2]], 4)`$   & $`r round(meanBeta[2
 
 ### Solution 
 
-```{r SolP04c, echo=FALSE, results='hide'}
-# least squares
-ste_bw_cw_ls <- coefficients(sum_sw_bw)[,"Std. Error"]
-# bayes, get standard errors of samples
-ste_bw_cw_ba <- sqrt((meanBetaSQ - (meanBeta^2/n_iter)) / (n_iter-1))
-```
-
 
 \begin{center}
 \begin{tabular}{|p{4cm}|p{4cm}|p{4cm}|}
@@ -759,9 +563,9 @@ Parameter  &  Least Squares  &  Bayesian \\
           &   & \\
 \hline
           &   & \\
-Intercept               &  `r round(ste_bw_cw_ls[[1]], 4)`  &  `r round(ste_bw_cw_ba[1], 4)`\\
+Intercept               &    &  \\
           &   & \\
-Regression Coefficient  &  `r round(ste_bw_cw_ls[[2]], 4)`  &  `r round(ste_bw_cw_ba[2], 4)`\\
+Regression Coefficient  &    &  \\
           &   & \\
 \hline
 \end{tabular}
