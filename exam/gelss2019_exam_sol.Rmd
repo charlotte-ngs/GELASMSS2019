@@ -4,7 +4,7 @@ output:
     includes:
       in_header: tex/header.tex
     fig_caption: false
-output_file: asmfs2018_exam_tsk.pdf
+output_file: gelss2019_exam_sol.pdf
 ---
 
 <!-- %\usepackage{fancyhdr} -->
@@ -17,15 +17,15 @@ output_file: asmfs2018_exam_tsk.pdf
 ```{r ChunkOptions, echo=FALSE}
 knitr::opts_chunk$set(echo = FALSE, results = 'hide')
 #knitr::opts_chunk$set(concordance=TRUE)
-knitr::knit_hooks$set(conv.odg = rmddochelper::odg.graphics.conv.hook)
+knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
 ```
 
 <!-- <<PointsQ1, echo=FALSE>>= -->
 ```{r PointsQ1, echo=FALSE}
 # Assign Points for Q1
-lPointsQ1 <- list(TaskA = 0,
-                  TaskB = 0,
-                  TaskC = 0,
+lPointsQ1 <- list(TaskA = 16,
+                  TaskB = 6,
+                  TaskC = 3,
                   TaskD = 0)
 nPointQ1Total <- sum(unlist(lPointsQ1))
 ```
@@ -33,9 +33,9 @@ nPointQ1Total <- sum(unlist(lPointsQ1))
 <!-- <<PointsQ2, echo=FALSE>>= -->
 ```{r PointsQ2, echo=FALSE}
 # Assign Points for Q2
-lPointsQ2 <- list(TaskA = 0,
-                  TaskB = 0,
-                  TaskC = 0,
+lPointsQ2 <- list(TaskA = 12,
+                  TaskB = 8,
+                  TaskC = 6,
                   TaskD = 0)
 nPointQ2Total <- sum(unlist(lPointsQ2))
 ```
@@ -147,110 +147,378 @@ Total    &  `r nPointOverallTotal` & \\
 \clearpage
 \pagebreak
 
-## Problem 1: 
-\begin{enumerate}
-\item[a)] 
+## Problem 1: Model Selection
 
-\textit{}
+\begin{enumerate}
+\item[a)] Model selection can be done using \textbf{forward} selection or \textbf{backward} selection. Describe the four steps that are needed in both model selection procedures.
+
+\textit{Modellselektion kann mit \textbf{Forward} Selektion oder \textbf{Backward} Selektion gemacht werden. Beschreiben Sie die vier Schritte, welche es für beide Modellselektionsprozeduren braucht.}
 \end{enumerate}
 \points{`r lPointsQ1$TaskA`}
 
 ### Solution
 
+\begin{tabular}{|l|p{6cm}|p{6cm}|}
+\hline
+  &  &  \\
+Step  &  Forward   &  Backward  \\
+  &  &  \\
+\hline
+  &  &  \\
+1  &  Start with smallest model $\mathcal{M}_0$ 
+   &  Start with full model $\mathcal{M}_0$ \\
+   &  &  \\
+\hline
+   &  &  \\
+2  &  Include predictor reducing RSS the most
+   &  Eliminate predictor increasing RSS the least \\
+   &  &  \\
+\hline
+   &  &  \\
+3  &  Continue step 2 until all predictors chosen
+   &  Continue step 2 until all predictors eliminated  \\
+   &  &  \\
+\hline
+   &  &  \\
+4  &  From sequence of submodels $\mathcal{M}_0 \subseteq \mathcal{M}_1 \subseteq \mathcal{M}_2 \subseteq \ldots$ choose model with smallest $C_p$
+   &  From sequence of submodels $\mathcal{M}_0 \supseteq \mathcal{M}_1 \supseteq \mathcal{M}_2 \supseteq \ldots$ choose model with smallest $C_p$ \\
+   &  &  \\
+\hline
+\end{tabular}
+
 
 \clearpage
 \pagebreak
 
 \begin{enumerate}
-\item[b)] 
+\item[b)] We are given the following data set on body weight, breast circumference and shoulder height. Furthermore, the results of fitting the full regression model and a reduced model with only breast circumference as predictor. Compute the Mallow $C_p$ value for both models and decide which of the two models is better based on $C_p$
 
-\textit{}
+\textit{Gegeben ist der folgende Datensatz zu Körpergewicht, Brustumfang und Widerristhöhe. Weiter sind auch die Resultate des Fits des vollen Modells und eines reduzierten Models mit nur Brunstumfang als beschreibende Variable gegeben. Berechnen Sie den Mallow $C_p$-Wert für beide Modelle und begründen Sie, welches der beiden Modelle besser ist.}
 \end{enumerate}
 
 \points{`r lPointsQ1$TaskB`}
 
+```{r dataregressionP01b, echo=FALSE, results='asis', message=FALSE}
+### # define constant paths
+s_data_root_online <- "https://charlotte-ngs.github.io/GELASMSS2019"
+s_data_root_local <- here::here() 
+s_data_dir <- "ex/w03/bw_bc_reg.csv"
+### # define data path depending on whether we are online or not
+b_online <- FALSE
+if (b_online){
+  s_data_root <- s_data_root_online
+} else {
+  s_data_root <- s_data_root_local
+}
+s_data_path <- file.path(s_data_root, s_data_dir)
+### # read data from s_data_path
+tbl_reg <- readr::read_csv(file = s_data_path)
+### # add random shoulder height
+n_sh_mean <- 148
+n_sh_sd <- 4.3
+vec_sh <- rnorm(nrow(tbl_reg), mean = n_sh_mean, sd = n_sh_sd)
+tbl_reg_withsh <- dplyr::bind_cols(tbl_reg, tibble::tibble(`Shoulder Height` = round(vec_sh, 0)))
+# remove spaces from colnames
+colnames(tbl_reg_withsh) <- c("Animal", "BreastCircumference", "BodyWeight", "ShoulderHeight")
+# show the table
+knitr::kable(tbl_reg_withsh,
+             booktabs = TRUE,
+             longtable = TRUE)
+```
+
+The results of the full model
+
+\textit{Die Resultate des vollen Modells}
+
+```{r FullModelP01b, echo=FALSE, results='markup'}
+lm_bw_bc_sh <- lm(`BodyWeight` ~ `BreastCircumference` + `ShoulderHeight`, data = tbl_reg_withsh)
+(sy_bw_bc_sh <- summary(lm_bw_bc_sh))
+```
+
+\clearpage
+\pagebreak
+
+The results of the reduced model
+
+\textit{Die Resultate des reduzierten Modells}
+
+```{r RedModelP01b, echo=FALSE, results='markup'}
+lm_bw_bc <- lm(`BodyWeight` ~ `BreastCircumference`, data = tbl_reg_withsh)
+(sy_bw_bc <- summary(lm_bw_bc))
+```
+
+
 ### Solution 
+
+Mit `olsrr` erhalten wir
+
+\tiny
+
+```{r SolP01b, echo=TRUE, results='markup'}
+olsrr::ols_step_best_subset(lm_bw_bc_sh)
+```
+
+\normalsize
+
+Das reduzierte Model erhält einen tieferen $C_p$-Wert und ist somit das bessere Modell.
 
 
 \clearpage
 \pagebreak
 
 \begin{enumerate}
-\item[c)] 
+\item[c)] What is the reason why we are doing model selection, why should we not take always the full model? Please explain the underlying phenomenon in your own words.
 
-\textit{}
+\textit{Was ist der Grund, dass wir Modellselektion machen? Weshalb können wir nicht einfach immer das volle Modell mit allen erklärenden Variablen zur Anpassung verwenden? Bitte erklären Sie das unterliegende Phänotmen in Ihren eigenen Worten.}
 \end{enumerate}
 
 \points{`r lPointsQ1$TaskC`}
 
 ### Solution 
 
+The problem that makes model selection necessary is called Bias-Variance trade-off. The Bias is reduced, the more predictors we include. But on the other hand, the variance is increased. Hence we have to find the model that balances this trade-off. This is done with a criterion such as the Mallow $C_p$ statistic.
 
-\clearpage
-\pagebreak
-
-\begin{enumerate}
-\item[d)] 
-
-\textit{}
-\end{enumerate}
-
-\points{`r lPointsQ1$TaskD`}
-
-
-
-### Solution 
 
 
 \clearpage
 \pagebreak
 
-## Problem 2: 
+## Problem 2: Breeding Programs
+The breeding goal 2021 (\verb+https://homepage.braunvieh.ch/xml_1/internet/de/application/d2/d9/f464.cfm+) for the `Brown Swiss` cattle breed contains the following information
+
+\textit{Das Zuchtziel 2021 (}\verb+https://homepage.braunvieh.ch/xml_1/internet/de/application/d2/d9/f464.cfm+ \textit{) für das Braunvieh enthält die folgenden Informationen}
+\begin{tabular}{|p{6cm}|p{6cm}|}
+\hline
+Merkmal                                   &  Zielwert für Braunvieh  \\
+\hline
+Jährlicher Zuchtfortschritt Milch	        &  $+60$ kg \\
+\hline
+Jährlicher Zuchtfortschritt Eiweiss       &  $+2$ kg  \\
+\hline
+Milchleistung Ausgewachsene Kuh Talzone  	&  $8500$ kg       \\
+\hline
+Milchgehalt	Eiweiss                       &  $3.5 \%$          \\
+\hline
+Laktationspersistenz	                    &  $85 \%$ und höher \\
+\hline
+Nutzungsdauer (ZWS)	                      &  positiver genetischer Trend \\
+\hline
+Lebensleistung bei Abgang (Talzone)	      &  $35000$ kg\\
+\hline
+Eutergesundheit (ZW Zellzahl)	            &  positiver genetischer Trend \\
+\hline
+ZW Rastzeit	                              &  positiver genetischer Trend\\
+\hline
+ZW Non Return Rate	                      &  positiver genetischer Trend\\
+\hline
+Serviceperiode (phänotypisch)	            &  unter 120 Tagen\\
+\hline
+Rahmen, Becken, Fundament, Euter, Zitzen  &  positiver genetischer Trend\\
+\hline
+Grösse ausgewachsene Kühe                 &  $140$ - $152$ cm \\
+\hline
+\end{tabular}
+
+
+\vspace{10ex}
+The aggregate genotype of the Swiss `Edelschein` dam lines has the following weights for the different trait groups `Conformation`, `Production` and `Reproduction`.
+
+\textit{Im Gesamtzuchtwert der Edelschwein Mutterline werden die verschiedenen Merkmalsgruppen `Exterieur`, `Produktion` und `Reproduktion` wie folgt gewichtet.}
+
+\textit{Das Zuchtziel 2021 (}\verb+https://homepage.braunvieh.ch/xml_1/internet/de/application/d2/d9/f464.cfm+ \textit{) für das Braunvieh enthält die folgenden Informationen}
+
+\begin{tabular}{|p{6cm}|p{6cm}|}
+\hline
+Merkmalsgruppe  &  Gewicht im Gesamtzuchtwert \\
+\hline
+Exterieur       &  $19$  \\
+\hline
+Produktion      &  $30$  \\
+\hline
+Reproduktion    &  $51$  \\
+\hline
+\end{tabular}
+
+\clearpage
+\pagebreak
 
 \begin{enumerate}
-\item[a)] 
+\item[a)] What are the names of the two different formulation of the breeding goals for `Brown Swiss` cattle and for `Edelschein` pigs? Please complete the following table and in doing so, indicate both an advantage and a disadvantage of both formulations.
 
-\textit{}
+\textit{Wie heissen die beiden verschiedenen Arten der Formulierung eines Zuchtziels beim Braunvieh und beim Edelschwein? Bitte füllen Sie die nachfolgende Tabelle aus und geben Sie je einen Vorteil und einen Nachteil der beiden Formulierungen an.}
 \end{enumerate}
 \points{`r lPointsQ2$TaskA`}
 
+
+
 ### Solution
 
-
+\begin{center}
+\begin{tabular}{|p{4cm}|p{4cm}|p{4cm}|}
+\hline
+              &  &  \\
+              &  Braunvieh  &  Edelschwein  \\
+              &  &  \\
+\hline
+              &  &  \\
+Formulation   &  Political breeding goal with extensive description of mostly phenotypic properties of desired model breeding animal
+              &  Scientific breeding goal with aggregate genotype as mathematical form of breeding goal \\
+              &  &  \\
+\hline
+              &  &  \\
+Advantage     &  Easy to understand and easy to picture the model breeding animal
+              &  Based on solid theory, can be applied for all breeding animals, success can be verified \\
+              &  &  \\
+\hline
+              &  &  \\
+Disadvantage  &  Not clear what should be done with over-achiever animals. Goals can be contradictory. Success cannot be verified.
+              &  Not easy to understand. Difficult to get clear picture for single breeding animals \\
+              &  &  \\
+\hline
+\end{tabular}
+\end{center}
 
 \clearpage
 \pagebreak
 
-\begin{enumerate}
-\item[b)] 
+```{r SetupP02b, echo=FALSE, results='hide'}
+n_prop_ani_sel <- .05
+n_ag_sd <- 10
+n_acc_ng <- .85
+n_acc_gs <- .65
+n_gi_ng <- 7
+n_gi_gs <- 2
+tbl_agd_param <- tibble::tibble(Parameter = c("proportion of animals selected",
+                                              "accuracy of predicted breeding values",
+                                              "additive genetic standard deviation",
+                                              "generation interval"),
+                                `No Genomic Selection` = c(n_prop_ani_sel,
+                                                           n_acc_ng,
+                                                           n_ag_sd,
+                                                           n_gi_ng),
+                                `With Genomic Selection` = c(n_prop_ani_sel,
+                                                             n_acc_gs,
+                                                             n_ag_sd,
+                                                             n_gi_gs))
+```
 
-\textit{}
+\begin{enumerate}
+\item[b)] Genomic Selection has the potential to increase the genetic gain per year significantly. Currently beef cattle breeders start to introduce genomic selection for carcass traits. Let us assume the following selection parameters for the trait average daily gain. Compute the selection response per year for both scenarios with and without genomic selection. Based on the selection response per year which scenario is better? The trait is assumed to be normally distributed. 
+
+\textit{Die genomische Selektion hat das Potential den Zuchtfortschritt pro Jahr signifikant zu steigern. Aktuell beginnen die Fleischrinderzüchter mit der Einführung der genomischen Selektion für Fleischleistungsmerkmale. Für das Merkmal Tageszunahme gehen wir von den folgenden Selektionsparametern aus. Berechnen Sie den Selektionserfolg pro Jahr für die beiden Szenarien mit und ohne genomische Selektion. Welches der beiden Szenarien ist besser basierend auf dem Selektionsfortschritt pro Jahr? Für die Verteilung des Merkmals nehmen wir eine Normalverteilung an.}
 \end{enumerate}
 \points{`r lPointsQ2$TaskB`}
 
+```{r TableP02b, echo=FALSE, results='asis'}
+knitr::kable(tbl_agd_param,
+             booktabs = TRUE,
+             longtable = TRUE)
+```
+
+
 ### Solution
+
+```{r SolP02b, echo=FALSE, results='hide'}
+n_val_z <- dnorm(qnorm(n_prop_ani_sel, lower.tail = FALSE))
+n_sel_int <- n_val_z / n_prop_ani_sel
+n_sel_int_round <- round(n_sel_int, 3)
+n_delta_g_ng <- (n_sel_int * n_acc_ng * n_ag_sd) / n_gi_ng
+n_delta_g_gs <- (n_sel_int * n_acc_gs * n_ag_sd) / n_gi_gs
+```
+
+The proportion animals selected has to be converted into a selection intensity $i$.
+
+$$i = \frac{z}{p} = \frac{`r round(n_val_z, 3)`}{`r n_prop_ani_sel`} = `r n_sel_int_round`$$
+
+The selection response is computed as
+
+$$\Delta G = \frac{i*r_{TI} * \sigma_T}{L}$$
+
+**No Genomic Selection**: 
+
+$$\Delta G_{ng} = \frac{`r n_sel_int_round` * `r n_acc_ng` * `r n_ag_sd`}{`r n_gi_ng`} = `r round(n_delta_g_ng, 3)`$$
+
+**With Genomic Selection**: 
+
+$$\Delta G_{gs} = \frac{`r n_sel_int_round` * `r n_acc_gs` * `r n_ag_sd`}{`r n_gi_gs`} = `r round(n_delta_g_gs, 3)`$$
+
+Based on the selection response per year, the scenario with genomic selection is better. 
 
 
 \clearpage
 \pagebreak
 
 \begin{enumerate}
-\item[c)] 
+\item[c)] In cattle and in pigs, the structure of the breeding programs are different. What is the name of the structure of the different breeding programs. Please, specify a reason for the association of the structure of the breeding program to the different species.
 
-\textit{}
+\textit{In der Rinderzucht und der Schweinezucht ist die Struktur der Zuchtprogramme verschieden. Wie heissen diese Strukturen der Zuchtprogramme? Geben Sie je einen Grund an weshalb die beiden Spezies die entsprechende Struktur des Zuchtprogramms gewählt haben.}
 \end{enumerate}
 \points{`r lPointsQ2$TaskC`}
 
 
-
 ### Solution 
 
+\begin{center}
+\begin{tabular}{|p{4cm}|p{4cm}|p{4cm}|}
+\hline
+                               &          &  \\
+                               &  Cattle  &  Pigs  \\
+                               &          &  \\
+\hline
+                               &          &  \\
+Structure of breeding program  &  monolitic  &  hierarchical  \\    
+                               &          &  \\
+\hline
+                               &          &  \\
+Reason                         &  low reproduction rate, single animal is valuable, sex-limited traits make expensive off-spring tests necessary, hence large herdbooks with many member farms are required
+                               &  high reproduction rate, single animal not so valuable. Split between breeding and production can be used to increase efficiency \\  
+                               &          &  \\
+\hline     
+\end{tabular}
+\end{center}
 
 \clearpage
 \pagebreak
 
 
-## Problem 3: 
+## Problem 3: Variance Components Estimation
+
+```{r SetupDataP03}
+# according to google and https://timeforchange.org/are-cows-cause-of-global-warming-meat-methane-CO2
+n_min_met_prod_per_year <- 70
+n_max_met_prod_per_year <- 120
+n_av_met_prod_per_year <- mean(c(n_min_met_prod_per_year,n_max_met_prod_per_year))
+n_sd_met_prod_per_year <- (n_max_met_prod_per_year - n_min_met_prod_per_year) / 6
+# number of bull
+n_nr_bull <- 5
+vec_bull_eff <- rnorm(n_nr_bull, sd = n_sd_met_prod_per_year / 4)
+# number of daughters per bull
+n_nr_dau <- 3
+# number of observations
+n_nr_met_obs <- n_nr_bull * n_nr_dau
+# bull incidence matrix
+mat_bull_design <- kronecker(diag(n_nr_bull), matrix(rep(1,n_nr_dau), ncol = 1))
+
+# observations
+mat_obs <- n_av_met_prod_per_year + crossprod(t(mat_bull_design), vec_bull_eff) + rnorm(n_nr_met_obs, mean = 0, n_sd_met_prod_per_year)
+# data tibble
+tbl_met <- tibble::tibble(Offspring = c(1:n_nr_met_obs), 
+                          Bull = sort(rep(1:n_nr_bull, n_nr_dau)), 
+                          Methan = round(mat_obs[,1], 0))
+
+```
+
+
+The following data set with average amounts of methan gas emission per year for three offspring per bull are given in the following table.
+
+\textit{Im folgenden Datensatz sind die mittleren Mengen an Methanemissionen pro Jahr für je drei Nachkommen für fünf verschiedene Bullen gegeben.}
+
+```{r TableDataP03, echo=FALSE, results='asis'}
+knitr::kable(tbl_met,
+             booktabs = TRUE,
+             longtable = TRUE)
+```
+
 
 \begin{enumerate}
 \item[a)] 
@@ -293,7 +561,7 @@ Total    &  `r nPointOverallTotal` & \\
 \pagebreak
 
 
-## Problem 4: 
+## Problem 4: Prediction of Breeding Values
 
 \begin{enumerate}
 \item[a)]
