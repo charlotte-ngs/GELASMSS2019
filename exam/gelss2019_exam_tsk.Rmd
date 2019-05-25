@@ -4,7 +4,7 @@ output:
     includes:
       in_header: tex/header.tex
     fig_caption: false
-output_file: gelss2019_exam_sol.pdf
+output_file: gelss2019_exam_tsk.pdf
 ---
 
 <!-- %\usepackage{fancyhdr} -->
@@ -95,7 +95,7 @@ nPointOverallTotal <- nPointQ1Total + nPointQ2Total + nPointQ3Total + nPointQ4To
 		\centering \fontsize{25pt}{40pt}\selectfont %
 		\vspace*{0.2cm}
 		 751-6212-00L V \\
-     Solutions to Exam    \\
+     Exam    \\
      Applied Genetic Evaluation\\
      SS 2019
 
@@ -163,23 +163,23 @@ Step  &  Forward   &  Backward  \\
   &  &  \\
 \hline
   &  &  \\
-1  &  Start with smallest model $\mathcal{M}_0$ 
-   &  Start with full model $\mathcal{M}_0$ \\
+1  &  
+   &   \\
    &  &  \\
 \hline
    &  &  \\
-2  &  Include predictor reducing RSS the most
-   &  Eliminate predictor increasing RSS the least \\
+2  &  
+   &   \\
    &  &  \\
 \hline
    &  &  \\
-3  &  Continue step 2 until all predictors chosen
-   &  Continue step 2 until all predictors eliminated  \\
+3  &  
+   &  \\
    &  &  \\
 \hline
    &  &  \\
-4  &  From sequence of submodels $\mathcal{M}_0 \subseteq \mathcal{M}_1 \subseteq \mathcal{M}_2 \subseteq \ldots$ choose model with smallest $C_p$
-   &  From sequence of submodels $\mathcal{M}_0 \supseteq \mathcal{M}_1 \supseteq \mathcal{M}_2 \supseteq \ldots$ choose model with smallest $C_p$ \\
+4  &  
+   &  \\
    &  &  \\
 \hline
 \end{tabular}
@@ -248,17 +248,6 @@ lm_bw_bc <- lm(`BodyWeight` ~ `BreastCircumference`, data = tbl_reg_withsh)
 
 ### Solution 
 
-Mit `olsrr` erhalten wir
-
-\tiny
-
-```{r SolP01b, echo=TRUE, results='markup'}
-olsrr::ols_step_best_subset(lm_bw_bc_sh)
-```
-
-\normalsize
-
-Das reduzierte Model erhält einen tieferen $C_p$-Wert und ist somit das bessere Modell.
 
 
 \clearpage
@@ -274,7 +263,6 @@ Das reduzierte Model erhält einen tieferen $C_p$-Wert und ist somit das bessere
 
 ### Solution 
 
-The problem that makes model selection necessary is called Bias-Variance trade-off. The Bias is reduced, the more predictors we include. But on the other hand, the variance is increased. Hence we have to find the model that balances this trade-off. This is done with a criterion such as the Mallow $C_p$ statistic.
 
 
 
@@ -359,18 +347,18 @@ Reproduktion    &  $51$  \\
               &  &  \\
 \hline
               &  &  \\
-Formulation   &  Political breeding goal with extensive description of mostly phenotypic properties of desired model breeding animal
-              &  Scientific breeding goal with aggregate genotype as mathematical form of breeding goal \\
+Formulation   &  
+              &  \\
               &  &  \\
 \hline
               &  &  \\
-Advantage     &  Easy to understand and easy to picture the model breeding animal
-              &  Based on solid theory, can be applied for all breeding animals, success can be verified \\
+Advantage     &  
+              &  \\
               &  &  \\
 \hline
               &  &  \\
-Disadvantage  &  Not clear what should be done with over-achiever animals. Goals can be contradictory. Success cannot be verified.
-              &  Not easy to understand. Difficult to get clear picture for single breeding animals \\
+Disadvantage  &  
+              &  \\
               &  &  \\
 \hline
 \end{tabular}
@@ -416,31 +404,6 @@ knitr::kable(tbl_agd_param,
 
 ### Solution
 
-```{r SolP02b, echo=FALSE, results='hide'}
-n_val_z <- dnorm(qnorm(n_prop_ani_sel, lower.tail = FALSE))
-n_sel_int <- n_val_z / n_prop_ani_sel
-n_sel_int_round <- round(n_sel_int, 3)
-n_delta_g_ng <- (n_sel_int * n_acc_ng * n_ag_sd) / n_gi_ng
-n_delta_g_gs <- (n_sel_int * n_acc_gs * n_ag_sd) / n_gi_gs
-```
-
-The proportion animals selected has to be converted into a selection intensity $i$.
-
-$$i = \frac{z}{p} = \frac{`r round(n_val_z, 3)`}{`r n_prop_ani_sel`} = `r n_sel_int_round`$$
-
-The selection response is computed as
-
-$$\Delta G = \frac{i*r_{TI} * \sigma_T}{L}$$
-
-**No Genomic Selection**: 
-
-$$\Delta G_{ng} = \frac{`r n_sel_int_round` * `r n_acc_ng` * `r n_ag_sd`}{`r n_gi_ng`} = `r round(n_delta_g_ng, 3)`$$
-
-**With Genomic Selection**: 
-
-$$\Delta G_{gs} = \frac{`r n_sel_int_round` * `r n_acc_gs` * `r n_ag_sd`}{`r n_gi_gs`} = `r round(n_delta_g_gs, 3)`$$
-
-Based on the selection response per year, the scenario with genomic selection is better. 
 
 
 \clearpage
@@ -464,12 +427,12 @@ Based on the selection response per year, the scenario with genomic selection is
                                &          &  \\
 \hline
                                &          &  \\
-Structure of breeding program  &  monolitic  &  hierarchical  \\    
+Structure of breeding program  &          &  \\    
                                &          &  \\
 \hline
                                &          &  \\
-Reason                         &  low reproduction rate, single animal is valuable, sex-limited traits make expensive off-spring tests necessary, hence large herdbooks with many member farms are required
-                               &  high reproduction rate, single animal not so valuable. Split between breeding and production can be used to increase efficiency \\  
+Reason                         &  
+                               &  \\  
                                &          &  \\
 \hline     
 \end{tabular}
@@ -528,7 +491,6 @@ knitr::kable(tbl_met,
 
 ### Solution
 
-One of the main livestock breeding tools is selection. Selection means that we choose from a given population the best individuals to be parents of the next generation. Hence selection can only happen, when a certain level of variation can be observed in a population. Because livestock breeding means improvement of a population at the genetic level, the genetic variance component or in our case the sire variance component is important.
 
 \clearpage
 \pagebreak
@@ -545,21 +507,6 @@ One of the main livestock breeding tools is selection. Selection means that we c
 
 ### Solution
 
-The model is
-
-$$y_{ij} = \mu + s_i + e_{ij}$$
-
-\begin{tabular}{lll}
-where  &  &  \\
-       & $y_{ij}$         &  measurement $j$ of animal $i$    \\
-       & $\mu$            &  expected value of $y$            \\
-       & $s_i$            &  deviation of $y_{ij}$ from $\mu$ attributed to bull $i$ \\
-       & $e_{ij}$  &  measurement error
-\end{tabular}
-
-The expected values are: $E\left[ s_i \right] = 0$, $E\left[ e_{ij} \right] = 0$, $E\left[ y_{ij} \right] = \mu$
-
-The variances: $var(s_i) = \sigma_s^2$, $var(e_{ij}) = \sigma_e^2$, $var(y_{ij}) = \sigma_s^2 + \sigma_e^2$
 
 \clearpage
 \pagebreak
@@ -572,29 +519,6 @@ The variances: $var(s_i) = \sigma_s^2$, $var(e_{ij}) = \sigma_e^2$, $var(y_{ij})
 \points{`r lPointsQ3$TaskC`}
 
 ### Solution
-
-The sires are first converted into factors to prevent R to fit them as covariables.
-
-```{r PrepP03c, echo=TRUE, results='markup'}
-tbl_met$Bull <- as.factor(tbl_met$Bull)
-```
-
-Use `aov()` to get the ANOVA-table
-
-```{r AovP03c, echo=TRUE, results='markup'}
-aov_meth <- aov(Methan ~ Bull, data = tbl_met)
-(sy_aov_meth <- summary(aov_meth))
-```
-
-From this the estimate of the residual variance corresponds to
-
-```{r Sigmae2, echo=TRUE, results='markup'}
-(n_hat_sigma_e2 <- sy_aov_meth[[1]]$`Mean Sq`[2])
-```
-
-```{r Sigmas2, echo=TRUE, results='markup'}
-(n_hat_sigma_s2 <- (sy_aov_meth[[1]]$`Mean Sq`[1] - sy_aov_meth[[1]]$`Mean Sq`[2]) / n_nr_dau)
-```
 
 
 \clearpage
@@ -616,54 +540,6 @@ We are using the same dataset as in Problem 3. The results of the variance compo
 
 ### Solution
 
-The sire model is
-
-$$y = Xb + Zs + e$$
-
-\begin{tabular}{lll}
-  where  &  &  \\
-         &  $y$  &  vector of length $n$ with observations  \\
-         &  $b$  &  general mean as the only fixed effect \\
-         &  $X$  &  incidence matrix linking elements in $b$ to observations \\
-         &  $s$  &  vector of length $t$ with random sire effects \\
-         &  $Z$  &  incidence matrix linking elements in $s$ to observations \\
-         &  $e$  &  vector of length $n$ of random error terms
-\end{tabular}
-
-Inserting the data into the model
-
-```{r ModelInfoP01a, echo=FALSE, results='asis'}
-vec_y_met <- tbl_met$Methan
-vec_b_met <- c("\\mu")
-mat_X_met <- matrix(c(rep(1,n_nr_met_obs)), ncol = 1)
-vec_s_met <- rmddochelper::vecGetVecElem(psBaseElement = "s", pnVecLen = n_nr_bull, psResult = "latex") 
-mat_Z_met <- mat_bull_design
-vec_e_met <- rmddochelper::vecGetVecElem(psBaseElement = "e", pnVecLen = n_nr_met_obs, psResult = "latex") 
-cat("$$\n")
-cat("y = \\left[\n")
-cat(paste0(rmddochelper::sConvertVectorToLaTexArray(pvec_avector = vec_y_met, pnDigits = 0), collapse = "\n"), "\n")
-cat("\\right], \n")
-cat("b = \\left[\n")
-cat(paste0(rmddochelper::sConvertVectorToLaTexArray(pvec_avector = vec_b_met), collapse = "\n"), "\n")
-cat("\\right], \n")
-cat("X = \\left[\n")
-cat(paste0(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = mat_X_met, pnDigits = 0), collapse = "\n"), "\n")
-cat("\\right], \n")
-cat("s = \\left[\n")
-cat(paste0(rmddochelper::sConvertVectorToLaTexArray(pvec_avector = vec_s_met), collapse = "\n"), "\n")
-cat("\\right], \n")
-cat("Z = \\left[\n")
-cat(paste0(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = mat_Z_met, pnDigits = 0), collapse = "\n"), "\n")
-cat("\\right], \n")
-cat("e = \\left[\n")
-cat(paste0(rmddochelper::sConvertVectorToLaTexArray(pvec_avector = vec_e_met), collapse = "\n"), "\n")
-cat("\\right]\n")
-cat("$$\n")
-```
-
-The expected values of the random components are: $E\left[s\right] = 0$, $E\left[e\right] = 0$ and $E\left[y \right] = Xb = 1_n\mu$
-
-The variances are $var(s) = G = A_s * \sigma_s^2$ where $A_s$ is the numerator relationship matrix for the sires. Because the sires are unrelated $A_s = I$. The variance of the errors is given by $var(e) = R = I * \sigma_e^2$ and $var(y) = ZGZ^T + R$. 
 
 
 \clearpage
@@ -683,79 +559,4 @@ n_lambda <- n_sigma_e2 / n_sigma_s2
 \points{`r lPointsQ4$TaskB`}
 
 ### Solution
-
-The mixed model equations using the simplifications from 4a) are given by
-
-$$
-\left[
-  \begin{array}{lr} 
-  X^TX  &  X^TZ  \\
-  Z^TX  &  Z^TZ + \lambda * I
-  \end{array} 
-\right]
-\left[
-  \begin{array}{c}
-  \hat{\mu} \\
-  \hat{s}
-  \end{array} 
-\right]
-=
-\left[
-  \begin{array}{c}
-  X^Ty \\
-  Z^Ty
-  \end{array} 
-\right]
-$$
-
-where $\lambda = \frac{\sigma_e^2}{\sigma_s^2}$
-
-Inserting the numbers leads to
-
-```{r MmeP04b, echo=FALSE, results='hide'}
-mat_xtx <- crossprod(mat_X_met)
-mat_xtz <- crossprod(mat_X_met, mat_Z_met)
-mat_ztz <- crossprod(mat_Z_met)
-mat_ztz_lambda <- mat_ztz + n_lambda * diag(n_nr_bull)
-mat_coeff <- rbind(cbind(mat_xtx, mat_xtz), cbind(t(mat_xtz), mat_ztz_lambda))
-mat_rhs <- rbind(crossprod(mat_X_met, vec_y_met), crossprod(mat_Z_met, vec_y_met))
-vec_unknown <- c("\\hat{\\mu}", "\\hat{s}")
-mat_sol <- solve(mat_coeff, mat_rhs)
-```
-
-```{r ShowMmeP04b, echo=FALSE, results='asis'}
-cat("$$\n")
-cat("\\left[")
-cat(paste0(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = mat_coeff, pnDigits = 0)))
-cat("\\right] \n")
-cat("\\left[")
-cat(paste0(rmddochelper::sConvertVectorToLaTexArray(pvec_avector = vec_unknown)))
-cat("\\right] \n")
-cat("= \n")
-cat("\\left[")
-cat(paste0(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = mat_rhs, pnDigits = 0)))
-cat("\\right] \n")
-cat("$$\n")
-```
-
-Solving for the vector of unknowns leads to 
-
-```{r SolveMmeP04b, echo=FALSE, results='asis'}
-cat("$$\n")
-cat("\\left[")
-cat(paste0(rmddochelper::sConvertVectorToLaTexArray(pvec_avector = vec_unknown)))
-cat("\\right] \n")
-cat("= \n")
-cat("\\left[")
-cat(paste0(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = mat_coeff, pnDigits = 0)))
-cat("\\right]^{-1} \n")
-cat("\\left[")
-cat(paste0(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = mat_rhs, pnDigits = 0)))
-cat("\\right] \n")
-cat("= \n")
-cat("\\left[")
-cat(paste0(rmddochelper::sConvertMatrixToLaTexArray(pmatAMatrix = mat_sol, pnDigits = 3)))
-cat("\\right] \n")
-cat("$$\n")
-```
 
