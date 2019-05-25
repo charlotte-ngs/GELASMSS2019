@@ -466,7 +466,7 @@ mat_obs <- n_av_met_prod_per_year + crossprod(t(mat_bull_design), vec_bull_eff) 
 # data tibble
 tbl_met <- tibble::tibble(Offspring = c(1:n_nr_met_obs), 
                           Bull = sort(rep(1:n_nr_bull, n_nr_dau)), 
-                          Methan = round(mat_obs[,1], 0))
+                          Methane = round(mat_obs[,1], 0))
 
 ```
 
@@ -488,6 +488,7 @@ knitr::kable(tbl_met,
 \textit{Wir möchten die Methanemission beim Rind mit den Werkzeugen der Tierzucht senken. Weshalb brauchen wir für die züchterische Bearbeitung eines Merkmals ein gewisse Variabilität im Merkmal und welche Varianzkomponente interessiert uns besonders?}
 \end{enumerate}
 \points{`r lPointsQ3$TaskA`}
+
 
 ### Solution
 
@@ -531,12 +532,22 @@ We are using the same dataset as in Problem 3. The results of the variance compo
 
 \textit{Wir verwenden nochmals den gleichen Datensatz wie in Aufgabe 3. Die Resultate der Varianzkomponenten waren positiv in dem Sinne, dass eine züchterische Bearbeitung des Merkmals Methanemission möglich erscheint.}
 
+```{r TableDataP04, echo=FALSE, results='asis'}
+knitr::kable(tbl_met,
+             booktabs = TRUE,
+             longtable = TRUE)
+```
+
 \begin{enumerate}
 \item[a)] Specify a sire model by writing down the model formula, describing the meaning of all model components and indicating the expected values and the variances of all random effects in the model. We are using a general mean $\mu$ as the only fixed effect. We assume that all bulls are unrelated. Input the numeric information from the dataset into the model components
 
 \textit{Spezifizieren Sie für die Zuchtwertschätzung ein Vatermodell. Geben Sie die Modellformel, beschreiben Sie die Bedeutung aller Modellkomponenten und geben Sie für alle zufälligen Komponenten im Modell den Erwartungswert und die Varianz an. Als einziger fixer Effekt wird ein allgemeines Mittel $\mu$ angenommen. Die Väter sind nicht miteinander verwandt. Setzen Sie die numerische Information aus dem Datensatz in die Modellkomponenten ein.}
 \end{enumerate}
 \points{`r lPointsQ4$TaskA`}
+
+
+\clearpage
+\pagebreak
 
 ### Solution
 

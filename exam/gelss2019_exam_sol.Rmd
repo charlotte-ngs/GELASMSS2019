@@ -503,7 +503,7 @@ mat_obs <- n_av_met_prod_per_year + crossprod(t(mat_bull_design), vec_bull_eff) 
 # data tibble
 tbl_met <- tibble::tibble(Offspring = c(1:n_nr_met_obs), 
                           Bull = sort(rep(1:n_nr_bull, n_nr_dau)), 
-                          Methan = round(mat_obs[,1], 0))
+                          Methane = round(mat_obs[,1], 0))
 
 ```
 
@@ -582,7 +582,7 @@ tbl_met$Bull <- as.factor(tbl_met$Bull)
 Use `aov()` to get the ANOVA-table
 
 ```{r AovP03c, echo=TRUE, results='markup'}
-aov_meth <- aov(Methan ~ Bull, data = tbl_met)
+aov_meth <- aov(Methane ~ Bull, data = tbl_met)
 (sy_aov_meth <- summary(aov_meth))
 ```
 
@@ -607,12 +607,19 @@ We are using the same dataset as in Problem 3. The results of the variance compo
 
 \textit{Wir verwenden nochmals den gleichen Datensatz wie in Aufgabe 3. Die Resultate der Varianzkomponenten waren positiv in dem Sinne, dass eine züchterische Bearbeitung des Merkmals Methanemission möglich erscheint.}
 
+```{r TableDataP04, echo=FALSE, results='asis'}
+knitr::kable(tbl_met,
+             booktabs = TRUE,
+             longtable = TRUE)
+```
+
 \begin{enumerate}
 \item[a)] Specify a sire model by writing down the model formula, describing the meaning of all model components and indicating the expected values and the variances of all random effects in the model. We are using a general mean $\mu$ as the only fixed effect. We assume that all bulls are unrelated. Input the numeric information from the dataset into the model components
 
 \textit{Spezifizieren Sie für die Zuchtwertschätzung ein Vatermodell. Geben Sie die Modellformel, beschreiben Sie die Bedeutung aller Modellkomponenten und geben Sie für alle zufälligen Komponenten im Modell den Erwartungswert und die Varianz an. Als einziger fixer Effekt wird ein allgemeines Mittel $\mu$ angenommen. Die Väter sind nicht miteinander verwandt. Setzen Sie die numerische Information aus dem Datensatz in die Modellkomponenten ein.}
 \end{enumerate}
 \points{`r lPointsQ4$TaskA`}
+
 
 ### Solution
 
@@ -633,7 +640,7 @@ $$y = Xb + Zs + e$$
 Inserting the data into the model
 
 ```{r ModelInfoP01a, echo=FALSE, results='asis'}
-vec_y_met <- tbl_met$Methan
+vec_y_met <- tbl_met$Methane
 vec_b_met <- c("\\mu")
 mat_X_met <- matrix(c(rep(1,n_nr_met_obs)), ncol = 1)
 vec_s_met <- rmddochelper::vecGetVecElem(psBaseElement = "s", pnVecLen = n_nr_bull, psResult = "latex") 
