@@ -62,6 +62,16 @@ Swiss Dairy Cattle Breeding organisations (Braunvieh Schweiz, Swissherdbook and 
 ### Predicting Behavior Traits Based On Video Data   {-#project_header .emphasized}
 SESAM stands for Sensor Assisted Alpine Milk Production and is an Interreg B project in the EU. The project aims at predicting new phenotypes based on sensor-collected activity patterns of cows. In a first project stage, behavior phenotypes must be derived from activity patterns and activity data. The main task in this project is to determine the different behavior traits based on collected video data.
 
+--- 
+
+## Schon vergebene Themen   {-#project_header .emphasized}
+
+### ANALYSE VON ZWILLINGS- UND MEHRLINGSGEBURTEN IN DEN SCHWEIZERISCHEN RINDERRASSEN   {-#project_header .emphasized}
+Studentin: Sarah Widmer
+
+Das Ziel der Masterarbeit ist die Analyse von Zwillings- und Mehrlingsgeburten bei den Schweizerischen Rinderrassen Braunvieh, Original Braunvieh, Simmental, Swiss Fleckvieh, Holstein und Limousin. Die Schwerpunkte der Masterarbeit liegen in der Analyse der Häufigkeit von Zwillings- und Mehrlingsgeburten (deskriptive Statistik), der Bestimmung von Einflussfaktoren auf die Häufigkeit von Zwillings- und Mehrlingsgeburten (Modellselektion) und der Schätzung von Heritabilitäten bei ausgewählten Rassen. Für die statistische Auswertung wird das Statistikprogramm R verwendet. Für die Heritabilitätsschätzung stehen spezielle Softwareprogramme zur Verfügung.
+
+
 ---
 
 If you are interested in any of the following topics or if you have questions, please contact Peter von Rohr (Qualitas AG) Chamerstrasse 56, 6300 Zug; peter.vonrohr@qualitasag.ch, Tel 041 768 92 21.
